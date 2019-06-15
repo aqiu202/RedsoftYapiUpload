@@ -1,0 +1,40 @@
+<idea-plugin>
+  <id>RedsoftYapiUpload</id>
+  <name>RedsoftYapiUpload</name>
+  <version>1.0</version>
+  <vendor email="aqiuqiuweb@163.com" url="http://www.qdredsoft.com">青岛红柿子技术有限公司</vendor>
+
+  <description><![CDATA[
+      An small plugin for upload api info to Yapi.<br>
+      <em>避免重复的工作，减轻开发压力，提高工作效率！</em>
+    ]]></description>
+
+  <change-notes><![CDATA[
+      Add change notes here.<br>
+      <em>RedsoftYapiUpload 1.0 init!</em>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="173.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+    <action id="RedsoftYapiUpload" class="com.qdredsoft.plugin.action.UploadToYapi" text="上传到Yapi"
+      description="Yapi文档上传插件">
+      <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="shift alt u"/>
+    </action>
+  </actions>
+
+</idea-plugin>
