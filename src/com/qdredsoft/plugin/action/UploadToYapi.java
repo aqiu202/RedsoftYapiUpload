@@ -17,7 +17,6 @@ import com.qdredsoft.plugin.model.YapiResponse;
 import com.qdredsoft.plugin.model.YapiSaveParam;
 import com.qdredsoft.plugin.parser.YapiApiParser;
 import com.qdredsoft.plugin.upload.UploadYapi;
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +46,7 @@ public class UploadToYapi extends AnAction {
       projectToken = projectConfig.split("projectToken\">")[1].split("</")[0];
       projectId = projectConfig.split("projectId\">")[1].split("</")[0];
       yapiUrl = projectConfig.split("yapiUrl\">")[1].split("</")[0];
-    } catch (IOException ex) {
+    } catch (Exception ex) {
       Notification error = notificationGroup
           .createNotification("读取配置错误:" + ex.getMessage(), NotificationType.ERROR);
       Notifications.Bus.notify(error, project);
@@ -63,7 +62,7 @@ public class UploadToYapi extends AnAction {
       return;
     }
     //获得api 需上传的接口列表 参数对象
-    List<YapiApiDTO> yapiApiDTOS = new YapiApiParser().build(e);
+    List<YapiApiDTO> yapiApiDTOS = new YapiApiParser().parse(e);
     if (yapiApiDTOS != null) {
       for (YapiApiDTO yapiApiDTO : yapiApiDTOS) {
         YapiSaveParam yapiSaveParam = new YapiSaveParam(projectToken, yapiApiDTO.getTitle(),

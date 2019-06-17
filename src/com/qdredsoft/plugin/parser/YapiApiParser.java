@@ -65,7 +65,7 @@ public class YapiApiParser {
         NotificationDisplayType.BALLOON, true);
   }
 
-  public List<YapiApiDTO> build(AnActionEvent e) {
+  public List<YapiApiDTO> parse(AnActionEvent e) {
     Editor editor = (Editor) e.getDataContext().getData(CommonDataKeys.EDITOR);
     PsiFile psiFile = (PsiFile) e.getDataContext().getData(CommonDataKeys.PSI_FILE);
     String selectedText = e.getRequiredData(CommonDataKeys.EDITOR).getSelectionModel()
