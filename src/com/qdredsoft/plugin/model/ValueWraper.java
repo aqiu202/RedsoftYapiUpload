@@ -68,4 +68,18 @@ public class ValueWraper {
       this.setExample(valueWraper.getExample());
     }
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if( o == null || !(o instanceof ValueWraper)) {
+      return false;
+    }
+    ValueWraper target = (ValueWraper) o;
+    return this.name.equals(target.getName());
+  }
+
+  @Override
+  public int hashCode(){
+    return Objects.hash(this.name);
+  }
 }

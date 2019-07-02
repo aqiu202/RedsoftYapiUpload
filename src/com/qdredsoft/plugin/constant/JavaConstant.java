@@ -7,10 +7,6 @@ package com.qdredsoft.plugin.constant;
  */
 public interface JavaConstant {
 
-  String NotNull = "javax.validation.constraints.NotNull";
-
-  String NotBlank = "javax.validation.constraints.NotBlank";
-
   String HttpServletRequest = "javax.servlet.http.HttpServletRequest";
 
   String HttpServletResponse = "javax.servlet.http.HttpServletResponse";

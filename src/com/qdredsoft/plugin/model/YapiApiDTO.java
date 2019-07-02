@@ -2,6 +2,7 @@ package com.qdredsoft.plugin.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * yapi dto
@@ -21,7 +22,7 @@ public class YapiApiDTO implements Serializable {
   /**
    * 头信息
    */
-  private List header;
+  private List<YapiHeaderDTO> header;
   /**
    * title
    */
@@ -47,7 +48,7 @@ public class YapiApiDTO implements Serializable {
   /**
    * 请求form
    */
-  private List<YapiFormDTO> req_body_form;
+  private Set<YapiFormDTO> req_body_form;
 
   /**
    * 描述
@@ -65,7 +66,7 @@ public class YapiApiDTO implements Serializable {
   /**
    * 请求参数
    */
-  private List req_params;
+  private List<YapiPathVariableDTO> req_params;
 
   private boolean hasFile = false;
 
@@ -126,11 +127,11 @@ public class YapiApiDTO implements Serializable {
     this.desc = desc;
   }
 
-  public List getHeader() {
+  public List<YapiHeaderDTO> getHeader() {
     return header;
   }
 
-  public void setHeader(List header) {
+  public void setHeader(List<YapiHeaderDTO> header) {
     this.header = header;
   }
 
@@ -142,20 +143,20 @@ public class YapiApiDTO implements Serializable {
     this.req_body_type = req_body_type;
   }
 
-  public List<YapiFormDTO> getReq_body_form() {
+  public Set<YapiFormDTO> getReq_body_form() {
     return req_body_form;
   }
 
 
-  public List getReq_params() {
+  public List<YapiPathVariableDTO> getReq_params() {
     return req_params;
   }
 
-  public void setReq_params(List req_params) {
+  public void setReq_params(List<YapiPathVariableDTO> req_params) {
     this.req_params = req_params;
   }
 
-  public void setReq_body_form(List<YapiFormDTO> req_body_form) {
+  public void setReq_body_form(Set<YapiFormDTO> req_body_form) {
     this.req_body_form = req_body_form;
   }
 

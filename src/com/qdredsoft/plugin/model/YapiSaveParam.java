@@ -2,6 +2,7 @@ package com.qdredsoft.plugin.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * yapi 保存请求参数
@@ -26,7 +27,7 @@ public class YapiSaveParam implements Serializable {
   /**
    * 请求参数 form 类型
    */
-  private List req_body_form;
+  private Set req_body_form;
   /**
    * 标题
    */
@@ -144,11 +145,11 @@ public class YapiSaveParam implements Serializable {
     this.req_headers = req_headers;
   }
 
-  public List getReq_body_form() {
+  public Set getReq_body_form() {
     return req_body_form;
   }
 
-  public void setReq_body_form(List req_body_form) {
+  public void setReq_body_form(Set req_body_form) {
     this.req_body_form = req_body_form;
   }
 

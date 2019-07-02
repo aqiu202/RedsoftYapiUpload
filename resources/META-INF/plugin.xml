@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>RedsoftYapiUpload</id>
   <name>RedsoftYapiUpload</name>
-  <version>1.0</version>
+  <version>1.1</version>
   <vendor email="aqiuqiuweb@163.com" url="http://www.qdredsoft.com">青岛红柿子技术有限公司</vendor>
 
   <description><![CDATA[
@@ -10,8 +10,13 @@
     ]]></description>
 
   <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>RedsoftYapiUpload 1.0 init!</em>
+      <h4>初始版本1.0</h4>
+      <em>RedsoftYapiUpload 1.0版本发布!</em>
+      <h4>发布1.1版本，修改已知BUG</h4>
+      <ol>
+        <li>form参数重复问题 修改</li>
+        <li>get/delete 请求参数类型包含基本类型和对象的时候报错 修改</li>
+      </ol>
     ]]>
   </change-notes>
 
