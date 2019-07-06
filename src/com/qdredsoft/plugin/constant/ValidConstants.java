@@ -1,6 +1,6 @@
 package com.qdredsoft.plugin.constant;
 
-public interface ValidConstant {
+public interface ValidConstants {
 
     String NotNull = "javax.validation.constraints.NotNull";
     String NotBlank = "javax.validation.constraints.NotBlank";

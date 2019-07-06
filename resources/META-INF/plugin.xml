@@ -1,11 +1,12 @@
 <idea-plugin>
   <id>RedsoftYapiUpload</id>
   <name>RedsoftYapiUpload</name>
-  <version>1.1</version>
+  <version>1.2</version>
   <vendor email="aqiuqiuweb@163.com" url="http://www.qdredsoft.com">青岛红柿子技术有限公司</vendor>
 
   <description><![CDATA[
-      An small plugin for upload api info to Yapi.<br>
+      一个根据注解同步接口信息到Yapi平台的小插件.<br>
+      <em>减少开发人员接口信息的重复录入</em>
       <em>避免重复的工作，减轻开发压力，提高工作效率！</em>
     ]]></description>
 
@@ -16,6 +17,14 @@
       <ol>
         <li>form参数重复问题 修改</li>
         <li>get/delete 请求参数类型包含基本类型和对象的时候报错 修改</li>
+      </ol>
+      <h4>发布1.2版本，修改BUG，功能完善</h4>
+      <ol>
+        <li>描述字段含有异常空格和制表符问题修复</li>
+        <li>添加了对【JSR-349】规范和hibernate部分数据校验注解的支持
+        （@NotNull @NotBlank @NotEmpty @Size @Min @Max @Digits @Pattern @DecimalMin @DecimalMax
+        @Positive @PositiveOrZero @Negative @NegativeOrZero @Length @Range）</li>
+        <li>返回结果功能完善（支持返回结果为json和raw格式）</li>
       </ol>
     ]]>
   </change-notes>

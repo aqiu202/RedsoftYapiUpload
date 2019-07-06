@@ -16,13 +16,14 @@ import org.jetbrains.annotations.NonNls;
  *
  * @date 2019/1/30 9:58 AM
  */
-public class NormalTypes {
+public class TypeConstants {
 
     @NonNls
     public static final Map<String, Object> normalTypes = new HashMap<>();
     @NonNls
     public static final Map<String, SchemaType> normalTypeMappings = new HashMap<>();
     public static final Map<String, SchemaType> arrayTypeMappings = new HashMap<>();
+    public static final Map<String, SchemaType> mapTypeMappings = new HashMap<>();
 
     public static final Map<String, Object> noramlTypesPackages = new HashMap<>();
 
@@ -47,12 +48,12 @@ public class NormalTypes {
         normalTypes.put("double", 1.0D);
         normalTypes.put("char", 'a');
         normalTypes.put("Boolean", false);
-        normalTypes.put("Byte", 0);
-        normalTypes.put("Short", Short.valueOf((short) 0));
-        normalTypes.put("Integer", 0);
-        normalTypes.put("Long", 0L);
-        normalTypes.put("Float", 0.0F);
-        normalTypes.put("Double", 0.0D);
+        normalTypes.put("Byte", 1);
+        normalTypes.put("Short", Short.valueOf((short) 1));
+        normalTypes.put("Integer", 1);
+        normalTypes.put("Long", 1L);
+        normalTypes.put("Float", 1.0F);
+        normalTypes.put("Double", 1.0D);
         normalTypes.put("String", "String");
         normalTypes.put("Date", new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(new Date()));
         normalTypes.put("Time", new SimpleDateFormat("HH:mm:ss").format(new Date()));
@@ -83,7 +84,7 @@ public class NormalTypes {
         noramlTypesPackages.put("double", 1.0D);
         noramlTypesPackages.put("char", 'a');
         noramlTypesPackages.put("java.lang.Boolean", false);
-        noramlTypesPackages.put("java.lang.Byte", 0);
+        noramlTypesPackages.put("java.lang.Byte", 1);
         noramlTypesPackages.put("java.lang.Short", Short.valueOf((short) 0));
         noramlTypesPackages.put("java.lang.Integer", 1);
         noramlTypesPackages.put("java.lang.Long", 1L);
@@ -128,6 +129,11 @@ public class NormalTypes {
         arrayTypeMappings.put("java.util.Set", SchemaType.array);
         arrayTypeMappings.put("java.util.HashSet", SchemaType.array);
         arrayTypeMappings.put("java.util.LinkedHashSet", SchemaType.array);
+
+        mapTypeMappings.put("java.util.Map", SchemaType.object);
+        mapTypeMappings.put("java.util.HashMap", SchemaType.object);
+        mapTypeMappings.put("java.util.LinkedHashMap", SchemaType.object);
+        mapTypeMappings.put("java.util.TreeMap", SchemaType.object);
 
         collectTypesPackages.put("java.util.LinkedHashMap", "LinkedHashMap");
         collectTypesPackages.put("java.util.HashMap", "HashMap");

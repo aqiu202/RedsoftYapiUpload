@@ -57,7 +57,7 @@ public class YapiSaveParam implements Serializable {
    */
   private String status = "done";
   /**
-   * 返回参数类型  json
+   * 返回参数类型  json,raw
    */
   private String res_body_type = "json";
 

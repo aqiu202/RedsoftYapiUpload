@@ -91,7 +91,8 @@ public class DesUtil {
                     return trimFirstAndLastChar(
                             psiDocTag.getText().replace("@param", "").replace("@Param", "")
                                     .replace(paramName, "")
-                                    .replace(":", "").replace("*", "").replace("\n", " "), ' ');
+                                    .replace(":", "").replace("*", "").replace("\n", " "), ' ')
+                            .replace("\t", "");
                 }
             }
         }
@@ -110,9 +111,9 @@ public class DesUtil {
             String fileText = psiDocComment.getText();
             if (!Strings.isNullOrEmpty(fileText)) {
                 return trimFirstAndLastChar(
-                        fileText.replace("*", "").replace("/", "").replace(" ", "")
-                                .replace("\n", ",")
-                                .replace("\t", ""), ',').split("\\{@link")[0];
+                        fileText.replace("*", "").replace("/", "")
+                                .replace("\n", "")
+                                .replace("\t", ""), ',').split("\\{@link")[0].trim();
             }
         }
         return "";

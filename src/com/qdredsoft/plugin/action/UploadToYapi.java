@@ -12,7 +12,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.qdredsoft.plugin.constant.YapiConstant;
+import com.qdredsoft.plugin.constant.YapiConstants;
 import com.qdredsoft.plugin.model.YapiApiDTO;
 import com.qdredsoft.plugin.model.YapiResponse;
 import com.qdredsoft.plugin.model.YapiSaveParam;
@@ -74,6 +74,7 @@ public class UploadToYapi extends AnAction {
         yapiSaveParam.setReq_body_type(yapiApiDTO.getReq_body_type());
         yapiSaveParam.setReq_params(yapiApiDTO.getReq_params());
         yapiSaveParam.setRes_body(yapiApiDTO.getResponse());
+        yapiSaveParam.setRes_body_type(yapiApiDTO.getRes_body_type());
         String menuDesc = yapiApiDTO.getMenuDesc();
         if(Objects.nonNull(menuDesc)) {
           yapiSaveParam.setMenuDesc(yapiApiDTO.getMenuDesc());
@@ -81,7 +82,7 @@ public class UploadToYapi extends AnAction {
         if (!Strings.isNullOrEmpty(yapiApiDTO.getMenu())) {
           yapiSaveParam.setMenu(yapiApiDTO.getMenu());
         } else {
-          yapiSaveParam.setMenu(YapiConstant.menu);
+          yapiSaveParam.setMenu(YapiConstants.menu);
         }
         try {
             System.out.println(new Gson().toJson(yapiSaveParam));

@@ -3,7 +3,7 @@ package com.qdredsoft.plugin.upload;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.qdredsoft.plugin.constant.YapiConstant;
+import com.qdredsoft.plugin.constant.YapiConstants;
 import com.qdredsoft.plugin.model.YapiCatMenuParam;
 import com.qdredsoft.plugin.model.YapiCatResponse;
 import com.qdredsoft.plugin.model.YapiHeaderDTO;
@@ -65,7 +65,7 @@ public class UploadYapi {
     if (yapiResponse.getErrcode() == 0 && yapiResponse.getData() != null) {
       yapiSaveParam.setCatid(String.valueOf(yapiResponse.getData()));
       String response = HttpClientUtil.ObjectToString(HttpClientUtil.getHttpclient().execute(
-          this.getHttpPost(yapiSaveParam.getYapiUrl() + YapiConstant.yapiSave,
+          this.getHttpPost(yapiSaveParam.getYapiUrl() + YapiConstants.yapiSave,
               gson.toJson(yapiSaveParam))), "utf-8");
       return gson.fromJson(response, YapiResponse.class);
     } else {
@@ -113,17 +113,17 @@ public class UploadYapi {
           return new YapiResponse(catMenuMap.get(yapiSaveParam.getMenu()));
         }
       } else {
-        if (Objects.nonNull(catMenuMap.get(YapiConstant.menu))) {
-          return new YapiResponse(catMenuMap.get(YapiConstant.menu));
+        if (Objects.nonNull(catMenuMap.get(YapiConstants.menu))) {
+          return new YapiResponse(catMenuMap.get(YapiConstants.menu));
         }
-        yapiSaveParam.setMenu(YapiConstant.menu);
+        yapiSaveParam.setMenu(YapiConstants.menu);
       }
     }
     String response = null;
     try {
       response = HttpClientUtil.ObjectToString(HttpClientUtil.getHttpclient().execute(
           this.getHttpGet(
-              yapiSaveParam.getYapiUrl() + YapiConstant.yapiCatMenu + "?project_id=" + yapiSaveParam
+              yapiSaveParam.getYapiUrl() + YapiConstants.yapiCatMenu + "?project_id=" + yapiSaveParam
                   .getProjectId() + "&token=" + yapiSaveParam.getToken())), "utf-8");
       YapiResponse yapiResponse = gson.fromJson(response, YapiResponse.class);
       Map<String, Integer> catMenuMapSub = catMap
@@ -146,7 +146,7 @@ public class UploadYapi {
         yapiCatMenuParam.setDesc(menuDesc);
       }
       String responseCat = HttpClientUtil.ObjectToString(HttpClientUtil.getHttpclient().execute(
-          this.getHttpPost(yapiSaveParam.getYapiUrl() + YapiConstant.yapiAddCat,
+          this.getHttpPost(yapiSaveParam.getYapiUrl() + YapiConstants.yapiAddCat,
               gson.toJson(yapiCatMenuParam))), "utf-8");
       YapiCatResponse yapiCatResponse = gson
           .fromJson(gson.fromJson(responseCat, YapiResponse.class).getData().toString(),

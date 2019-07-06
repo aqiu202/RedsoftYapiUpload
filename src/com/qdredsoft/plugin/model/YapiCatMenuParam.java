@@ -1,7 +1,7 @@
 package com.qdredsoft.plugin.model;
 
 import com.google.common.base.Strings;
-import com.qdredsoft.plugin.constant.YapiConstant;
+import com.qdredsoft.plugin.constant.YapiConstants;
 import java.io.Serializable;
 
 /**
@@ -82,7 +82,7 @@ public class YapiCatMenuParam implements Serializable {
     this.project_id = project_id;
     this.token = token;
     if (Strings.isNullOrEmpty(name)) {
-      this.name = YapiConstant.menu;
+      this.name = YapiConstants.menu;
     }
   }
 }
