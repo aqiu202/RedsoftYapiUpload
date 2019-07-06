@@ -1,0 +1,2 @@
+# RedsoftYapiUpload
+一个快速生成接口文档的IntelliJ IDEA的Yapi上传小插件（基于YapiIdeaUploadPlugin改造）
