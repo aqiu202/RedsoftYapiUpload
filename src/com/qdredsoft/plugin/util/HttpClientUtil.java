@@ -30,6 +30,7 @@ import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
@@ -86,7 +87,7 @@ public class HttpClientUtil {
     });
     SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(),
         new String[]{"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"}, null,
-        SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            NoopHostnameVerifier.INSTANCE);
     Registry<ConnectionSocketFactory> socketFactoryRegistry
         = RegistryBuilder.<ConnectionSocketFactory>create().register("http",
         PlainConnectionSocketFactory.INSTANCE).register("https",
