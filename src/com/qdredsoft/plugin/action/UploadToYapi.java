@@ -1,7 +1,6 @@
 package com.qdredsoft.plugin.action;
 
 import com.google.common.base.Strings;
-import com.google.gson.Gson;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
@@ -85,7 +84,7 @@ public class UploadToYapi extends AnAction {
           yapiSaveParam.setMenu(YapiConstants.menu);
         }
         try {
-            System.out.println(new Gson().toJson(yapiSaveParam));
+//            System.out.println(new Gson().toJson(yapiSaveParam));
           // 上传
           YapiResponse yapiResponse = new UploadYapi()
               .uploadSave(yapiSaveParam, project.getBasePath());

@@ -597,7 +597,6 @@ public class YapiApiParser {
                         TypeConstants.normalTypes.get(typeName).toString());
             } else {//处理@RequestParam注解
                 ValueWraper valueWraper = handleParamAnnotation(psiAnnotation, psiParameter);
-                System.out.println(valueWraper.getExample());
                 form.full(valueWraper);
             }
             requestForm.add(form);
@@ -612,7 +611,6 @@ public class YapiApiParser {
                 String fieldType = field.getType().getCanonicalText();
                 YapiFormDTO form = new YapiFormDTO();
                 form.setRequired(ValidUtil.notNullOrBlank(field) ? "1" : "0");
-                System.out.println(field.getName() + ",required:" + form.getRequired());
                 form.setType(SpringMVCConstants.MultipartFile.equals(fieldType) ? "file" : "text");
                 form.setName(field.getName());
                 remark = DesUtil.getLinkRemark(field, this.project);
@@ -661,6 +659,7 @@ public class YapiApiParser {
                 && !"\"\\n\\t\\t\\n\\t\\t\\n\\uE000\\uE001\\uE002\\n\\t\\t\\t\\t\\n\""
                 .equals(defaultValue.getText())) {
             valueWraper.setExample(defaultValue.getText().replace("\"", ""));
+            valueWraper.setRequired("0");
         }
         if (Strings.isNullOrEmpty(valueWraper.getRequired())) {
             valueWraper.setRequired("1");
