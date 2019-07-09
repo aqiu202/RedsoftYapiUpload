@@ -5,10 +5,11 @@
   <vendor email="aqiuqiuweb@163.com" url="http://www.qdredsoft.com">青岛红柿子技术有限公司</vendor>
 
   <description><![CDATA[
-      一个快速生成接口文档的IntelliJ IDEA的Yapi上传小插件<br>
-      <em>减少开发人员接口信息的重复录入</em></br>
-      <em>避免重复的工作，减轻开发压力，提高工作效率！（同时规范了代码注释）</em>
-      <p><b>使用方法见<a href="https://github.com/aqiu202/RedsoftYapiUpload/wiki/使用指南">使用指南</a></b></p>
+      一个快速生成接口文档的IntelliJ IDEA的Yapi上传小插件<br>a small plugin for IntelliJ IDEA uploading http api information to Yapi<br>
+      <em>减少开发人员接口信息的重复录入(less inputing)</em></br>
+      <em>避免重复的工作，减轻开发压力，提高工作效率！同时还规范了代码注释<br>Avoid duplication of work,Reducing Development Pressure,improve work efficiency.Code annotations are also standardized</em>
+      <p><b>使用方法见<a href="https://github.com/aqiu202/RedsoftYapiUpload/wiki/使用指南">使用指南</a><br>
+      for help to see <a href="https://github.com/aqiu202/RedsoftYapiUpload/wiki/使用指南">guide</a></b></p>
     ]]></description>
 
   <change-notes><![CDATA[
