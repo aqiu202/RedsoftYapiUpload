@@ -4,7 +4,7 @@ import com.qdredsoft.plugin.model.LongRange;
 import com.qdredsoft.plugin.schema.base.SchemaType;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ public class TypeConstants {
     /**
      * 泛型列表
      */
-    public static final List<String> genericList = new ArrayList<>();
+    public static final List<String> genericList = Arrays.asList("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""));
 
 
     static {
@@ -64,13 +64,6 @@ public class TypeConstants {
         collectTypes.put("HashMap", "HashMap");
         collectTypes.put("Map", "Map");
         collectTypes.put("LinkedHashMap", "LinkedHashMap");
-        genericList.add("T");
-        genericList.add("S");
-        genericList.add("E");
-        genericList.add("A");
-        genericList.add("B");
-        genericList.add("K");
-        genericList.add("V");
 
     }
 

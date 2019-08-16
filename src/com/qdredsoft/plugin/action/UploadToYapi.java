@@ -23,91 +23,97 @@ import org.jetbrains.annotations.NotNull;
 
 public class UploadToYapi extends AnAction {
 
-  private static NotificationGroup notificationGroup;
+    private static NotificationGroup notificationGroup;
 
-  static {
-    notificationGroup = new NotificationGroup("Java2Json.NotificationGroup",
-        NotificationDisplayType.BALLOON, true);
-  }
+    static {
+        notificationGroup = new NotificationGroup("Java2Json.NotificationGroup",
+                NotificationDisplayType.BALLOON, true);
+    }
 
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
-    Editor editor = (Editor) e.getDataContext().getData(CommonDataKeys.EDITOR);
-    Project project = editor.getProject();
-    // token
-    String projectToken = null;
-    // 项目ID
-    String projectId = null;
-    // yapi地址
-    String yapiUrl = null;
-    try {
-      String projectConfig = new String(editor.getProject().getProjectFile().contentsToByteArray(),
-          "utf-8");
-      projectToken = projectConfig.split("projectToken\">")[1].split("</")[0];
-      projectId = projectConfig.split("projectId\">")[1].split("</")[0];
-      yapiUrl = projectConfig.split("yapiUrl\">")[1].split("</")[0];
-    } catch (Exception ex) {
-      Notification error = notificationGroup
-          .createNotification("读取配置错误:" + ex.getMessage(), NotificationType.ERROR);
-      Notifications.Bus.notify(error, project);
-      return;
-    }
-    // 配置校验
-    if (Strings.isNullOrEmpty(projectToken) || Strings.isNullOrEmpty(projectId) || Strings
-        .isNullOrEmpty(yapiUrl)) {
-      Notification error = notificationGroup
-          .createNotification("请检查配置文件参数是否正常",
-              NotificationType.ERROR);
-      Notifications.Bus.notify(error, project);
-      return;
-    }
-    //获得api 需上传的接口列表 参数对象
-    List<YapiApiDTO> yapiApiDTOS = new YapiApiParser().parse(e);
-    if (yapiApiDTOS != null) {
-      for (YapiApiDTO yapiApiDTO : yapiApiDTOS) {
-        YapiSaveParam yapiSaveParam = new YapiSaveParam(projectToken, yapiApiDTO.getTitle(),
-            yapiApiDTO.getPath(), yapiApiDTO.getParams(), yapiApiDTO.getRequestBody(),
-            yapiApiDTO.getResponse(), Integer.valueOf(projectId), yapiUrl, true,
-            yapiApiDTO.getMethod(), yapiApiDTO.getDesc(), yapiApiDTO.getHeader());
-        yapiSaveParam.setReq_body_form(yapiApiDTO.getReq_body_form());
-        yapiSaveParam.setReq_body_type(yapiApiDTO.getReq_body_type());
-        yapiSaveParam.setReq_params(yapiApiDTO.getReq_params());
-        yapiSaveParam.setRes_body(yapiApiDTO.getResponse());
-        yapiSaveParam.setRes_body_type(yapiApiDTO.getRes_body_type());
-        String menuDesc = yapiApiDTO.getMenuDesc();
-        if(Objects.nonNull(menuDesc)) {
-          yapiSaveParam.setMenuDesc(yapiApiDTO.getMenuDesc());
-        }
-        if (!Strings.isNullOrEmpty(yapiApiDTO.getMenu())) {
-          yapiSaveParam.setMenu(yapiApiDTO.getMenu());
-        } else {
-          yapiSaveParam.setMenu(YapiConstants.menu);
-        }
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Editor editor = (Editor) e.getDataContext().getData(CommonDataKeys.EDITOR);
+        Project project = editor.getProject();
+        // token
+        String projectToken = null;
+        // 项目ID
+        String projectId = null;
+        // yapi地址
+        String yapiUrl = null;
+        boolean enableBasicScope = false;
         try {
-//            System.out.println(new Gson().toJson(yapiSaveParam));
-          // 上传
-          YapiResponse yapiResponse = new UploadYapi()
-              .uploadSave(yapiSaveParam, project.getBasePath());
-          if (yapiResponse.getErrcode() != 0) {
+            String projectConfig = new String(
+                    editor.getProject().getProjectFile().contentsToByteArray(),
+                    "utf-8");
+            projectToken = projectConfig.split("projectToken\">")[1].split("</")[0];
+            projectId = projectConfig.split("projectId\">")[1].split("</")[0];
+            yapiUrl = projectConfig.split("yapiUrl\">")[1].split("</")[0];
+            enableBasicScope = projectConfig.contains("basicScope\">") && "true"
+                    .equals(projectConfig.split("basicScope\">")[1].split("</")[0].toLowerCase());
+        } catch (Exception ex) {
             Notification error = notificationGroup
-                .createNotification("抱歉，api上传失败:" + yapiResponse.getErrmsg(),
-                    NotificationType.ERROR);
+                    .createNotification("读取配置错误:" + ex.getMessage(), NotificationType.ERROR);
             Notifications.Bus.notify(error, project);
-          } else {
-            String url =
-                yapiUrl + "/project/" + projectId + "/interface/api/cat_" + UploadYapi.catMap
-                    .get(projectId).get(yapiSaveParam.getMenu());
-            Notification error = notificationGroup
-                .createNotification("接口上传成功:  " + url, NotificationType.INFORMATION);
-            Notifications.Bus.notify(error, project);
-          }
-        } catch (Exception e1) {
-          Notification error = notificationGroup
-              .createNotification("抱歉，api上传失败:" + e1, NotificationType.ERROR);
-          Notifications.Bus.notify(error, project);
+            return;
         }
-      }
-      UploadYapi.catMap.clear();
+        // 配置校验
+        if (Strings.isNullOrEmpty(projectToken) || Strings.isNullOrEmpty(projectId) || Strings
+                .isNullOrEmpty(yapiUrl)) {
+            Notification error = notificationGroup
+                    .createNotification("请检查配置文件参数是否正常",
+                            NotificationType.ERROR);
+            Notifications.Bus.notify(error, project);
+            return;
+        }
+        //获得api 需上传的接口列表 参数对象
+        List<YapiApiDTO> yapiApiDTOS = new YapiApiParser().parse(e, enableBasicScope);
+        if (yapiApiDTOS != null) {
+            for (YapiApiDTO yapiApiDTO : yapiApiDTOS) {
+                YapiSaveParam yapiSaveParam = new YapiSaveParam(projectToken, yapiApiDTO.getTitle(),
+                        yapiApiDTO.getPath(), yapiApiDTO.getParams(), yapiApiDTO.getRequestBody(),
+                        yapiApiDTO.getResponse(), Integer.valueOf(projectId), yapiUrl, true,
+                        yapiApiDTO.getMethod(), yapiApiDTO.getDesc(), yapiApiDTO.getHeader());
+                yapiSaveParam.setReq_body_form(yapiApiDTO.getReq_body_form());
+                yapiSaveParam.setReq_body_type(yapiApiDTO.getReq_body_type());
+                yapiSaveParam.setReq_params(yapiApiDTO.getReq_params());
+                yapiSaveParam.setRes_body(yapiApiDTO.getResponse());
+                yapiSaveParam.setRes_body_type(yapiApiDTO.getRes_body_type());
+                String menuDesc = yapiApiDTO.getMenuDesc();
+                if (Objects.nonNull(menuDesc)) {
+                    yapiSaveParam.setMenuDesc(yapiApiDTO.getMenuDesc());
+                }
+                if (!Strings.isNullOrEmpty(yapiApiDTO.getMenu())) {
+                    yapiSaveParam.setMenu(yapiApiDTO.getMenu());
+                } else {
+                    yapiSaveParam.setMenu(YapiConstants.menu);
+                }
+                try {
+//            System.out.println(new Gson().toJson(yapiSaveParam));
+                    // 上传
+                    YapiResponse yapiResponse = new UploadYapi()
+                            .uploadSave(yapiSaveParam, project.getBasePath());
+                    if (yapiResponse.getErrcode() != 0) {
+                        Notification error = notificationGroup
+                                .createNotification("抱歉，api上传失败:" + yapiResponse.getErrmsg(),
+                                        NotificationType.ERROR);
+                        Notifications.Bus.notify(error, project);
+                    } else {
+                        String url =
+                                yapiUrl + "/project/" + projectId + "/interface/api/cat_"
+                                        + UploadYapi.catMap
+                                        .get(projectId).get(yapiSaveParam.getMenu());
+                        Notification error = notificationGroup
+                                .createNotification("接口上传成功:  " + url,
+                                        NotificationType.INFORMATION);
+                        Notifications.Bus.notify(error, project);
+                    }
+                } catch (Exception e1) {
+                    Notification error = notificationGroup
+                            .createNotification("抱歉，api上传失败:" + e1, NotificationType.ERROR);
+                    Notifications.Bus.notify(error, project);
+                }
+            }
+            UploadYapi.catMap.clear();
+        }
     }
-  }
 }

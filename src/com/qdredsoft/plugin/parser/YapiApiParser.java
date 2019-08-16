@@ -16,6 +16,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
@@ -68,13 +69,15 @@ public class YapiApiParser {
     private NotificationGroup notificationGroup;
 
     private Project project;
+    private boolean enableBasicScope;
 
     {
         notificationGroup = new NotificationGroup("Java2Json.NotificationGroup",
                 NotificationDisplayType.BALLOON, true);
     }
 
-    public List<YapiApiDTO> parse(AnActionEvent e) {
+    public List<YapiApiDTO> parse(AnActionEvent e, boolean enableBasicScope) {
+        this.enableBasicScope = enableBasicScope;
         Editor editor = (Editor) e.getDataContext().getData(CommonDataKeys.EDITOR);
         PsiFile psiFile = (PsiFile) e.getDataContext().getData(CommonDataKeys.PSI_FILE);
         String selectedText = e.getRequiredData(CommonDataKeys.EDITOR).getSelectionModel()
@@ -109,7 +112,7 @@ public class YapiApiParser {
                         yapiApiDTO = handleMethod(selectedClass, psiMethodTarget);
                     } catch (Exception ex) {
                         Notification error = notificationGroup
-                                .createNotification("JSON转化失败." + ex.getMessage(),
+                                .createNotification("解析接口信息失败：" + ex.getMessage(),
                                         NotificationType.ERROR);
                         Notifications.Bus.notify(error, this.project);
                     }
@@ -151,7 +154,7 @@ public class YapiApiParser {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     Notification error = notificationGroup
-                            .createNotification("JSON转化失败." + ex.getMessage(),
+                            .createNotification("解析接口信息失败：" + ex.getMessage(),
                                     NotificationType.ERROR);
                     Notifications.Bus.notify(error, this.project);
                 }
@@ -184,7 +187,7 @@ public class YapiApiParser {
     /**
      * 根据方法生成 YapiApiDTO （设置请求参数和path,method,desc,menu等字段）
      */
-    public YapiApiDTO handleMethod(PsiClass selectedClass, PsiMethod psiMethodTarget) {
+    private YapiApiDTO handleMethod(PsiClass selectedClass, PsiMethod psiMethodTarget) {
         //有@useless注释的方法不上传yapi
         if (DesUtil.notUsed(psiMethodTarget.getDocComment().getText())) {
             return null;
@@ -391,7 +394,7 @@ public class YapiApiParser {
      * @return: void
      * @date: 2019/2/19
      */
-    public void getRequest(YapiApiDTO yapiApiDTO, PsiMethod psiMethodTarget) {
+    private void getRequest(YapiApiDTO yapiApiDTO, PsiMethod psiMethodTarget) {
         PsiParameter[] psiParameters = psiMethodTarget.getParameterList().getParameters();
         if (psiParameters.length > 0) {
             boolean hasRequestBody = hasRequestBody(psiParameters);
@@ -567,7 +570,7 @@ public class YapiApiParser {
      * @return: java.util.List<YapiFormDTO>
      * @date: 2019/5/17
      */
-    public Set<YapiFormDTO> getRequestForm(PsiParameter psiParameter, PsiMethod psiMethodTarget) {
+    private Set<YapiFormDTO> getRequestForm(PsiParameter psiParameter, PsiMethod psiMethodTarget) {
         Set<YapiFormDTO> requestForm = new LinkedHashSet<>();
         String paramName = psiParameter.getName();
         String typeName = psiParameter.getType().getPresentableText();
@@ -615,14 +618,12 @@ public class YapiApiParser {
                 form.setName(field.getName());
                 remark = DesUtil.getLinkRemark(field, this.project);
                 form.setDesc(remark);
-                if (Objects.nonNull(field.getType().getPresentableText())) {
-                    Object obj = TypeConstants.normalTypes
-                            .get(field.getType().getPresentableText());
-                    if (Objects.nonNull(obj)) {
-                        form.setExample(
-                                TypeConstants.normalTypes.get(field.getType().getPresentableText())
-                                        .toString());
-                    }
+                Object obj = TypeConstants.normalTypes
+                        .get(field.getType().getPresentableText());
+                if (Objects.nonNull(obj)) {
+                    form.setExample(
+                            TypeConstants.normalTypes.get(field.getType().getPresentableText())
+                                    .toString());
                 }
                 requestForm.add(form);
             }
@@ -681,12 +682,20 @@ public class YapiApiParser {
      * @return: java.lang.String
      * @date: 2019/2/19
      */
-    public String getSchemaResponse(PsiType psiType) {
+    private String getSchemaResponse(PsiType psiType) {
         return getPojoJson(psiType);
     }
 
 
-    public String getPojoJson(PsiType psiType) {
+    private String getPojoJson(PsiType psiType, boolean needSchema) {
+        return this.getSchema(psiType, needSchema).toPrettyJson();
+    }
+
+    private String getPojoJson(PsiType psiType) {
+        return this.getPojoJson(psiType, true);
+    }
+
+    private ItemJsonSchema getSchema(PsiType psiType, boolean needSchema) {
         String typePkName = psiType.getCanonicalText();
         ItemJsonSchema result;
         //如果是基本类型
@@ -696,7 +705,14 @@ public class YapiApiParser {
         } else {
             result = this.getOtherTypeSchema(psiType);
         }
-        return result.set$schema(YapiConstants.$schema).toPrettyJson();
+        if (needSchema) {
+            result.set$schema(YapiConstants.$schema);
+        }
+        return result;
+    }
+
+    private ItemJsonSchema getSchema(PsiType psiType) {
+        return this.getSchema(psiType, true);
     }
 
     /**
@@ -705,7 +721,7 @@ public class YapiApiParser {
      * @date 2019-07-03 09:53
      * @description 通过字段属性获取Schema信息
      **/
-    public ItemJsonSchema getFieldSchema(PsiField psiField) {
+    private ItemJsonSchema getFieldSchema(PsiField psiField) {
         PsiType type = psiField.getType();
         String typePkName = type.getCanonicalText();
         if (TypeConstants.isBaseType(typePkName)) {
@@ -725,7 +741,7 @@ public class YapiApiParser {
      * @date 2019-07-03 09:52
      * @description 获取基本类型Schema信息
      **/
-    public ItemJsonSchema getBaseFieldSchema(SchemaType schemaType, PsiField psiField) {
+    private ItemJsonSchema getBaseFieldSchema(SchemaType schemaType, PsiField psiField) {
         PsiType psiType = psiField.getType();
         String typePkName = psiType.getCanonicalText();
         ItemJsonSchema result;
@@ -756,11 +772,11 @@ public class YapiApiParser {
                 IntegerSchema integerSchema = new IntegerSchema();
                 if (TypeConstants.hasBaseRange(typePkName)) {
                     LongRange longRange = TypeConstants.baseRangeMappings.get(typePkName);
-                    if (Objects.nonNull(longRange)) {
+                    if (Objects.nonNull(longRange) && this.enableBasicScope) {
                         integerSchema.setRange(longRange);
                     }
                 }
-                LongRange longRange = ValidUtil.range(psiField);
+                LongRange longRange = ValidUtil.range(psiField, this.enableBasicScope);
                 if (Objects.nonNull(longRange)) {
                     integerSchema.setRange(longRange);
                 }
@@ -782,11 +798,9 @@ public class YapiApiParser {
                 break;
             case string:
                 StringSchema stringSchema = new StringSchema();
-                IntegerRange integerRange = ValidUtil.rangeLength(psiField);
-                if (Objects.nonNull(integerRange)) {
-                    stringSchema.setMinLength(integerRange.getMin());
-                    stringSchema.setMaxLength(integerRange.getMax());
-                }
+                IntegerRange integerRange = ValidUtil.rangeLength(psiField, this.enableBasicScope);
+                stringSchema.setMinLength(integerRange.getMin());
+                stringSchema.setMaxLength(integerRange.getMax());
                 String pattern = ValidUtil.getPattern(psiField);
                 if (!Strings.isNullOrEmpty(pattern)) {
                     stringSchema.setPattern(pattern);
@@ -811,7 +825,7 @@ public class YapiApiParser {
      * @date 2019-07-03 09:51
      * @description 根据属性字段获取Schema信息 （非基本类型可用）
      **/
-    public ItemJsonSchema getOtherFieldSchema(PsiField psiField) {
+    private ItemJsonSchema getOtherFieldSchema(PsiField psiField) {
         PsiType psiType = psiField.getType();
         String typeName = psiType.getPresentableText();
         boolean wrapArray = typeName.endsWith("[]");
@@ -824,11 +838,12 @@ public class YapiApiParser {
             if (ValidUtil.notEmpty(psiField)) {
                 a.setMinItems(1);
             }
-            IntegerRange integerRange = ValidUtil.rangeSize(psiField);
-            if (Objects.nonNull(integerRange)) {
-                a.setMinItems(integerRange.getMin());
-                a.setMaxItems(integerRange.getMax());
-            }
+            IntegerRange integerRange = ValidUtil.rangeSize(psiField, this.enableBasicScope);
+            Integer minValue = integerRange.getMin();
+            Integer min = this.enableBasicScope ? minValue
+                    : (Integer.MIN_VALUE == minValue ? null : minValue);
+            a.setMinItems(min);
+            a.setMaxItems(integerRange.getMax());
         }
         result.setDescription(DesUtil.getLinkRemark(psiField, this.project));
         return result;
@@ -899,7 +914,7 @@ public class YapiApiParser {
      * @date 2019-07-03 09:43
      * @description 通过类型获取Schema信息
      **/
-    public ItemJsonSchema getOtherTypeSchema(PsiType psiType) {
+    private ItemJsonSchema getOtherTypeSchema(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();
         boolean wrapArray = false;
         if (typePkName.endsWith("[]")) {
@@ -934,19 +949,38 @@ public class YapiApiParser {
      * @date 2019-07-03 09:49
      * @description 通过类完整包名获取object Schema信息（只有自定义pojo类可用）
      **/
-    public ItemJsonSchema getObjectSchema(String typePkName) {
+    private ItemJsonSchema getObjectSchema(String typePkName) {
         ObjectSchema objectSchema = new ObjectSchema();
+        String[] types = typePkName.split("<");
+        typePkName = types[0];
         PsiClass psiClass = JavaPsiFacade.getInstance(this.project)
                 .findClass(typePkName, GlobalSearchScope.allScope(this.project));
         if (Objects.nonNull(psiClass)) {
+            boolean hasChildren;
+            PsiClassType classType = null;
+            if (hasChildren = types.length == 2) {
+                String childrenType = types[1].split(">")[0];
+                classType = PsiType.getTypeByName(childrenType, this.project,
+                        GlobalSearchScope.allScope(this.project));
+            } else if(hasChildren = types.length == 3){
+                String childrenType = types[1].split(">")[0]+"<" + types[2].split(">")[0]+">";
+                classType = PsiType.getTypeByName(childrenType, this.project,
+                        GlobalSearchScope.allScope(this.project));
+            }
             for (PsiField field : psiClass.getAllFields()) {
                 if (field.getModifierList().hasModifierProperty("final") ||
                         field.getModifierList().hasModifierProperty("static")) {
                     continue;
                 }
                 String fieldName = field.getName();
-                objectSchema.addProperty(fieldName, this.getFieldSchema(field));
-                if (ValidUtil.notNull(field) || ValidUtil.notBlank(field)) {
+                if (hasChildren && TypeConstants.genericList
+                        .contains(field.getType().getCanonicalText())) {
+                    objectSchema.addProperty(fieldName, this.getSchema(classType, false)
+                            .setDescription(DesUtil.getLinkRemark(field, this.project)));
+                } else {
+                    objectSchema.addProperty(fieldName, this.getFieldSchema(field));
+                }
+                if (ValidUtil.notNullOrBlank(field)) {
                     objectSchema.addRequired(fieldName);
                 }
             }

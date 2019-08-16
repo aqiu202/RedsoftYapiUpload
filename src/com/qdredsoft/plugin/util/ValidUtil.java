@@ -54,26 +54,28 @@ public final class ValidUtil {
         return hasAnnotation(psiModifierListOwner, ValidConstants.NegativeOrZero);
     }
 
-    public static IntegerRange rangeSize(PsiModifierListOwner psiModifierListOwner) {
+    public static IntegerRange rangeSize(PsiModifierListOwner psiModifierListOwner, boolean enableBasicScope) {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.Size);
         if (Objects.nonNull(psiAnnotation)) {
             return new IntegerRange(
                     Integer.valueOf(psiAnnotation.findAttributeValue("min").getText()),
-                    Integer.valueOf(psiAnnotation.findAttributeValue("max").getText()));
+                    Integer.valueOf(psiAnnotation.findAttributeValue("max").getText()),
+                    enableBasicScope);
         }
-        return new IntegerRange(0, Integer.MAX_VALUE);
+        return new IntegerRange(null, Integer.MAX_VALUE,enableBasicScope);
     }
 
-    public static IntegerRange rangeLength(PsiModifierListOwner psiModifierListOwner) {
+    public static IntegerRange rangeLength(PsiModifierListOwner psiModifierListOwner, boolean enableBasicScope) {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.Length);
         if (Objects.nonNull(psiAnnotation)) {
             return new IntegerRange(
                     Integer.valueOf(psiAnnotation.findAttributeValue("min").getText()),
-                    Integer.valueOf(psiAnnotation.findAttributeValue("max").getText()));
+                    Integer.valueOf(psiAnnotation.findAttributeValue("max").getText()),
+                    enableBasicScope);
         }
-        return new IntegerRange(0, Integer.MAX_VALUE);
+        return new IntegerRange(null, Integer.MAX_VALUE, enableBasicScope);
     }
 
     public static Long getMin(PsiModifierListOwner psiModifierListOwner) {
@@ -94,7 +96,7 @@ public final class ValidUtil {
         return null;
     }
 
-    public static LongRange range(PsiModifierListOwner psiModifierListOwner) {
+    public static LongRange range(PsiModifierListOwner psiModifierListOwner, boolean enableBasicScope) {
         LongRange result = null;
         Long min;
         Long max;
@@ -114,7 +116,8 @@ public final class ValidUtil {
             if (Objects.nonNull(psiAnnotation)) {
                 return new LongRange(
                         Long.valueOf(psiAnnotation.findAttributeValue("min").getText()),
-                        Long.valueOf(psiAnnotation.findAttributeValue("max").getText()));
+                        Long.valueOf(psiAnnotation.findAttributeValue("max").getText()),
+                        enableBasicScope);
             }
         }
         return result;
