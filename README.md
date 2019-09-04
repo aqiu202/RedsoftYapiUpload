@@ -14,4 +14,4 @@ Java
 #### 支持接口
 HTTP接口
 #### 使用方式
-详情查看[使用文档](https://github.com/aqiu202/RedsoftYapiUpload/wiki)
+详情查看[使用文档](https://github.com/aqiu202/RedsoftYapiUpload/wiki/%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
