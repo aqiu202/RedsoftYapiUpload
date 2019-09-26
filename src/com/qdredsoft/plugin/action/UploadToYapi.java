@@ -42,14 +42,9 @@ public class UploadToYapi extends AnAction {
         String yapiUrl = null;
         boolean enableBasicScope = false;
         try {
-//            String projectConfig = new String(
-//                    editor.getProject().getProjectFile().contentsToByteArray(),
-//                    "utf-8");
-            String projectConfig = "<component name=\"yapi\">\n"
-                    + "    <option name=\"projectToken\">9e643413546194549c72398adbaa3d08a78679788527690037b03f3c39519e6b</option>\n"
-                    + "    <option name=\"projectId\">32</option>\n"
-                    + "    <option name=\"yapiUrl\">http://47.105.222.231:3000</option>\n"
-                    + "  </component>";
+            String projectConfig = new String(
+                    editor.getProject().getProjectFile().contentsToByteArray(),
+                    "utf-8");
             projectToken = projectConfig.split("projectToken\">")[1].split("</")[0];
             projectId = projectConfig.split("projectId\">")[1].split("</")[0];
             yapiUrl = projectConfig.split("yapiUrl\">")[1].split("</")[0];
