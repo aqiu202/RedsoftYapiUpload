@@ -15,9 +15,9 @@ public final class NumberSchema extends EnumableSchema {
 
     private BigDecimal maximum;
 
-    private boolean exclusiveMinimum;
+    private Boolean exclusiveMinimum;
 
-    private boolean exclusiveMaximum;
+    private Boolean exclusiveMaximum;
 
     public boolean isExclusiveMinimum() {
         return exclusiveMinimum;

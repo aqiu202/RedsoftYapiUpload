@@ -63,7 +63,7 @@ public final class ValidUtil {
                     Integer.valueOf(psiAnnotation.findAttributeValue("max").getText()),
                     enableBasicScope);
         }
-        return new IntegerRange(null, Integer.MAX_VALUE,enableBasicScope);
+        return new IntegerRange(null, null,enableBasicScope);
     }
 
     public static IntegerRange rangeLength(PsiModifierListOwner psiModifierListOwner, boolean enableBasicScope) {
@@ -75,7 +75,7 @@ public final class ValidUtil {
                     Integer.valueOf(psiAnnotation.findAttributeValue("max").getText()),
                     enableBasicScope);
         }
-        return new IntegerRange(null, Integer.MAX_VALUE, enableBasicScope);
+        return new IntegerRange(null, null, enableBasicScope);
     }
 
     public static Long getMin(PsiModifierListOwner psiModifierListOwner) {

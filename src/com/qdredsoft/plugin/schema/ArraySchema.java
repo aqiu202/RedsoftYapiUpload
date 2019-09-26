@@ -44,12 +44,30 @@ public class ArraySchema extends ItemJsonSchema {
         return this;
     }
 
+    public ArraySchema setMinItems(Integer minItems, boolean enableBasicScope) {
+        if(minItems == null && enableBasicScope) {
+            this.minItems = Integer.MIN_VALUE;
+        } else {
+            this.minItems = minItems;
+        }
+        return this;
+    }
+
     public Integer getMaxItems() {
         return maxItems;
     }
 
     public ArraySchema setMaxItems(Integer maxItems) {
         this.maxItems = maxItems;
+        return this;
+    }
+
+    public ArraySchema setMaxItems(Integer maxItems, boolean enableBasicScope) {
+        if(maxItems == null && enableBasicScope) {
+            this.maxItems = Integer.MAX_VALUE;
+        } else {
+            this.maxItems = maxItems;
+        }
         return this;
     }
 }

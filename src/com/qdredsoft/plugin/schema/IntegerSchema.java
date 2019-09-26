@@ -10,9 +10,9 @@ public class IntegerSchema extends EnumableSchema {
         super(SchemaType.integer);
     }
 
-    private boolean exclusiveMinimum;
+    private Boolean exclusiveMinimum;
 
-    private boolean exclusiveMaximum;
+    private Boolean exclusiveMaximum;
 
     private Long minimum;
 

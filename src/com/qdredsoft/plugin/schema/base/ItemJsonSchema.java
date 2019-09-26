@@ -5,12 +5,12 @@ import com.google.gson.annotations.SerializedName;
 
 public class ItemJsonSchema {
 
-    protected String $schema;
+    private String $schema;
 
-    protected SchemaType type;
+    private SchemaType type;
     @SerializedName("default")
-    protected String _default;
-    protected String description;
+    private String _default;
+    private String description;
 
     public ItemJsonSchema(SchemaType type) {
         this.type = type;

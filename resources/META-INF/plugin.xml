@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>RedsoftYapiUpload</id>
   <name>RedsoftYapiUpload</name>
-  <version>1.3</version>
+  <version>1.3.3</version>
   <vendor email="aqiuqiuweb@163.com" url="http://www.qdredsoft.com">青岛红柿子技术有限公司</vendor>
 
   <description><![CDATA[
@@ -11,6 +11,7 @@
       <p><b>github: <a href="https://github.com/aqiu202/RedsoftYapiUpload">RedsoftYapiUpload</a></b></p>
       <p><b>for help to see <a href="https://github.com/aqiu202/RedsoftYapiUpload/wiki/使用指南">guide</a></b></p>
       <hr>
+      <br>
       一个快速上传HTTP接口文档到Yapi的IntelliJ IDEA小插件（基于<a href="https://github.com/diwand/YapiIdeaUploadPlugin">YapiIdeaUploadPlugin</a>）重构<br>
       <em>减少开发人员接口信息的重复录入</em><br>
       <em>避免重复的工作，减轻开发压力，提高工作效率！同时还规范了代码注释</em>
@@ -38,7 +39,20 @@
       <ol>
         <li>Response parameters support generics</li>
       </ol>
+      <h4>1.3.1 version fixed bugs</h4>
+      <ol>
+        <li>Nesting within the return type itself results in dead-loop BUG fixed</li>
+      </ol>
+      <h4>1.3.2 version fixed bugs</h4>
+      <ol>
+        <li>json schema exclusiveMinimum field default value false BUG fixed</li>
+      </ol>
+      <h4>1.3.3 version support java8 DateTime API</h4>
+      <ol>
+        <li>Support java8 DateTime api (LocalDateTime,LocalDate,LocalTime)</li>
+      </ol>
       <hr>
+      <br>
       <h4>初始版本1.0</h4>
       <h4>发布1.1版本，修改已知BUG</h4>
       <ol>
@@ -56,6 +70,18 @@
       <h4>发布1.3版本, 响应参数支持泛型</h4>
       <ol>
         <li>响应参数支持泛型</li>
+      </ol>
+      <h4>版本1.3.1,修复已知BUG</h4>
+      <ol>
+        <li>返回类型内部嵌套自身会导致死循环BUG修复</li>
+      </ol>
+      <h4>版本1.3.2,修复已知BUG</h4>
+      <ol>
+        <li>json schema exclusiveMinimum字段默认为false 问题修复</li>
+      </ol>
+      <h4>版本1.3.3,新增支持java8新时间API</h4>
+      <ol>
+        <li>支持Java8的新时间API（LocalDateTime,LocalDate,LocalTime）</li>
       </ol>
     ]]>
   </change-notes>

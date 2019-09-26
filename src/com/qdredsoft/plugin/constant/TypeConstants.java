@@ -3,9 +3,11 @@ package com.qdredsoft.plugin.constant;
 import com.qdredsoft.plugin.model.LongRange;
 import com.qdredsoft.plugin.schema.base.SchemaType;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,10 @@ import org.jetbrains.annotations.NonNls;
  */
 public class TypeConstants {
 
+    private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter
+            .ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
     @NonNls
     public static final Map<String, Object> normalTypes = new HashMap<>();
     @NonNls
@@ -27,15 +33,16 @@ public class TypeConstants {
 
     public static final Map<String, Object> noramlTypesPackages = new HashMap<>();
 
-    public static final Map<String, Object> collectTypes = new HashMap<>();
-
-    public static final Map<String, Object> collectTypesPackages = new HashMap<>();
+//    public static final Map<String, Object> collectTypes = new HashMap<>();
+//
+//    public static final Map<String, Object> collectTypesPackages = new HashMap<>();
 
     public static final Map<String, LongRange> baseRangeMappings = new HashMap<>();
     /**
      * 泛型列表
      */
-    public static final List<String> genericList = Arrays.asList("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""));
+    public static final List<String> genericList = Arrays
+            .asList("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""));
 
 
     static {
@@ -49,21 +56,24 @@ public class TypeConstants {
         normalTypes.put("char", 'a');
         normalTypes.put("Boolean", false);
         normalTypes.put("Byte", 1);
-        normalTypes.put("Short", Short.valueOf((short) 1));
+        normalTypes.put("Short", (short) 1);
         normalTypes.put("Integer", 1);
         normalTypes.put("Long", 1L);
         normalTypes.put("Float", 1.0F);
         normalTypes.put("Double", 1.0D);
         normalTypes.put("String", "String");
-        normalTypes.put("Date", new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(new Date()));
-        normalTypes.put("Time", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+        normalTypes.put("Date", LocalDateTime.now().format(dateTimeFormat));
+        normalTypes.put("Time", LocalTime.now().format(timeFormat));
+        normalTypes.put("LocalDateTime", LocalDateTime.now().format(dateTimeFormat));
+        normalTypes.put("LocalDate", LocalDate.now().format(dateFormat));
+        normalTypes.put("LocalTime", LocalTime.now().format(timeFormat));
         normalTypes.put("BigDecimal", 0.111111);
         normalTypes.put("Timestamp", new Timestamp(System.currentTimeMillis()));
         normalTypes.put("MultipartFile", "file");
         normalTypes.put("MultipartFile[]", "file[]");
-        collectTypes.put("HashMap", "HashMap");
-        collectTypes.put("Map", "Map");
-        collectTypes.put("LinkedHashMap", "LinkedHashMap");
+//        collectTypes.put("HashMap", "HashMap");
+//        collectTypes.put("Map", "Map");
+//        collectTypes.put("LinkedHashMap", "LinkedHashMap");
 
     }
 
@@ -78,7 +88,7 @@ public class TypeConstants {
         noramlTypesPackages.put("char", 'a');
         noramlTypesPackages.put("java.lang.Boolean", false);
         noramlTypesPackages.put("java.lang.Byte", 1);
-        noramlTypesPackages.put("java.lang.Short", Short.valueOf((short) 0));
+        noramlTypesPackages.put("java.lang.Short", (short) 0);
         noramlTypesPackages.put("java.lang.Integer", 1);
         noramlTypesPackages.put("java.lang.Long", 1L);
         noramlTypesPackages.put("java.lang.Float", 1L);
@@ -86,11 +96,18 @@ public class TypeConstants {
         noramlTypesPackages.put("java.sql.Timestamp", new Timestamp(System.currentTimeMillis()));
         noramlTypesPackages
                 .put("java.util.Date",
-                        new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(new Date()));
+                        LocalDateTime.now().format(dateTimeFormat));
         noramlTypesPackages
-                .put("java.sql.Date", new SimpleDateFormat("YYYY-MM-dd").format(new Date()));
+                .put("java.sql.Date", LocalDate.now().format(dateFormat));
         noramlTypesPackages
-                .put("java.sql.Time", new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                .put("java.sql.Time", LocalTime.now().format(timeFormat));
+        noramlTypesPackages
+                .put("java.time.LocalDateTime",
+                        LocalDateTime.now().format(dateTimeFormat));
+        noramlTypesPackages
+                .put("java.time.LocalDate", LocalDate.now().format(dateFormat));
+        noramlTypesPackages
+                .put("java.time.LocalTime", LocalTime.now().format(timeFormat));
         noramlTypesPackages.put("java.lang.String", "String");
         noramlTypesPackages.put("java.math.BigDecimal", 1);
 
@@ -113,6 +130,9 @@ public class TypeConstants {
         normalTypeMappings.put("java.util.Date", SchemaType.string);
         normalTypeMappings.put("java.sql.Date", SchemaType.string);
         normalTypeMappings.put("java.sql.Time", SchemaType.string);
+        normalTypeMappings.put("java.time.LocalDateTime", SchemaType.string);
+        normalTypeMappings.put("java.time.LocalDate", SchemaType.string);
+        normalTypeMappings.put("java.time.LocalTime", SchemaType.string);
         normalTypeMappings.put("java.lang.String", SchemaType.string);
         normalTypeMappings.put("java.math.BigDecimal", SchemaType.number);
 
@@ -128,19 +148,21 @@ public class TypeConstants {
         mapTypeMappings.put("java.util.LinkedHashMap", SchemaType.object);
         mapTypeMappings.put("java.util.TreeMap", SchemaType.object);
 
-        collectTypesPackages.put("java.util.LinkedHashMap", "LinkedHashMap");
-        collectTypesPackages.put("java.util.HashMap", "HashMap");
-        collectTypesPackages.put("java.util.Map", "Map");
+//        collectTypesPackages.put("java.util.LinkedHashMap", "LinkedHashMap");
+//        collectTypesPackages.put("java.util.HashMap", "HashMap");
+//        collectTypesPackages.put("java.util.Map", "Map");
     }
 
     static {
         baseRangeMappings.put("byte", new LongRange(-128L, 127L));
         baseRangeMappings.put("short", new LongRange(-32768L, 32767L));
-        baseRangeMappings.put("int", new LongRange((long)Integer.MIN_VALUE, (long)Integer.MAX_VALUE));
+        baseRangeMappings
+                .put("int", new LongRange((long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE));
         baseRangeMappings.put("long", new LongRange(Long.MIN_VALUE, Long.MAX_VALUE));
         baseRangeMappings.put("java.lang.Byte", new LongRange(-128L, 127L));
         baseRangeMappings.put("java.lang.Short", new LongRange(-32768L, 32767L));
-        baseRangeMappings.put("java.lang.Integer", new LongRange((long)Integer.MIN_VALUE, (long)Integer.MAX_VALUE));
+        baseRangeMappings.put("java.lang.Integer",
+                new LongRange((long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE));
         baseRangeMappings.put("java.lang.Long", new LongRange(Long.MIN_VALUE, Long.MAX_VALUE));
 
     }

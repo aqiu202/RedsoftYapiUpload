@@ -78,8 +78,8 @@ public class YapiApiParser {
 
     public List<YapiApiDTO> parse(AnActionEvent e, boolean enableBasicScope) {
         this.enableBasicScope = enableBasicScope;
-        Editor editor = (Editor) e.getDataContext().getData(CommonDataKeys.EDITOR);
-        PsiFile psiFile = (PsiFile) e.getDataContext().getData(CommonDataKeys.PSI_FILE);
+        Editor editor = e.getDataContext().getData(CommonDataKeys.EDITOR);
+        PsiFile psiFile = e.getDataContext().getData(CommonDataKeys.PSI_FILE);
         String selectedText = e.getRequiredData(CommonDataKeys.EDITOR).getSelectionModel()
                 .getSelectedText();
         this.project = editor.getProject();
@@ -771,9 +771,8 @@ public class YapiApiParser {
             case integer:
                 IntegerSchema integerSchema = new IntegerSchema();
                 if (TypeConstants.hasBaseRange(typePkName)) {
-                    LongRange longRange = TypeConstants.baseRangeMappings.get(typePkName);
-                    if (Objects.nonNull(longRange) && this.enableBasicScope) {
-                        integerSchema.setRange(longRange);
+                    if (this.enableBasicScope) {
+                        integerSchema.setRange(TypeConstants.baseRangeMappings.get(typePkName));
                     }
                 }
                 LongRange longRange = ValidUtil.range(psiField, this.enableBasicScope);
@@ -839,11 +838,8 @@ public class YapiApiParser {
                 a.setMinItems(1);
             }
             IntegerRange integerRange = ValidUtil.rangeSize(psiField, this.enableBasicScope);
-            Integer minValue = integerRange.getMin();
-            Integer min = this.enableBasicScope ? minValue
-                    : (Integer.MIN_VALUE == minValue ? null : minValue);
-            a.setMinItems(min);
-            a.setMaxItems(integerRange.getMax());
+            a.setMinItems(integerRange.getMin(), this.enableBasicScope);
+            a.setMaxItems(integerRange.getMax(), this.enableBasicScope);
         }
         result.setDescription(DesUtil.getLinkRemark(psiField, this.project));
         return result;
@@ -962,8 +958,8 @@ public class YapiApiParser {
                 String childrenType = types[1].split(">")[0];
                 classType = PsiType.getTypeByName(childrenType, this.project,
                         GlobalSearchScope.allScope(this.project));
-            } else if(hasChildren = types.length == 3){
-                String childrenType = types[1].split(">")[0]+"<" + types[2].split(">")[0]+">";
+            } else if (hasChildren = types.length == 3) {
+                String childrenType = types[1].split(">")[0] + "<" + types[2].split(">")[0] + ">";
                 classType = PsiType.getTypeByName(childrenType, this.project,
                         GlobalSearchScope.allScope(this.project));
             }
@@ -972,11 +968,29 @@ public class YapiApiParser {
                         field.getModifierList().hasModifierProperty("static")) {
                     continue;
                 }
+                //防止对象内部嵌套自身导致死循环
+                if (field.getType().getCanonicalText().contains(psiClass.getQualifiedName())) {
+                    continue;
+                }
                 String fieldName = field.getName();
-                if (hasChildren && TypeConstants.genericList
-                        .contains(field.getType().getCanonicalText())) {
-                    objectSchema.addProperty(fieldName, this.getSchema(classType, false)
-                            .setDescription(DesUtil.getLinkRemark(field, this.project)));
+                if (hasChildren) {
+                    String gType = field.getType().getCanonicalText();
+                    String[] gTypes = gType.split("<");
+                    if (gTypes.length > 1 && TypeConstants.genericList
+                            .contains(gTypes[1].split(">")[0]) && TypeConstants.arrayTypeMappings
+                            .containsKey(gTypes[0])) {
+                        objectSchema.addProperty(fieldName,
+                                new ArraySchema().setItems(this.getSchema(classType, false))
+                                        .setDescription(
+                                                DesUtil.getLinkRemark(field, this.project)));
+                    } else if (TypeConstants.genericList
+                            .contains(gType)) {
+                        objectSchema.addProperty(fieldName, this.getSchema(classType, false)
+                                .setDescription(DesUtil.getLinkRemark(field, this.project)));
+                    } else {
+                        objectSchema.addProperty(fieldName, this.getFieldSchema(field)
+                                .setDescription(DesUtil.getLinkRemark(field, this.project)));
+                    }
                 } else {
                     objectSchema.addProperty(fieldName, this.getFieldSchema(field));
                 }
