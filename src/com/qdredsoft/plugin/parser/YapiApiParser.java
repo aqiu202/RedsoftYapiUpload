@@ -306,7 +306,7 @@ public class YapiApiParser {
     }
 
     private Map<String, Object> getMapRaw() {
-        Map m = new HashMap<String, Object>();
+        Map<String, Object> m = new HashMap<>();
         m.put("key", "value");
         return m;
     }
@@ -314,10 +314,11 @@ public class YapiApiParser {
     private List<Object> getArrayRaw(String typePkName) {
         List<Object> result = new ArrayList<>();
         String[] types = typePkName.split("<");
-        String type = types[0];
         //如果有泛型
         if (types.length > 1) {
             String childrenType = types[1].split(">")[0];
+            childrenType = childrenType.replace("? extends ", "")
+                    .replace("? super ", "");
             boolean isWrapArray = childrenType.endsWith("[]");
             //是否是数组类型
             if (isWrapArray) {
@@ -439,12 +440,9 @@ public class YapiApiParser {
                         yapiHeaderDTOList.add(yapiHeaderDTO);
                         continue;
                     }
-                    if (yapiPathVariableDTO != null) {
-                        yapiPathVariableDTO.full(valueWraper);
-                        yapiPathVariableDTOList.add(yapiPathVariableDTO);
-                        continue;
-                    }
-                } else if (psiAnnotation == null) { //没有@RequestHeader和@PathVariable注解
+                    yapiPathVariableDTO.full(valueWraper);
+                    yapiPathVariableDTOList.add(yapiPathVariableDTO);
+                } else { //没有@RequestHeader和@PathVariable注解
                     if ("GET".equals(method) || "DELETE".equals(method)) {
                         List<YapiQueryDTO> queryDTOList = this.getRequestQuery(psiMethodTarget,
                                 psiParameter);
@@ -858,7 +856,7 @@ public class YapiApiParser {
             return true;
         }
         PsiType[] parentTypes = psiType.getSuperTypes();
-        if (parentTypes != null && parentTypes.length > 0) {
+        if (parentTypes.length > 0) {
             for (PsiType parentType : parentTypes) {
                 String parentTypeName = parentType.getCanonicalText().split("<")[0];
                 if (TypeConstants.mapTypeMappings.containsKey(parentTypeName)) {
@@ -882,6 +880,8 @@ public class YapiApiParser {
         //如果有泛型
         if (types.length > 1) {
             String childrenType = types[1].split(">")[0];
+            childrenType = childrenType.replace("? extends ", "")
+                    .replace("? super ", "");
             boolean isWrapArray = childrenType.endsWith("[]");
             //是否是数组类型
             if (isWrapArray) {
@@ -956,10 +956,14 @@ public class YapiApiParser {
             PsiClassType classType = null;
             if (hasChildren = types.length == 2) {
                 String childrenType = types[1].split(">")[0];
+                childrenType = childrenType.replace("? extends ", "")
+                        .replace("? super ", "");
                 classType = PsiType.getTypeByName(childrenType, this.project,
                         GlobalSearchScope.allScope(this.project));
             } else if (hasChildren = types.length == 3) {
                 String childrenType = types[1].split(">")[0] + "<" + types[2].split(">")[0] + ">";
+                childrenType = childrenType.replace("? extends ", "")
+                        .replace("? super ", "");
                 classType = PsiType.getTypeByName(childrenType, this.project,
                         GlobalSearchScope.allScope(this.project));
             }

@@ -18,7 +18,6 @@ import java.util.Objects;
  */
 public class DesUtil {
 
-
     /**
      * 去除字符串首尾出现的某个字符.
      *
@@ -27,8 +26,8 @@ public class DesUtil {
      * @return String.
      */
     public static String trimFirstAndLastChar(String source, char element) {
-        boolean beginIndexFlag = true;
-        boolean endIndexFlag = true;
+        boolean beginIndexFlag;
+        boolean endIndexFlag;
         do {
             if (Strings.isNullOrEmpty(source.trim()) || source.equals(String.valueOf(element))) {
                 source = "";
@@ -117,26 +116,6 @@ public class DesUtil {
             }
         }
         return "";
-    }
-
-    /**
-     * @description: 获得引用url
-     * @param: []
-     * @return: java.lang.String
-     * @date: 2019/5/18
-     */
-    public static String getUrlReFerenceRDesc(String text) {
-        if (Strings.isNullOrEmpty(text)) {
-            return text;
-        }
-        if (!text.contains("*/")) {
-            return null;
-        }
-        return DesUtil.trimFirstAndLastChar(
-                text.split("\\*/")[0].replace("@description", "").replace("@Description", "")
-                        .split("@")[0]
-                        .replace(":", "").replace("*", "").replace("/", "").replace("\n", " "),
-                ' ');
     }
 
     /**
