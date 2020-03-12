@@ -1,0 +1,63 @@
+package com.redsoft.idea.plugin.yapi.schema;
+
+import com.redsoft.idea.plugin.yapi.model.DecimalRange;
+import com.redsoft.idea.plugin.yapi.schema.base.EnumableSchema;
+import com.redsoft.idea.plugin.yapi.schema.base.SchemaType;
+import java.math.BigDecimal;
+
+public final class NumberSchema extends EnumableSchema {
+
+    public NumberSchema(){
+        super(SchemaType.number);
+    }
+
+    private BigDecimal minimum;
+
+    private BigDecimal maximum;
+
+    private Boolean exclusiveMinimum;
+
+    private Boolean exclusiveMaximum;
+
+    public boolean isExclusiveMinimum() {
+        return exclusiveMinimum;
+    }
+
+    public NumberSchema setExclusiveMinimum(boolean exclusiveMinimum) {
+        this.exclusiveMinimum = exclusiveMinimum;
+        return this;
+    }
+
+    public boolean isExclusiveMaximum() {
+        return exclusiveMaximum;
+    }
+
+    public NumberSchema setExclusiveMaximum(boolean exclusiveMaximum) {
+        this.exclusiveMaximum = exclusiveMaximum;
+        return this;
+    }
+
+    public BigDecimal getMinimum() {
+        return minimum;
+    }
+
+    public NumberSchema setMinimum(BigDecimal minimum) {
+        this.minimum = minimum;
+        return this;
+    }
+
+    public BigDecimal getMaximum() {
+        return maximum;
+    }
+
+    public NumberSchema setMaximum(BigDecimal maximum) {
+        this.maximum = maximum;
+        return this;
+    }
+
+    public NumberSchema setRange(DecimalRange decimalRange) {
+        this.minimum = decimalRange.getMin();
+        this.maximum = decimalRange.getMax();
+        return this;
+    }
+}
