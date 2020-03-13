@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>RedsoftYapiUpload</id>
     <name>RedsoftYapiUpload</name>
-    <version>1.3.6</version>
+    <version>1.3.5</version>
     <vendor email="aqiuqiuweb@163.com" url="http://www.qdredsoft.com">青岛红柿子软件技术有限公司</vendor>
 
     <description><![CDATA[
@@ -63,10 +63,6 @@
         <li>Support setting the status for route with @status (done、undone)</li>
         <li>Query parameter repeat bug fixed and so on</li>
       </ol>
-      <h4>1.3.6 version，Make compatible with versions prior to idea 2019.2 </h4>
-      <ol>
-        <li>Add com.intellij.modules.java module dependency，Make compatible with versions prior to idea 2019.2</li>
-      </ol>
       <hr>
       <br>
       <h4>初始版本1.0</h4>
@@ -110,10 +106,6 @@
         <li>支持使用 @path 注释自定义接口路由</li>
         <li>支持 @status 设置接口状态（done 已完成、undone 开发中）</li>
         <li>query查询参数重复bug修复等</li>
-      </ol>
-      <h4>版本1.3.6，使兼容idea 2019.2 之前的版本</h4>
-      <ol>
-        <li>添加 com.intellij.modules.java 模块依赖，使插件兼容idea 2019.2 之前的版本</li>
       </ol>
     ]]>
     </change-notes>
