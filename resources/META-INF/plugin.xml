@@ -1,10 +1,10 @@
 <idea-plugin>
-  <id>RedsoftYapiUpload</id>
-  <name>RedsoftYapiUpload</name>
-  <version>1.3.5</version>
-  <vendor email="aqiuqiuweb@163.com" url="http://www.qdredsoft.com">青岛红柿子软件技术有限公司</vendor>
+    <id>RedsoftYapiUpload</id>
+    <name>RedsoftYapiUpload</name>
+    <version>1.3.5</version>
+    <vendor email="aqiuqiuweb@163.com" url="http://www.qdredsoft.com">青岛红柿子软件技术有限公司</vendor>
 
-  <description><![CDATA[
+    <description><![CDATA[
       a small plugin for IntelliJ IDEA uploading http api information to YApi.(Base on <a href="https://github.com/diwand/YApiIdeaUploadPlugin">YApiIdeaUploadPlugin</a>)<br>
       <em>less inputing</em><br>
       <em>Avoid duplication of work,Reducing Development Pressure,improve work efficiency.Code annotations are also standardized</em>
@@ -19,7 +19,7 @@
       <p><b>使用方法见<a href="https://github.com/aqiu202/RedsoftYApiUpload/wiki/使用指南">使用指南</b></p>
     ]]></description>
 
-  <change-notes><![CDATA[
+    <change-notes><![CDATA[
       <em>RedsoftYApiUpload IntelliJ IDEA plugin</em>
       <h4>The version 1.0</h4>
       <h4>Publish 1.1 version，fixed some bugs</h4>
@@ -108,34 +108,36 @@
         <li>query查询参数重复bug修复等</li>
       </ol>
     ]]>
-  </change-notes>
+    </change-notes>
 
-  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="173.0"/>
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="173.0"/>
 
-  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-       on how to target different products -->
-  <!-- uncomment to enable plugin in all products
-  -->
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    -->
 
-  <depends>com.intellij.modules.platform</depends>
-  <!--  <depends>com.intellij.spring</depends>-->
-  <!--  <depends>com.intellij.modules.java</depends>-->
-  <!--  <depends>com.intellij.modules.lang</depends>-->
+    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.modules.platform</depends>
+    <!--  <depends>com.intellij.modules.lang</depends>-->
 
-  <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
-    <projectConfigurable instance="com.redsoft.idea.plugin.yapi.config.YApiSearchableConfigurable" />
-    <projectService serviceImplementation="com.redsoft.idea.plugin.yapi.config.YApiPersistentState" />
-  </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <projectConfigurable
+                instance="com.redsoft.idea.plugin.yapi.config.YApiSearchableConfigurable"/>
+        <projectService
+                serviceImplementation="com.redsoft.idea.plugin.yapi.config.YApiPersistentState"/>
+    </extensions>
 
-  <actions>
-    <!-- Add your actions here -->
-    <action id="RedsoftYApiUpload" class="com.redsoft.idea.plugin.yapi.action.YApiUploadAction" text="上传到YApi"
-            description="YApi文档上传插件">
-      <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>
-      <keyboard-shortcut keymap="$default" first-keystroke="shift alt u"/>
-    </action>
-  </actions>
+    <actions>
+        <!-- Add your actions here -->
+        <action id="RedsoftYApiUpload" class="com.redsoft.idea.plugin.yapi.action.YApiUploadAction"
+                text="上传到YApi"
+                description="YApi文档上传插件">
+            <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift alt u"/>
+        </action>
+    </actions>
 
 </idea-plugin>
