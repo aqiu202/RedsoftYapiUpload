@@ -9,6 +9,7 @@ import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.impl.source.SourceJavaCodeReference;
 import com.intellij.util.ArrayUtil;
+import com.redsoft.idea.plugin.yapi.constant.AnnotationConstants;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -89,7 +90,6 @@ public class PsiAnnotationSearchUtil {
         }
       }
     }
-
     return null;
   }
 
@@ -135,6 +135,10 @@ public class PsiAnnotationSearchUtil {
     }
 
     return null;
+  }
+
+  public static boolean hasDeprecated(@NotNull PsiModifierListOwner psiModifierListOwner) {
+    return null != findAnnotation(psiModifierListOwner, AnnotationConstants.Deprecated);
   }
 
   @Nullable

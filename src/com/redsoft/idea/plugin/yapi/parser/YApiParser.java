@@ -22,6 +22,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jgoodies.common.base.Strings;
@@ -38,6 +39,7 @@ import com.redsoft.idea.plugin.yapi.model.YApiFormDTO;
 import com.redsoft.idea.plugin.yapi.model.YApiHeaderDTO;
 import com.redsoft.idea.plugin.yapi.model.YApiPathVariableDTO;
 import com.redsoft.idea.plugin.yapi.model.YApiQueryDTO;
+import com.redsoft.idea.plugin.yapi.model.YApiStatusEnum;
 import com.redsoft.idea.plugin.yapi.schema.ArraySchema;
 import com.redsoft.idea.plugin.yapi.schema.BooleanSchema;
 import com.redsoft.idea.plugin.yapi.schema.IntegerSchema;
@@ -92,10 +94,18 @@ public class YApiParser {
         PsiElement referenceAt = Objects.requireNonNull(psiFile)
                 .findElementAt(Objects.requireNonNull(editor).getCaretModel().getOffset());
         PsiClass selectedClass = PsiTreeUtil.getContextOfType(referenceAt, PsiClass.class);
+        //获取该类是否已经过时
+        if (PsiAnnotationSearchUtil.hasDeprecated(Objects.requireNonNull(selectedClass)) || DesUtil.deprecated(
+                Objects.requireNonNull(selectedClass.getDocComment()).getText())) {
+            Notification error = notificationGroup
+                    .createNotification("该类已过时", NotificationType.WARNING);
+            Notifications.Bus.notify(error, this.project);
+            return null;
+        }
         String classMenu = null;
         String menuDesc = null;
         //如果类文件上有注解，读取接口分类信息
-        if (Objects.nonNull(Objects.requireNonNull(selectedClass).getDocComment())) {
+        if (Objects.nonNull(selectedClass.getDocComment())) {
             String text = selectedClass.getText();
             classMenu = DesUtil.getMenu(text);
             menuDesc = DesUtil.getMenuDesc(text);
@@ -107,6 +117,13 @@ public class YApiParser {
             for (PsiMethod psiMethodTarget : psiMethods) {
                 //去除私有方法
                 if (!psiMethodTarget.getModifierList().hasModifierProperty("private")) {
+                    //带有 @Deprecated 注解的方法跳过
+                    if (PsiAnnotationSearchUtil.hasDeprecated(psiMethodTarget) || DesUtil
+                            .deprecated(
+                                    Objects.requireNonNull(psiMethodTarget.getDocComment())
+                                            .getText())) {
+                        continue;
+                    }
                     YApiDTO yapiApiDTO = null;
                     try {
                         yapiApiDTO = handleMethod(selectedClass, psiMethodTarget);
@@ -143,14 +160,18 @@ public class YApiParser {
             if (Objects.nonNull(psiMethodTarget)) {
                 YApiDTO yapiApiDTO = null;
                 try {
-                    yapiApiDTO = handleMethod(selectedClass, psiMethodTarget);
-                    if (Objects.isNull(yapiApiDTO)) {
+                    if (PsiAnnotationSearchUtil.hasDeprecated(psiMethodTarget) || DesUtil
+                            .deprecated(
+                                    Objects.requireNonNull(psiMethodTarget.getDocComment())
+                                            .getText())) {
                         Notification error = notificationGroup
                                 .createNotification(
-                                        "该方法注释含有@deprecated，如需上传，请删除该注解:" + selectedText,
+                                        "该方法或者类(或注释中)含有@Deprecated注解，如需上传，请删除该注解:" + selectedText,
                                         NotificationType.WARNING);
                         Notifications.Bus.notify(error, this.project);
                         return null;
+                    } else {
+                        yapiApiDTO = handleMethod(selectedClass, psiMethodTarget);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -189,48 +210,84 @@ public class YApiParser {
      * 根据方法生成 YApiApiDTO （设置请求参数和path,method,desc,menu等字段）
      */
     private YApiDTO handleMethod(PsiClass selectedClass, PsiMethod psiMethodTarget) {
-        //有@deprecated注释的方法不上传yapi
-        if (DesUtil.deprecated(Objects.requireNonNull(psiMethodTarget.getDocComment()).getText())) {
-            return null;
-        }
         YApiDTO yapiApiDTO = new YApiDTO();
         // 获得路径
         StringBuilder path = new StringBuilder();
-        String cprefix;
-        String mprefix;
-        if (Objects.nonNull(selectedClass.getDocComment())) {
-            //获取类注释上的@prefix注解，（网关专用）
-            cprefix = DesUtil.getPrefix(selectedClass.getDocComment().getText());
-            if (Strings.isNotBlank(cprefix)) {
-                path.append(this.buildPath(cprefix));
+        String status = null;
+        StringBuilder customPath = null;
+        PsiDocComment classDoc;
+        PsiDocComment methodDoc;
+        if (Objects.nonNull(classDoc = selectedClass.getDocComment())) {
+            String s = DesUtil.getStatus(classDoc.getText());
+            if (Strings.isNotBlank(s)) {
+                status = s;
+            }
+            //获取类注释上的@path注解（自定义路由用）
+            String cpath = DesUtil.getPath(classDoc.getText());
+            if (Strings.isNotBlank(cpath)) {
+                customPath = new StringBuilder(this.buildPath(cpath));
+            }
+            if (customPath == null) {
+                //获取类注释上的@prefix注解，（网关专用）
+                String cprefix = DesUtil.getPrefix(classDoc.getText());
+                if (Strings.isNotBlank(cprefix)) {
+                    path.append(this.buildPath(cprefix));
+                }
             }
         }
-        if (Objects.nonNull(psiMethodTarget.getDocComment())) {
-            //获取方法注释上的@prefix注解，（网关专用）
-            mprefix = DesUtil.getPrefix(psiMethodTarget.getDocComment().getText());
-            if (Strings.isNotBlank(mprefix)) {
-                if (mprefix.startsWith("/")) {
-                    path = new StringBuilder();
-                }
-                path.append(this.buildPath(mprefix));
+        if (Objects.nonNull(methodDoc = psiMethodTarget.getDocComment())) {
+            String s = DesUtil.getStatus(methodDoc.getText());
+            if (Strings.isNotBlank(s)) {
+                status = s;
             }
+            //获取方法注释上的@path注解（自定义路由用）
+            String mpath = DesUtil.getPath(methodDoc.getText());
+            if (Strings.isNotBlank(mpath)) {
+                if (customPath == null) {
+                    customPath = new StringBuilder(this.buildPath(mpath));
+                } else {
+                    if (mpath.startsWith("/")) {
+                        customPath = new StringBuilder(this.buildPath(mpath));
+                    } else {
+                        customPath.append(this.buildPath(mpath));
+                    }
+                }
+            }
+            if (customPath == null) {
+                //获取方法注释上的@prefix注解，（网关专用）
+                String mprefix = DesUtil.getPrefix(methodDoc.getText());
+                if (Strings.isNotBlank(mprefix)) {
+                    if (mprefix.startsWith("/")) {
+                        path = new StringBuilder();
+                    }
+                    path.append(this.buildPath(mprefix));
+                }
+            }
+        }
+        if (Strings.isNotBlank(status)) {
+            yapiApiDTO.setStatus(YApiStatusEnum.getStatus(status));
+        }
+        if (customPath != null) {
+            yapiApiDTO.setPath(this.buildPath(customPath));
         }
         //获取类上面的RequestMapping 中的value
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(selectedClass, SpringMVCConstants.RequestMapping);
-        if (psiAnnotation != null) {
+        if (customPath == null && psiAnnotation != null) {
             path.append(this.buildPath(this.getPathByAnno(psiAnnotation)));
         }
         //获取方法上的RequestMapping注解
         PsiAnnotation psiAnnotationMethod = PsiAnnotationSearchUtil
                 .findAnnotation(psiMethodTarget, SpringMVCConstants.RequestMapping);
         if (psiAnnotationMethod != null) {
-            path.append(this.buildPath(this.getPathByAnno(psiAnnotationMethod)));
+            if (customPath == null) {
+                path.append(this.buildPath(this.getPathByAnno(psiAnnotationMethod)));
+                yapiApiDTO.setPath(this.buildPath(path));
+            }
             PsiAnnotationMemberValue method = psiAnnotationMethod.findAttributeValue("method");
             if (method != null) {
                 yapiApiDTO.setMethod(method.getText().toUpperCase());
             }
-            yapiApiDTO.setPath(this.buildPath(path));
         } else {
             PsiAnnotation psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                     .findAnnotation(psiMethodTarget, SpringMVCConstants.GetMapping);
@@ -262,11 +319,12 @@ public class YApiParser {
                     }
                 }
             }
-            if (psiAnnotationMethodSemple != null) {
+            if (customPath == null && psiAnnotationMethodSemple != null) {
                 path.append(this.buildPath(this.getPathByAnno(psiAnnotationMethodSemple)));
                 yapiApiDTO.setPath(buildPath(path));
             }
         }
+
         String classDesc = psiMethodTarget.getText().replace(
                 Objects.nonNull(psiMethodTarget.getBody()) ? psiMethodTarget.getBody().getText()
                         : "", "");
@@ -990,7 +1048,8 @@ public class YApiParser {
             for (PsiField field : psiClass.getAllFields()) {
                 if (
 //                        field.getModifierList().hasModifierProperty("final") ||
-                        Objects.requireNonNull(field.getModifierList()).hasModifierProperty("static")) {
+                        Objects.requireNonNull(field.getModifierList())
+                                .hasModifierProperty("static")) {
                     continue;
                 }
                 //防止对象内部嵌套自身导致死循环

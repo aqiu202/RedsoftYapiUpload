@@ -128,6 +128,22 @@ public class DesUtil {
     }
 
     /**
+     * @description 获得自定义路径
+     * @date 2019/5/18
+     */
+    public static String getPath(String text) {
+        return getAnno(text, "@path");
+    }
+
+    /**
+     * @description 获得接口状态
+     * @date 2019/5/18
+     */
+    public static String getStatus(String text) {
+        return getAnno(text, "@status");
+    }
+
+    /**
      * @description 获得菜单描述
      * @date 2019/5/18
      */

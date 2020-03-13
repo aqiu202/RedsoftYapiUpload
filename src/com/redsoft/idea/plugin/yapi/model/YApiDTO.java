@@ -14,7 +14,7 @@ public class YApiDTO implements Serializable {
     /**
      * 路径
      */
-    private String path;
+    private String path = "/";
     /**
      * 请求Query参数
      */
@@ -57,7 +57,7 @@ public class YApiDTO implements Serializable {
     /**
      * 描述
      */
-    private String desc;
+    private String desc = "<h3>请补充描述</h3>";
     /**
      * 菜单
      */
@@ -71,6 +71,11 @@ public class YApiDTO implements Serializable {
      * 请求路径参数
      */
     private Set<YApiPathVariableDTO> req_params;
+
+    /**
+     * 状态 done undone
+     */
+    private String status = "done";
 
     private boolean hasFile = false;
 
@@ -194,6 +199,14 @@ public class YApiDTO implements Serializable {
 
     public void setHasFile(boolean hasFile) {
         this.hasFile = hasFile;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public YApiDTO() {

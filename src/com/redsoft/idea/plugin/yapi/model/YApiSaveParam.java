@@ -120,7 +120,6 @@ public class YApiSaveParam implements Serializable {
      */
     private String menuDesc;
 
-
     public String getToken() {
         return token;
     }

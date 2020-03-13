@@ -65,6 +65,7 @@ public class YApiUploadAction extends AnAction {
                 yapiSaveParam.setReq_body_type(yapiApiDTO.getReq_body_type());
                 yapiSaveParam.setReq_params(yapiApiDTO.getReq_params());
                 yapiSaveParam.setRes_body(yapiApiDTO.getResponse());
+                yapiSaveParam.setStatus(yapiApiDTO.getStatus());
                 yapiSaveParam.setRes_body_type(yapiApiDTO.getRes_body_type());
                 String menuDesc = yapiApiDTO.getMenuDesc();
                 if (Objects.nonNull(menuDesc)) {
