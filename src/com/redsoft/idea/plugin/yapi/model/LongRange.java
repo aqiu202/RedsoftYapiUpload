@@ -25,18 +25,16 @@ public class LongRange implements Range {
         return min;
     }
 
-    public LongRange setMin(Long min, boolean enableBasicScope) {
+    public void setMin(Long min, boolean enableBasicScope) {
         if(min == null && enableBasicScope) {
             this.min = Long.MIN_VALUE;
         } else {
             this.min = min;
         }
-        return this;
     }
 
-    public LongRange setMin(Long min) {
+    public void setMin(Long min) {
         this.min = min;
-        return this;
     }
 
     @Override
@@ -44,17 +42,15 @@ public class LongRange implements Range {
         return max;
     }
 
-    public LongRange setMax(Long max, boolean enableBasicScope) {
+    public void setMax(Long max, boolean enableBasicScope) {
         if(max == null && enableBasicScope) {
             this.max = Long.MAX_VALUE;
         } else {
             this.max = max;
         }
-        return this;
     }
 
-    public LongRange setMax(Long max) {
+    public void setMax(Long max) {
         this.max = max;
-        return this;
     }
 }

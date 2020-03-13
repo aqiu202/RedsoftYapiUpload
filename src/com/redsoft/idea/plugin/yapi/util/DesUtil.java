@@ -23,7 +23,6 @@ public class DesUtil {
      *
      * @param source 源字符串.
      * @param element 需要去除的字符.
-     * @return String.
      */
     public static String trimFirstAndLastChar(String source, char element) {
         boolean beginIndexFlag;
@@ -46,10 +45,8 @@ public class DesUtil {
 
 
     /**
-     * @description: 获得描述
-     * @param: [psiMethodTarget]
-     * @return: java.lang.String
-     * @date: 2019/2/2
+     * @description 获得描述
+     * @date 2019/2/2
      */
     public static String getDescription(PsiMethod psiMethodTarget) {
         if (psiMethodTarget.getDocComment() != null) {
@@ -74,10 +71,8 @@ public class DesUtil {
     }
 
     /**
-     * @description: 通过paramName 获得描述
-     * @param: [psiMethodTarget, paramName]
-     * @return: java.lang.String
-     * @date: 2019/5/22
+     * @description 通过paramName 获得描述
+     * @date 2019/5/22
      */
     public static String getParamDesc(PsiMethod psiMethodTarget, String paramName) {
         if (psiMethodTarget.getDocComment() != null) {
@@ -99,10 +94,8 @@ public class DesUtil {
     }
 
     /**
-     * @description: 获得属性注释
-     * @param: [psiDocComment]
-     * @return: java.lang.String
-     * @date: 2019/4/27
+     * @description 获得属性注释
+     * @date 2019/4/27
      */
     public static String getFiledDesc(PsiField psiField) {
         PsiDocComment psiDocComment = psiField.getDocComment();
@@ -119,40 +112,32 @@ public class DesUtil {
     }
 
     /**
-     * @description: 获得菜单名称
-     * @param: [text]
-     * @return: java.lang.String
-     * @date: 2019/5/18
+     * @description 获得菜单名称
+     * @date 2019/5/18
      */
     public static String getMenu(String text) {
         return getAnno(text, "@menu");
     }
 
     /**
-     * @description: 获得路径前缀（用于带网关的接口）
-     * @param: [text]
-     * @return: java.lang.String
-     * @date: 2019/5/18
+     * @description 获得路径前缀（用于带网关的接口）
+     * @date 2019/5/18
      */
     public static String getPrefix(String text) {
         return getAnno(text, "@prefix");
     }
 
     /**
-     * @description: 获得菜单描述
-     * @param: [text]
-     * @return: java.lang.String
-     * @date: 2019/5/18
+     * @description 获得菜单描述
+     * @date 2019/5/18
      */
     public static String getMenuDesc(String text) {
         return getAnno(text, "@menuDesc");
     }
 
     /**
-     * @description: 获得特定注释内容
-     * @param: [text, arg]
-     * @return: java.lang.String
-     * @date: 2019/5/18
+     * @description 获得特定注释内容
+     * @date 2019/5/18
      */
     public static String getAnno(String text, String arg) {
         if (Strings.isEmpty(text) || !text.contains("*/")) {
@@ -170,10 +155,8 @@ public class DesUtil {
     }
 
     /**
-     * @description: 是否不需要上传yapi
-     * @param: [text]
-     * @return: java.lang.Boolean
-     * @date: 2019/5/18
+     * @description 是否不需要上传yapi
+     * @date 2019/5/18
      */
     public static boolean deprecated(String text) {
         if (Strings.isEmpty(text) || !text.contains("*/")) {
@@ -183,16 +166,14 @@ public class DesUtil {
     }
 
     /**
-     * @description: 获得link 备注
-     * @param: [remark, project, field]
-     * @return: java.lang.String
-     * @date: 2019/5/18
+     * @description 获得link 备注
+     * @date 2019/5/18
      */
     public static String getLinkRemark(PsiField field, Project project) {
-        String remark = DesUtil.getFiledDesc(field);
+        StringBuilder remark = new StringBuilder(DesUtil.getFiledDesc(field));
         // 尝试获得@link 的常量定义
         if (Objects.isNull(field.getDocComment())) {
-            return remark;
+            return remark.toString();
         }
         String[] linkString = field.getDocComment().getText().split("@link");
         if (linkString.length > 1) {
@@ -202,7 +183,7 @@ public class DesUtil {
                     .findClass(linkAddress, GlobalSearchScope.allScope(project));
             if (Objects.isNull(psiClassLink)) {
                 //可能没有获得全路径，尝试获得全路径
-                String[] importPaths = field.getParent().getContext().getText().split("import");
+                String[] importPaths = Objects.requireNonNull(field.getParent().getContext()).getText().split("import");
                 if (importPaths.length > 1) {
                     for (String importPath : importPaths) {
                         if (importPath.contains(linkAddress.split("\\.")[0])) {
@@ -221,29 +202,29 @@ public class DesUtil {
                 //说明获得了link 的class
                 PsiField[] linkFields = psiClassLink.getFields();
                 if (linkFields.length > 0) {
-                    remark += "," + psiClassLink.getName() + "[";
+                    remark.append(",").append(psiClassLink.getName()).append("[");
                     for (int i = 0; i < linkFields.length; i++) {
                         PsiField psiField = linkFields[i];
                         if (i > 0) {
-                            remark += ",";
+                            remark.append(",");
                         }
                         // 先获得名称
-                        remark += psiField.getName();
+                        remark.append(psiField.getName());
                         // 后获得value,通过= 来截取获得，第二个值，再截取;
                         String[] splitValue = psiField.getText().split("=");
                         if (splitValue.length > 1) {
                             String value = splitValue[1].split(";")[0];
-                            remark += ":" + value;
+                            remark.append(":").append(value);
                         }
                         String filedValue = DesUtil.getFiledDesc(psiField);
                         if (!Strings.isEmpty(filedValue)) {
-                            remark += "(" + filedValue + ")";
+                            remark.append("(").append(filedValue).append(")");
                         }
                     }
-                    remark += "]";
+                    remark.append("]");
                 }
             }
         }
-        return remark;
+        return remark.toString();
     }
 }

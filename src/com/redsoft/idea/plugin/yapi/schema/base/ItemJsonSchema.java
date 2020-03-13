@@ -3,6 +3,7 @@ package com.redsoft.idea.plugin.yapi.schema.base;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("unused")
 public class ItemJsonSchema {
 
     private String $schema;
@@ -29,9 +30,8 @@ public class ItemJsonSchema {
         return _default;
     }
 
-    public ItemJsonSchema setDefault(String _default) {
+    public void setDefault(String _default) {
         this._default = _default;
-        return this;
     }
 
     public String getDescription() {
@@ -47,9 +47,8 @@ public class ItemJsonSchema {
         return $schema;
     }
 
-    public ItemJsonSchema set$schema(String $schema) {
+    public void set$schema(String $schema) {
         this.$schema = $schema;
-        return this;
     }
 
     public String toPrettyJson() {

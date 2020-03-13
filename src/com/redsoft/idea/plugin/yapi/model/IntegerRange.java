@@ -7,11 +7,6 @@ public class IntegerRange implements Range {
         this.setMax(max, enableBasicScope);
     }
 
-    public IntegerRange(Integer min, Integer max) {
-        this.min = min;
-        this.max = max;
-    }
-
     private Integer min;
 
     private Integer max;
@@ -21,13 +16,12 @@ public class IntegerRange implements Range {
         return min;
     }
 
-    public IntegerRange setMin(Integer min, boolean enableBasicScope) {
+    public void setMin(Integer min, boolean enableBasicScope) {
         if(min == null && enableBasicScope) {
             this.min = Integer.MIN_VALUE;
         } else {
             this.min = min;
         }
-        return this;
     }
 
     @Override
@@ -35,13 +29,12 @@ public class IntegerRange implements Range {
         return max;
     }
 
-    public IntegerRange setMax(Integer max, boolean enableBasicScope) {
+    public void setMax(Integer max, boolean enableBasicScope) {
         if(max == null && enableBasicScope) {
             this.max = Integer.MAX_VALUE;
         } else {
             this.max = max;
         }
-        return this;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.redsoft.idea.plugin.yapi.ui;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import javax.swing.JCheckBox;
@@ -37,8 +39,8 @@ public class YApiConfigurationForm {
 
     private void createUIComponents() {
         this.projectIdField = new JFormattedTextField(new DecimalFormat("#0"));
-        this.projectIdField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
+        this.projectIdField.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent evt) {
                 String old = projectIdField.getText();
                 JFormattedTextField.AbstractFormatter formatter = projectIdField.getFormatter();
                 if (!old.equals("")) {

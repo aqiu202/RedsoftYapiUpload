@@ -5,7 +5,8 @@ package com.redsoft.idea.plugin.yapi.constant;
  *
  * @date 2019/1/31 3:29 PM
  */
-public interface YapiConstants {
+@SuppressWarnings("unused")
+public interface YApiConstants {
 
     /**
      * 目录

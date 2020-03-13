@@ -7,7 +7,8 @@ import java.io.Serializable;
  *
  * @date 2019/2/11 5:05 PM
  */
-public class YapiQueryDTO extends ValueWraper implements Serializable {
+@SuppressWarnings("unused")
+public class YApiQueryDTO extends ValueWraper implements Serializable {
 
   private String _id;
 
@@ -19,6 +20,6 @@ public class YapiQueryDTO extends ValueWraper implements Serializable {
     this._id = _id;
   }
 
-  public YapiQueryDTO() {
+  public YApiQueryDTO() {
   }
 }

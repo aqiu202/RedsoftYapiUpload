@@ -8,7 +8,8 @@ import java.util.Objects;
  *
  * @date 2019/2/11 5:05 PM
  */
-public class YapiFormDTO extends ValueWraper implements Serializable {
+@SuppressWarnings("unused")
+public class YApiFormDTO extends ValueWraper implements Serializable {
 
   private String _id;
 
@@ -33,7 +34,7 @@ public class YapiFormDTO extends ValueWraper implements Serializable {
     this.type = type;
   }
 
-  public YapiFormDTO() {
+  public YApiFormDTO() {
   }
 
   @Override
@@ -44,7 +45,7 @@ public class YapiFormDTO extends ValueWraper implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    YapiFormDTO that = (YapiFormDTO) o;
+    YApiFormDTO that = (YApiFormDTO) o;
     return Objects.equals(name, that.name);
   }
 

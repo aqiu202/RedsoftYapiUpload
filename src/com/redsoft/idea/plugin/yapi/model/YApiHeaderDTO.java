@@ -5,7 +5,8 @@ package com.redsoft.idea.plugin.yapi.model;
  *
  * @date 2019/5/9 10:11 PM
  */
-public class YapiHeaderDTO extends ValueWraper {
+@SuppressWarnings("unused")
+public class YApiHeaderDTO extends ValueWraper {
 
   /**
    * 值

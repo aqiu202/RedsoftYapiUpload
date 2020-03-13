@@ -15,7 +15,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="Redsoft Yapi Upload配置"/>
+          <text value="Redsoft YApi Upload配置"/>
         </properties>
       </component>
       <grid id="cb0a7" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

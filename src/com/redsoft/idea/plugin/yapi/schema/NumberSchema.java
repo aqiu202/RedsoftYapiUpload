@@ -5,6 +5,7 @@ import com.redsoft.idea.plugin.yapi.schema.base.EnumableSchema;
 import com.redsoft.idea.plugin.yapi.schema.base.SchemaType;
 import java.math.BigDecimal;
 
+@SuppressWarnings("unused")
 public final class NumberSchema extends EnumableSchema {
 
     public NumberSchema(){
@@ -23,41 +24,36 @@ public final class NumberSchema extends EnumableSchema {
         return exclusiveMinimum;
     }
 
-    public NumberSchema setExclusiveMinimum(boolean exclusiveMinimum) {
+    public void setExclusiveMinimum(boolean exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
-        return this;
     }
 
     public boolean isExclusiveMaximum() {
         return exclusiveMaximum;
     }
 
-    public NumberSchema setExclusiveMaximum(boolean exclusiveMaximum) {
+    public void setExclusiveMaximum(boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
-        return this;
     }
 
     public BigDecimal getMinimum() {
         return minimum;
     }
 
-    public NumberSchema setMinimum(BigDecimal minimum) {
+    public void setMinimum(BigDecimal minimum) {
         this.minimum = minimum;
-        return this;
     }
 
     public BigDecimal getMaximum() {
         return maximum;
     }
 
-    public NumberSchema setMaximum(BigDecimal maximum) {
+    public void setMaximum(BigDecimal maximum) {
         this.maximum = maximum;
-        return this;
     }
 
-    public NumberSchema setRange(DecimalRange decimalRange) {
+    public void setRange(DecimalRange decimalRange) {
         this.minimum = decimalRange.getMin();
         this.maximum = decimalRange.getMax();
-        return this;
     }
 }

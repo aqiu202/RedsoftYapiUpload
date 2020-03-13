@@ -7,7 +7,8 @@ import java.util.Objects;
  *
  * @date 2019/5/24 2:24 PM
  */
-public class YapiPathVariableDTO {
+@SuppressWarnings("unused")
+public class YApiPathVariableDTO {
 
     /**
      * 名称
@@ -66,7 +67,7 @@ public class YapiPathVariableDTO {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        YapiPathVariableDTO that = (YapiPathVariableDTO) o;
+        YApiPathVariableDTO that = (YApiPathVariableDTO) o;
         return Objects.equals(name, that.name);
     }
 

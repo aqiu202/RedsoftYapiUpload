@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("unused")
 public class PsiAnnotationSearchUtil {
 
   private static final Key<String> LOMBOK_ANNOTATION_FQN_KEY = Key.create("LOMBOK_ANNOTATION_FQN");
@@ -37,6 +38,7 @@ public class PsiAnnotationSearchUtil {
     return findAnnotationQuick(psiModifierListOwner.getModifierList(), annotationType.getName());
   }
 
+  @SafeVarargs
   @Nullable
   public static PsiAnnotation findAnnotation(@NotNull PsiModifierListOwner psiModifierListOwner,
       @NotNull final Class<? extends Annotation>... annotationTypes) {
@@ -164,11 +166,13 @@ public class PsiAnnotationSearchUtil {
     return !isAnnotatedWith(psiModifierListOwner, annotationType);
   }
 
+  @SafeVarargs
   public static boolean isAnnotatedWith(@NotNull PsiModifierListOwner psiModifierListOwner,
       @NotNull final Class<? extends Annotation>... annotationTypes) {
     return null != findAnnotation(psiModifierListOwner, annotationTypes);
   }
 
+  @SafeVarargs
   public static boolean isNotAnnotatedWith(@NotNull PsiModifierListOwner psiModifierListOwner,
       @NotNull final Class<? extends Annotation>... annotationTypes) {
     return !isAnnotatedWith(psiModifierListOwner, annotationTypes);

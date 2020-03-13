@@ -1,7 +1,6 @@
 package com.redsoft.idea.plugin.yapi.model;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -9,7 +8,8 @@ import java.util.Set;
  *
  * @date 2019/1/31 11:43 AM
  */
-public class YapiSaveParam implements Serializable {
+@SuppressWarnings("unused")
+public class YApiSaveParam implements Serializable {
 
     /**
      * 项目 token  唯一标识
@@ -19,15 +19,15 @@ public class YapiSaveParam implements Serializable {
     /**
      * 请求参数
      */
-    private Set<YapiQueryDTO> req_query;
+    private Set<YApiQueryDTO> req_query;
     /**
      * header
      */
-    private Set<YapiHeaderDTO> req_headers;
+    private Set<YApiHeaderDTO> req_headers;
     /**
      * 请求参数 form 类型
      */
-    private Set<YapiFormDTO> req_body_form;
+    private Set<YApiFormDTO> req_body_form;
     /**
      * 标题
      */
@@ -98,7 +98,7 @@ public class YapiSaveParam implements Serializable {
     /**
      * 请求参数
      */
-    private Set<YapiPathVariableDTO> req_params;
+    private Set<YApiPathVariableDTO> req_params;
 
 
     private String id;
@@ -129,27 +129,27 @@ public class YapiSaveParam implements Serializable {
         this.token = token;
     }
 
-    public Set<YapiQueryDTO> getReq_query() {
+    public Set<YApiQueryDTO> getReq_query() {
         return req_query;
     }
 
-    public void setReq_query(Set<YapiQueryDTO> req_query) {
+    public void setReq_query(Set<YApiQueryDTO> req_query) {
         this.req_query = req_query;
     }
 
-    public Set<YapiHeaderDTO> getReq_headers() {
+    public Set<YApiHeaderDTO> getReq_headers() {
         return req_headers;
     }
 
-    public void setReq_headers(Set<YapiHeaderDTO> req_headers) {
+    public void setReq_headers(Set<YApiHeaderDTO> req_headers) {
         this.req_headers = req_headers;
     }
 
-    public Set<YapiFormDTO> getReq_body_form() {
+    public Set<YApiFormDTO> getReq_body_form() {
         return req_body_form;
     }
 
-    public void setReq_body_form(Set<YapiFormDTO> req_body_form) {
+    public void setReq_body_form(Set<YApiFormDTO> req_body_form) {
         this.req_body_form = req_body_form;
     }
 
@@ -233,11 +233,11 @@ public class YapiSaveParam implements Serializable {
         this.method = method;
     }
 
-    public Set<YapiPathVariableDTO> getReq_params() {
+    public Set<YApiPathVariableDTO> getReq_params() {
         return req_params;
     }
 
-    public void setReq_params(Set<YapiPathVariableDTO> req_params) {
+    public void setReq_params(Set<YApiPathVariableDTO> req_params) {
         this.req_params = req_params;
     }
 
@@ -297,11 +297,11 @@ public class YapiSaveParam implements Serializable {
         this.projectId = projectId;
     }
 
-    public String getYapiUrl() {
+    public String getYApiUrl() {
         return yapiUrl;
     }
 
-    public void setYapiUrl(String yapiUrl) {
+    public void setYApiUrl(String yapiUrl) {
         this.yapiUrl = yapiUrl;
     }
 
@@ -330,10 +330,10 @@ public class YapiSaveParam implements Serializable {
         this.menuDesc = menuDesc;
     }
 
-    public YapiSaveParam() {
+    public YApiSaveParam() {
     }
 
-    public YapiSaveParam(String token, String title, String path, String req_body_other,
+    public YApiSaveParam(String token, String title, String path, String req_body_other,
             String res_body, Integer projectId, String yapiUrl, String desc) {
         this.token = token;
         this.title = title;
@@ -346,9 +346,10 @@ public class YapiSaveParam implements Serializable {
     }
 
 
-    public YapiSaveParam(String token, String title, String path, Set<YapiQueryDTO> req_query,
+    public YApiSaveParam(String token, String title, String path, Set<YApiQueryDTO> req_query,
             String req_body_other, String res_body, Integer projectId, String yapiUrl,
-            boolean req_body_is_json_schema, String method, String desc, Set<YapiHeaderDTO> header) {
+            boolean req_body_is_json_schema, String method, String desc,
+            Set<YApiHeaderDTO> header) {
         this.token = token;
         this.title = title;
         this.path = path;

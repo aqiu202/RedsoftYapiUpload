@@ -3,6 +3,7 @@ package com.redsoft.idea.plugin.yapi.schema.base;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class EnumableSchema extends ItemJsonSchema implements Enumable {
 
     public EnumableSchema(SchemaType type) {

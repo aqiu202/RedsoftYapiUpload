@@ -4,6 +4,7 @@ import com.redsoft.idea.plugin.yapi.model.LongRange;
 import com.redsoft.idea.plugin.yapi.schema.base.EnumableSchema;
 import com.redsoft.idea.plugin.yapi.schema.base.SchemaType;
 
+@SuppressWarnings("unused")
 public class IntegerSchema extends EnumableSchema {
 
     public IntegerSchema() {
@@ -22,27 +23,24 @@ public class IntegerSchema extends EnumableSchema {
         return exclusiveMinimum;
     }
 
-    public IntegerSchema setExclusiveMinimum(boolean exclusiveMinimum) {
+    public void setExclusiveMinimum(boolean exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
-        return this;
     }
 
     public boolean isExclusiveMaximum() {
         return exclusiveMaximum;
     }
 
-    public IntegerSchema setExclusiveMaximum(boolean exclusiveMaximum) {
+    public void setExclusiveMaximum(boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
-        return this;
     }
 
     public Long getMinimum() {
         return minimum;
     }
 
-    public IntegerSchema setMinimum(Long minimum) {
+    public void setMinimum(Long minimum) {
         this.minimum = minimum;
-        return this;
     }
 
     public Long getMaximum() {
@@ -54,9 +52,8 @@ public class IntegerSchema extends EnumableSchema {
         return this;
     }
 
-    public IntegerSchema setRange(LongRange longRange) {
+    public void setRange(LongRange longRange) {
         this.minimum = longRange.getMin();
         this.maximum = longRange.getMax();
-        return this;
     }
 }

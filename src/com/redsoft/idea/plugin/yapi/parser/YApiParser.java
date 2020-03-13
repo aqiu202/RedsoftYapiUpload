@@ -28,16 +28,16 @@ import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapi.constant.ServletConstants;
 import com.redsoft.idea.plugin.yapi.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapi.constant.TypeConstants;
-import com.redsoft.idea.plugin.yapi.constant.YapiConstants;
+import com.redsoft.idea.plugin.yapi.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapi.model.DecimalRange;
 import com.redsoft.idea.plugin.yapi.model.IntegerRange;
 import com.redsoft.idea.plugin.yapi.model.LongRange;
 import com.redsoft.idea.plugin.yapi.model.ValueWraper;
-import com.redsoft.idea.plugin.yapi.model.YapiApiDTO;
-import com.redsoft.idea.plugin.yapi.model.YapiFormDTO;
-import com.redsoft.idea.plugin.yapi.model.YapiHeaderDTO;
-import com.redsoft.idea.plugin.yapi.model.YapiPathVariableDTO;
-import com.redsoft.idea.plugin.yapi.model.YapiQueryDTO;
+import com.redsoft.idea.plugin.yapi.model.YApiDTO;
+import com.redsoft.idea.plugin.yapi.model.YApiFormDTO;
+import com.redsoft.idea.plugin.yapi.model.YApiHeaderDTO;
+import com.redsoft.idea.plugin.yapi.model.YApiPathVariableDTO;
+import com.redsoft.idea.plugin.yapi.model.YApiQueryDTO;
 import com.redsoft.idea.plugin.yapi.schema.ArraySchema;
 import com.redsoft.idea.plugin.yapi.schema.BooleanSchema;
 import com.redsoft.idea.plugin.yapi.schema.IntegerSchema;
@@ -64,7 +64,7 @@ import java.util.Set;
  * @date 2019-06-15 11:46
  * @description 接口信息解析
  **/
-public class YapiApiParser {
+public class YApiParser {
 
     private NotificationGroup notificationGroup;
 
@@ -76,7 +76,7 @@ public class YapiApiParser {
                 NotificationDisplayType.BALLOON, true);
     }
 
-    public List<YapiApiDTO> parse(AnActionEvent e, boolean enableBasicScope) {
+    public List<YApiDTO> parse(AnActionEvent e, boolean enableBasicScope) {
         this.enableBasicScope = enableBasicScope;
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
@@ -89,24 +89,25 @@ public class YapiApiParser {
             Notifications.Bus.notify(error, this.project);
             return null;
         }
-        PsiElement referenceAt = psiFile.findElementAt(editor.getCaretModel().getOffset());
+        PsiElement referenceAt = Objects.requireNonNull(psiFile)
+                .findElementAt(Objects.requireNonNull(editor).getCaretModel().getOffset());
         PsiClass selectedClass = PsiTreeUtil.getContextOfType(referenceAt, PsiClass.class);
         String classMenu = null;
         String menuDesc = null;
         //如果类文件上有注解，读取接口分类信息
-        if (Objects.nonNull(selectedClass.getDocComment())) {
+        if (Objects.nonNull(Objects.requireNonNull(selectedClass).getDocComment())) {
             String text = selectedClass.getText();
             classMenu = DesUtil.getMenu(text);
             menuDesc = DesUtil.getMenuDesc(text);
         }
-        ArrayList<YapiApiDTO> yapiApiDTOS = new ArrayList<>();
+        ArrayList<YApiDTO> yapiApiDTOS = new ArrayList<>();
         //如果用户选中的是类
         if (selectedText.equals(selectedClass.getName())) {
             PsiMethod[] psiMethods = selectedClass.getMethods();
             for (PsiMethod psiMethodTarget : psiMethods) {
                 //去除私有方法
                 if (!psiMethodTarget.getModifierList().hasModifierProperty("private")) {
-                    YapiApiDTO yapiApiDTO = null;
+                    YApiDTO yapiApiDTO = null;
                     try {
                         yapiApiDTO = handleMethod(selectedClass, psiMethodTarget);
                     } catch (Exception ex) {
@@ -140,7 +141,7 @@ public class YapiApiParser {
                 }
             }
             if (Objects.nonNull(psiMethodTarget)) {
-                YapiApiDTO yapiApiDTO = null;
+                YApiDTO yapiApiDTO = null;
                 try {
                     yapiApiDTO = handleMethod(selectedClass, psiMethodTarget);
                     if (Objects.isNull(yapiApiDTO)) {
@@ -158,7 +159,7 @@ public class YapiApiParser {
                                     NotificationType.ERROR);
                     Notifications.Bus.notify(error, this.project);
                 }
-                if (Objects.isNull(yapiApiDTO.getMenu())) {
+                if (Objects.isNull(Objects.requireNonNull(yapiApiDTO).getMenu())) {
                     yapiApiDTO.setMenu(classMenu);
                 }
                 yapiApiDTOS.add(yapiApiDTO);
@@ -185,14 +186,14 @@ public class YapiApiParser {
     }
 
     /**
-     * 根据方法生成 YapiApiDTO （设置请求参数和path,method,desc,menu等字段）
+     * 根据方法生成 YApiApiDTO （设置请求参数和path,method,desc,menu等字段）
      */
-    private YapiApiDTO handleMethod(PsiClass selectedClass, PsiMethod psiMethodTarget) {
+    private YApiDTO handleMethod(PsiClass selectedClass, PsiMethod psiMethodTarget) {
         //有@deprecated注释的方法不上传yapi
-        if (DesUtil.deprecated(psiMethodTarget.getDocComment().getText())) {
+        if (DesUtil.deprecated(Objects.requireNonNull(psiMethodTarget.getDocComment()).getText())) {
             return null;
         }
-        YapiApiDTO yapiApiDTO = new YapiApiDTO();
+        YApiDTO yapiApiDTO = new YApiDTO();
         // 获得路径
         StringBuilder path = new StringBuilder();
         String cprefix;
@@ -286,8 +287,10 @@ public class YapiApiParser {
         }
         getRequest(yapiApiDTO, psiMethodTarget);
         if (Strings.isEmpty(yapiApiDTO.getTitle())) {
-            String title = DesUtil.getDescription(psiMethodTarget).replaceAll("\t", "").trim();
-            yapiApiDTO.setTitle(title);
+            String title = DesUtil.getDescription(psiMethodTarget);
+            if (Strings.isNotBlank(title)) {
+                yapiApiDTO.setTitle(title.replaceAll("\t", "").trim());
+            }
         }
         return yapiApiDTO;
     }
@@ -377,7 +380,8 @@ public class YapiApiParser {
             for (PsiField field : psiClass.getAllFields()) {
                 if (
 //                        field.getModifierList().hasModifierProperty("final") ||
-                        field.getModifierList().hasModifierProperty("static")) {
+                        Objects.requireNonNull(field.getModifierList())
+                                .hasModifierProperty("static")) {
                     continue;
                 }
                 String fieldName = field.getName();
@@ -403,25 +407,23 @@ public class YapiApiParser {
         }
         String value = element.getText();
         if ("{}".equals(value)) {
-            value = psiAnnotation.findAttributeValue("value").getText();
+            value = Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText();
         }
         return "{}".equals(value) ? "" : value.replace("\"", "");
     }
 
 
     /**
-     * @description: 获得请求参数
-     * @param: [yapiApiDTO, psiMethodTarget]
-     * @return: void
-     * @date: 2019/2/19
+     * @description 获得请求参数
+     * @date 2019/2/19
      */
-    private void getRequest(YapiApiDTO yapiApiDTO, PsiMethod psiMethodTarget) {
+    private void getRequest(YApiDTO yapiApiDTO, PsiMethod psiMethodTarget) {
         PsiParameter[] psiParameters = psiMethodTarget.getParameterList().getParameters();
         if (psiParameters.length > 0) {
             boolean hasRequestBody = hasRequestBody(psiParameters);
             String method = yapiApiDTO.getMethod();
-            Set<YapiHeaderDTO> yapiHeaderDTOList = new LinkedHashSet<>();
-            Set<YapiPathVariableDTO> yapiPathVariableDTOList = new LinkedHashSet<>();
+            Set<YApiHeaderDTO> yapiHeaderDTOList = new LinkedHashSet<>();
+            Set<YApiPathVariableDTO> yapiPathVariableDTOList = new LinkedHashSet<>();
             for (PsiParameter psiParameter : psiParameters) {
                 String desc = psiParameter.getType().getPresentableText();
                 // request,response,session 参数跳过
@@ -433,19 +435,19 @@ public class YapiApiParser {
                         .equals(psiParameter.getType().getCanonicalText())) {
                     continue;
                 }
-                YapiHeaderDTO yapiHeaderDTO = null;
-                YapiPathVariableDTO yapiPathVariableDTO = null;
+                YApiHeaderDTO yapiHeaderDTO = null;
+                YApiPathVariableDTO yapiPathVariableDTO = null;
                 PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                         .findAnnotation(psiParameter, SpringMVCConstants.RequestHeader);
                 //参数上有@RequestHeader注解
                 if (psiAnnotation != null) {
-                    yapiHeaderDTO = new YapiHeaderDTO();
+                    yapiHeaderDTO = new YApiHeaderDTO();
                 } else {
                     psiAnnotation = PsiAnnotationSearchUtil
                             .findAnnotation(psiParameter, SpringMVCConstants.PathVariable);
                     //参数上有@PathVariable注解
                     if (psiAnnotation != null) {
-                        yapiPathVariableDTO = new YapiPathVariableDTO();
+                        yapiPathVariableDTO = new YApiPathVariableDTO();
                     }
                 }
                 if (psiAnnotation != null) {
@@ -464,7 +466,7 @@ public class YapiApiParser {
                     yapiPathVariableDTOList.add(yapiPathVariableDTO);
                 } else { //没有@RequestHeader和@PathVariable注解
                     if ("GET".equals(method) || "DELETE".equals(method)) {
-                        Set<YapiQueryDTO> queryDTOList = this.getRequestQuery(psiMethodTarget,
+                        Set<YApiQueryDTO> queryDTOList = this.getRequestQuery(psiMethodTarget,
                                 psiParameter);
                         if (yapiApiDTO.getParams() == null) {
                             yapiApiDTO.setParams(queryDTOList);
@@ -480,7 +482,7 @@ public class YapiApiParser {
                                     .findAnnotation(psiParameter, SpringMVCConstants.RequestBody);
                             //方法参数中有@RequestBody注解，但是当前参数无@RequestBody注解，当作Query参数处理
                             if (psiAnnotation == null) {
-                                Set<YapiQueryDTO> yapiQueryDTO = getRequestQuery(
+                                Set<YApiQueryDTO> yapiQueryDTO = getRequestQuery(
                                         psiMethodTarget, psiParameter);
                                 if (yapiApiDTO.getParams() == null) {
                                     yapiApiDTO.setParams(yapiQueryDTO);
@@ -530,21 +532,21 @@ public class YapiApiParser {
     /**
      * @param psiMethodTarget: 方法
      * @param psiParameter: 参数
-     * @return {@link List< YapiQueryDTO>}
+     * @return {@link List<YApiQueryDTO>}
      * @author aqiu
      * @date 2019-07-03 10:01
      * @description 获取Query参数
      **/
-    private Set<YapiQueryDTO> getRequestQuery(PsiMethod psiMethodTarget,
+    private Set<YApiQueryDTO> getRequestQuery(PsiMethod psiMethodTarget,
             PsiParameter psiParameter) {
-        Set<YapiQueryDTO> results = new LinkedHashSet<>();
+        Set<YApiQueryDTO> results = new LinkedHashSet<>();
         String typeClassName = psiParameter.getType().getCanonicalText();
         String typeName = psiParameter.getType().getPresentableText();
         //如果是基本类型
-        if (TypeConstants.normalTypes.containsKey(typeName)) {
+        if (TypeConstants.isNormalType(typeName)) {
             PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                     .findAnnotation(psiParameter, SpringMVCConstants.RequestParam);
-            YapiQueryDTO yapiQueryDTO = new YapiQueryDTO();
+            YApiQueryDTO yapiQueryDTO = new YApiQueryDTO();
             if (psiAnnotation != null) {
                 ValueWraper valueWraper = handleParamAnnotation(psiAnnotation, psiParameter);
                 yapiQueryDTO.full(valueWraper);
@@ -560,13 +562,14 @@ public class YapiApiParser {
         } else {
             PsiClass psiClass = JavaPsiFacade.getInstance(this.project)
                     .findClass(typeClassName, GlobalSearchScope.allScope(this.project));
-            for (PsiField field : psiClass.getAllFields()) {
+            for (PsiField field : Objects.requireNonNull(psiClass).getAllFields()) {
                 if (
 //                        field.getModifierList().hasModifierProperty("final") ||
-                        field.getModifierList().hasModifierProperty("static")) {
+                        Objects.requireNonNull(field.getModifierList())
+                                .hasModifierProperty("static")) {
                     continue;
                 }
-                YapiQueryDTO query = new YapiQueryDTO();
+                YApiQueryDTO query = new YApiQueryDTO();
                 query.setRequired(ValidUtil.notNullOrBlank(field) ? "1" : "0");
                 query.setName(field.getName());
                 String remark = DesUtil.getLinkRemark(field, this.project);
@@ -585,13 +588,12 @@ public class YapiApiParser {
 
 
     /**
-     * @description: 获得表单提交数据对象
-     * @param: [requestClass]
-     * @return: java.util.List<YapiFormDTO>
-     * @date: 2019/5/17
+     * @description 获得表单提交数据对象
+     * @return {@link List<YApiFormDTO>}
+     * @date 2019/5/17
      */
-    private Set<YapiFormDTO> getRequestForm(PsiParameter psiParameter, PsiMethod psiMethodTarget) {
-        Set<YapiFormDTO> requestForm = new LinkedHashSet<>();
+    private Set<YApiFormDTO> getRequestForm(PsiParameter psiParameter, PsiMethod psiMethodTarget) {
+        Set<YApiFormDTO> requestForm = new LinkedHashSet<>();
         String paramName = psiParameter.getName();
         String typeName = psiParameter.getType().getPresentableText();
         String required = ValidUtil.notNullOrBlank(psiParameter) ? "1" : "0";
@@ -603,11 +605,11 @@ public class YapiApiParser {
         String remark =
                 DesUtil.getParamDesc(psiMethodTarget, paramName) + "(" + psiParameter
                         .getType().getPresentableText() + ")";
-        if (TypeConstants.normalTypes.containsKey(typeName) || SpringMVCConstants.MultipartFile
+        if (TypeConstants.isNormalType(typeName) || SpringMVCConstants.MultipartFile
                 .equals(typeClassName)) {
             PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                     .findAnnotation(psiParameter, SpringMVCConstants.RequestParam);
-            YapiFormDTO form = new YapiFormDTO();
+            YApiFormDTO form = new YApiFormDTO();
             //如果参数是文件类型
             if (SpringMVCConstants.MultipartFile.equals(typeClassName)) {
                 form.setType("file");
@@ -626,14 +628,15 @@ public class YapiApiParser {
         } else {//非基本类型
             PsiClass psiClass = JavaPsiFacade.getInstance(this.project)
                     .findClass(typeClassName, GlobalSearchScope.allScope(this.project));
-            for (PsiField field : psiClass.getAllFields()) {
+            for (PsiField field : Objects.requireNonNull(psiClass).getAllFields()) {
                 if (
 //                        field.getModifierList().hasModifierProperty("final") ||
-                        field.getModifierList().hasModifierProperty("static")) {
+                        Objects.requireNonNull(field.getModifierList())
+                                .hasModifierProperty("static")) {
                     continue;
                 }
                 String fieldType = field.getType().getCanonicalText();
-                YapiFormDTO form = new YapiFormDTO();
+                YApiFormDTO form = new YApiFormDTO();
                 form.setRequired(ValidUtil.notNullOrBlank(field) ? "1" : "0");
                 form.setType(SpringMVCConstants.MultipartFile.equals(fieldType) ? "file" : "text");
                 form.setName(field.getName());
@@ -665,7 +668,7 @@ public class YapiApiParser {
         if (Objects.nonNull(element)) {
             String name = element.getText();
             if (Strings.isEmpty(name)) {
-                name = psiAnnotation.findAttributeValue("value").getText();
+                name = Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText();
             }
             valueWraper.setName(name.replace("\"", ""));
         }
@@ -698,10 +701,8 @@ public class YapiApiParser {
     }
 
     /**
-     * @description: 获得响应参数
-     * @param: [psiType]
-     * @return: java.lang.String
-     * @date: 2019/2/19
+     * @description 获得响应参数
+     * @date 2019/2/19
      */
     private String getSchemaResponse(PsiType psiType) {
         return getPojoJson(psiType);
@@ -727,13 +728,9 @@ public class YapiApiParser {
             result = this.getOtherTypeSchema(psiType);
         }
         if (needSchema) {
-            result.set$schema(YapiConstants.$schema);
+            result.set$schema(YApiConstants.$schema);
         }
         return result;
-    }
-
-    private ItemJsonSchema getSchema(PsiType psiType) {
-        return this.getSchema(psiType, true);
     }
 
     /**
@@ -993,11 +990,12 @@ public class YapiApiParser {
             for (PsiField field : psiClass.getAllFields()) {
                 if (
 //                        field.getModifierList().hasModifierProperty("final") ||
-                        field.getModifierList().hasModifierProperty("static")) {
+                        Objects.requireNonNull(field.getModifierList()).hasModifierProperty("static")) {
                     continue;
                 }
                 //防止对象内部嵌套自身导致死循环
-                if (field.getType().getCanonicalText().contains(psiClass.getQualifiedName())) {
+                if (field.getType().getCanonicalText().contains(
+                        Objects.requireNonNull(psiClass.getQualifiedName()))) {
                     continue;
                 }
                 String fieldName = field.getName();

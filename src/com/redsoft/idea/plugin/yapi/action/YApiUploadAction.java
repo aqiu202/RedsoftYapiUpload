@@ -11,12 +11,12 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapi.config.YApiPersistentState;
-import com.redsoft.idea.plugin.yapi.constant.YapiConstants;
-import com.redsoft.idea.plugin.yapi.model.YapiApiDTO;
-import com.redsoft.idea.plugin.yapi.model.YapiResponse;
-import com.redsoft.idea.plugin.yapi.model.YapiSaveParam;
-import com.redsoft.idea.plugin.yapi.parser.YapiApiParser;
-import com.redsoft.idea.plugin.yapi.upload.UploadYapi;
+import com.redsoft.idea.plugin.yapi.constant.YApiConstants;
+import com.redsoft.idea.plugin.yapi.model.YApiDTO;
+import com.redsoft.idea.plugin.yapi.model.YApiResponse;
+import com.redsoft.idea.plugin.yapi.model.YApiSaveParam;
+import com.redsoft.idea.plugin.yapi.parser.YApiParser;
+import com.redsoft.idea.plugin.yapi.upload.YApiUpload;
 import com.redsoft.idea.plugin.yapi.xml.YApiProperty;
 import com.redsoft.idea.plugin.yapi.xml.YApiPropertyConvertHolder;
 import java.util.List;
@@ -36,7 +36,9 @@ public class YApiUploadAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getProject();
         YApiProperty property = YApiPropertyConvertHolder.getConvert().deserialize(
-                ServiceManager.getService(project, YApiPersistentState.class).getState());
+                ServiceManager
+                        .getService(Objects.requireNonNull(project), YApiPersistentState.class)
+                        .getState());
         // token
         String projectToken = property.getToken();
         // 项目ID
@@ -52,10 +54,10 @@ public class YApiUploadAction extends AnAction {
             return;
         }
         //获得api 需上传的接口列表 参数对象
-        List<YapiApiDTO> yapiApiDTOS = new YapiApiParser().parse(e, enableBasicScope);
+        List<YApiDTO> yapiApiDTOS = new YApiParser().parse(e, enableBasicScope);
         if (yapiApiDTOS != null) {
-            for (YapiApiDTO yapiApiDTO : yapiApiDTOS) {
-                YapiSaveParam yapiSaveParam = new YapiSaveParam(projectToken, yapiApiDTO.getTitle(),
+            for (YApiDTO yapiApiDTO : yapiApiDTOS) {
+                YApiSaveParam yapiSaveParam = new YApiSaveParam(projectToken, yapiApiDTO.getTitle(),
                         yapiApiDTO.getPath(), yapiApiDTO.getParams(), yapiApiDTO.getRequestBody(),
                         yapiApiDTO.getResponse(), projectId, yapiUrl, true,
                         yapiApiDTO.getMethod(), yapiApiDTO.getDesc(), yapiApiDTO.getHeader());
@@ -71,11 +73,11 @@ public class YApiUploadAction extends AnAction {
                 if (!Strings.isEmpty(yapiApiDTO.getMenu())) {
                     yapiSaveParam.setMenu(yapiApiDTO.getMenu());
                 } else {
-                    yapiSaveParam.setMenu(YapiConstants.menu);
+                    yapiSaveParam.setMenu(YApiConstants.menu);
                 }
                 try {
                     // 上传
-                    YapiResponse yapiResponse = new UploadYapi()
+                    YApiResponse yapiResponse = new YApiUpload()
                             .uploadSave(yapiSaveParam, project.getBasePath());
                     if (yapiResponse.getErrcode() != 0) {
                         Notification error = notificationGroup
@@ -85,9 +87,9 @@ public class YApiUploadAction extends AnAction {
                     } else {
                         String host = yapiUrl.endsWith("/") ? yapiUrl : (yapiUrl + "/");
                         String url = host + "project/" + projectId + "/interface/api/cat_"
-                                        + UploadYapi.catMap
-                                        .get(String.valueOf(projectId))
-                                        .get(yapiSaveParam.getMenu());
+                                + YApiUpload.catMap
+                                .get(String.valueOf(projectId))
+                                .get(yapiSaveParam.getMenu());
                         Notification error = notificationGroup
                                 .createNotification("接口上传成功:  " + url,
                                         NotificationType.INFORMATION);
@@ -99,7 +101,7 @@ public class YApiUploadAction extends AnAction {
                     Notifications.Bus.notify(error, project);
                 }
             }
-            UploadYapi.catMap.clear();
+            YApiUpload.catMap.clear();
         }
     }
 }

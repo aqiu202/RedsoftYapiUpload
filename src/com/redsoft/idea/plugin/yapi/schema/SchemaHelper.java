@@ -11,8 +11,6 @@ public final class SchemaHelper {
                 return new NumberSchema();
             case number:
                 return new IntegerSchema();
-            case string:
-                return new StringSchema();
             case object:
                 return new ObjectSchema();
             case array:

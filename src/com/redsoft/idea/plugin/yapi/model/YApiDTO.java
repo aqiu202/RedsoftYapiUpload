@@ -1,7 +1,6 @@
 package com.redsoft.idea.plugin.yapi.model;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -9,7 +8,8 @@ import java.util.Set;
  *
  * @date 2019/2/11 3:16 PM
  */
-public class YapiApiDTO implements Serializable {
+@SuppressWarnings("unused")
+public class YApiDTO implements Serializable {
 
     /**
      * 路径
@@ -18,11 +18,11 @@ public class YapiApiDTO implements Serializable {
     /**
      * 请求Query参数
      */
-    private Set<YapiQueryDTO> params;
+    private Set<YApiQueryDTO> params;
     /**
      * 头信息
      */
-    private Set<YapiHeaderDTO> header;
+    private Set<YApiHeaderDTO> header;
     /**
      * title
      */
@@ -48,7 +48,7 @@ public class YapiApiDTO implements Serializable {
     /**
      * 请求form
      */
-    private Set<YapiFormDTO> req_body_form;
+    private Set<YApiFormDTO> req_body_form;
     /**
      * 响应类型 json,raw
      */
@@ -70,7 +70,7 @@ public class YapiApiDTO implements Serializable {
     /**
      * 请求路径参数
      */
-    private Set<YapiPathVariableDTO> req_params;
+    private Set<YApiPathVariableDTO> req_params;
 
     private boolean hasFile = false;
 
@@ -83,11 +83,11 @@ public class YapiApiDTO implements Serializable {
         this.path = path;
     }
 
-    public Set<YapiQueryDTO> getParams() {
+    public Set<YApiQueryDTO> getParams() {
         return params;
     }
 
-    public void setParams(Set<YapiQueryDTO> params) {
+    public void setParams(Set<YApiQueryDTO> params) {
         this.params = params;
     }
 
@@ -139,11 +139,11 @@ public class YapiApiDTO implements Serializable {
         this.desc = desc;
     }
 
-    public Set<YapiHeaderDTO> getHeader() {
+    public Set<YApiHeaderDTO> getHeader() {
         return header;
     }
 
-    public void setHeader(Set<YapiHeaderDTO> header) {
+    public void setHeader(Set<YApiHeaderDTO> header) {
         this.header = header;
     }
 
@@ -155,20 +155,20 @@ public class YapiApiDTO implements Serializable {
         this.req_body_type = req_body_type;
     }
 
-    public Set<YapiFormDTO> getReq_body_form() {
+    public Set<YApiFormDTO> getReq_body_form() {
         return req_body_form;
     }
 
 
-    public Set<YapiPathVariableDTO> getReq_params() {
+    public Set<YApiPathVariableDTO> getReq_params() {
         return req_params;
     }
 
-    public void setReq_params(Set<YapiPathVariableDTO> req_params) {
+    public void setReq_params(Set<YApiPathVariableDTO> req_params) {
         this.req_params = req_params;
     }
 
-    public void setReq_body_form(Set<YapiFormDTO> req_body_form) {
+    public void setReq_body_form(Set<YApiFormDTO> req_body_form) {
         this.req_body_form = req_body_form;
     }
 
@@ -196,7 +196,7 @@ public class YapiApiDTO implements Serializable {
         this.hasFile = hasFile;
     }
 
-    public YapiApiDTO() {
+    public YApiDTO() {
     }
 
 

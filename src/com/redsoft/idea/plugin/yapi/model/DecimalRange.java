@@ -21,9 +21,8 @@ public class DecimalRange implements Range {
         return min;
     }
 
-    public DecimalRange setMin(BigDecimal min) {
+    public void setMin(BigDecimal min) {
         this.min = min;
-        return this;
     }
 
     @Override
@@ -31,8 +30,7 @@ public class DecimalRange implements Range {
         return max;
     }
 
-    public DecimalRange setMax(BigDecimal max) {
+    public void setMax(BigDecimal max) {
         this.max = max;
-        return this;
     }
 }

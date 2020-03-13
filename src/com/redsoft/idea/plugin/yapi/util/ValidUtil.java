@@ -60,8 +60,8 @@ public final class ValidUtil {
                 .findAnnotation(psiModifierListOwner, ValidConstants.Size);
         if (Objects.nonNull(psiAnnotation)) {
             return new IntegerRange(
-                    Integer.valueOf(psiAnnotation.findAttributeValue("min").getText()),
-                    Integer.valueOf(psiAnnotation.findAttributeValue("max").getText()),
+                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("min")).getText()),
+                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("max")).getText()),
                     enableBasicScope);
         }
         return new IntegerRange(null, null,enableBasicScope);
@@ -72,8 +72,8 @@ public final class ValidUtil {
                 .findAnnotation(psiModifierListOwner, ValidConstants.Length);
         if (Objects.nonNull(psiAnnotation)) {
             return new IntegerRange(
-                    Integer.valueOf(psiAnnotation.findAttributeValue("min").getText()),
-                    Integer.valueOf(psiAnnotation.findAttributeValue("max").getText()),
+                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("min")).getText()),
+                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("max")).getText()),
                     enableBasicScope);
         }
         return new IntegerRange(null, null, enableBasicScope);
@@ -83,7 +83,7 @@ public final class ValidUtil {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.Min);
         if(Objects.nonNull(psiAnnotation)) {
-            return Long.valueOf(psiAnnotation.findAttributeValue("value").getText());
+            return Long.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
         }
         return null;
     }
@@ -92,7 +92,7 @@ public final class ValidUtil {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.Max);
         if(Objects.nonNull(psiAnnotation)) {
-            return Long.valueOf(psiAnnotation.findAttributeValue("value").getText());
+            return Long.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
         }
         return null;
     }
@@ -116,8 +116,10 @@ public final class ValidUtil {
                     .findAnnotation(psiModifierListOwner, ValidConstants.Range);
             if (Objects.nonNull(psiAnnotation)) {
                 return new LongRange(
-                        Long.valueOf(psiAnnotation.findAttributeValue("min").getText()),
-                        Long.valueOf(psiAnnotation.findAttributeValue("max").getText()),
+                        Long.valueOf(
+                                Objects.requireNonNull(psiAnnotation.findAttributeValue("min")).getText()),
+                        Long.valueOf(
+                                Objects.requireNonNull(psiAnnotation.findAttributeValue("max")).getText()),
                         enableBasicScope);
             }
         }
@@ -142,10 +144,12 @@ public final class ValidUtil {
             PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                     .findAnnotation(psiModifierListOwner, ValidConstants.Digits);
             if (Objects.nonNull(psiAnnotation)) {
-                Integer integer = Integer
-                        .valueOf(psiAnnotation.findAttributeValue("integer").getText());
-                Integer fraction = Integer
-                        .valueOf(psiAnnotation.findAttributeValue("fraction").getText());
+                int integer = Integer.parseInt(
+                        Objects.requireNonNull(psiAnnotation.findAttributeValue("integer"))
+                                .getText());
+                int fraction = Integer.parseInt(
+                        Objects.requireNonNull(psiAnnotation.findAttributeValue("fraction"))
+                                .getText());
                 if (integer == 0 || fraction == 0) {
                     return null;
                 }
@@ -162,7 +166,7 @@ public final class ValidUtil {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.DecimalMin);
         if (Objects.nonNull(psiAnnotation)) {
-            return new BigDecimal(psiAnnotation.findAttributeValue("value").getText());
+            return new BigDecimal(Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
         }
         return null;
     }
@@ -171,7 +175,7 @@ public final class ValidUtil {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.DecimalMax);
         if (Objects.nonNull(psiAnnotation)) {
-            return new BigDecimal(psiAnnotation.findAttributeValue("value").getText());
+            return new BigDecimal(Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
         }
         return null;
     }
@@ -180,7 +184,7 @@ public final class ValidUtil {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.Pattern);
         if (Objects.nonNull(psiAnnotation)) {
-            String pattern = psiAnnotation.findAttributeValue("regexp").getText();
+            String pattern = Objects.requireNonNull(psiAnnotation.findAttributeValue("regexp")).getText();
             if(Strings.isNotBlank(pattern)) {
                 return pattern.replace("\\\\", "\\").replace("\"", "");
             }
@@ -189,7 +193,7 @@ public final class ValidUtil {
     }
 
     private static String maxString(int len) {
-        StringBuffer buffer = new StringBuffer(len);
+        StringBuilder buffer = new StringBuilder(len);
         for (int i = 0; i < len; i++) {
             buffer.append("9");
         }

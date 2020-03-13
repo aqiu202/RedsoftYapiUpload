@@ -1,5 +1,6 @@
 package com.redsoft.idea.plugin.yapi.schema.base;
 
+@SuppressWarnings("unused")
 public enum SchemaType {
     string("string"),
     number("number"),
@@ -10,14 +11,12 @@ public enum SchemaType {
 
     private String name;
 
-    private SchemaType(String name) {
+    SchemaType(String name) {
         this.name = name;
     }
 
     public static SchemaType parse(String name) {
         switch (name) {
-            case "string":
-                return string;
             case "number":
                 return number;
             case "array":

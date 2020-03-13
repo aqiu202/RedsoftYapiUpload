@@ -7,7 +7,8 @@ import java.io.Serializable;
  *
  * @date 2019/2/1 10:30 AM
  */
-public class YapiCatResponse implements Serializable {
+@SuppressWarnings("unused")
+public class YApiCatResponse implements Serializable {
 
   /**
    * id

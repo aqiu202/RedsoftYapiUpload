@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class ObjectSchema extends ItemJsonSchema {
 
     public ObjectSchema(){
@@ -34,17 +35,15 @@ public class ObjectSchema extends ItemJsonSchema {
         this.properties = properties;
     }
 
-    public ObjectSchema addProperty(String key, ItemJsonSchema jsonSchemaItem) {
+    public void addProperty(String key, ItemJsonSchema jsonSchemaItem) {
         this.properties.put(key, jsonSchemaItem);
-        return this;
     }
 
-    public ObjectSchema addRequired(String key) {
+    public void addRequired(String key) {
         if(this.required == null) {
             this.required = new ArrayList<>();
         }
         this.required.add(key);
-        return this;
     }
 
 }

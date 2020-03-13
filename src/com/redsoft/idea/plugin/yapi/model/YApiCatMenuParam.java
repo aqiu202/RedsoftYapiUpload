@@ -1,7 +1,7 @@
 package com.redsoft.idea.plugin.yapi.model;
 
 import com.jgoodies.common.base.Strings;
-import com.redsoft.idea.plugin.yapi.constant.YapiConstants;
+import com.redsoft.idea.plugin.yapi.constant.YApiConstants;
 import java.io.Serializable;
 
 /**
@@ -9,7 +9,8 @@ import java.io.Serializable;
  *
  * @date 2019/2/1 10:44 AM
  */
-public class YapiCatMenuParam implements Serializable {
+@SuppressWarnings("unused")
+public class YApiCatMenuParam implements Serializable {
 
     /**
      * 描述
@@ -61,28 +62,28 @@ public class YapiCatMenuParam implements Serializable {
         this.token = token;
     }
 
-    public YapiCatMenuParam() {
+    public YApiCatMenuParam() {
     }
 
 
-    public YapiCatMenuParam(String desc, String name, Integer project_id, String token) {
+    public YApiCatMenuParam(String desc, String name, Integer project_id, String token) {
         this.desc = desc;
         this.name = name;
         this.project_id = project_id;
         this.token = token;
     }
 
-    public YapiCatMenuParam(Integer project_id, String token) {
+    public YApiCatMenuParam(Integer project_id, String token) {
         this.project_id = project_id;
         this.token = token;
     }
 
-    public YapiCatMenuParam(String name, Integer project_id, String token) {
+    public YApiCatMenuParam(String name, Integer project_id, String token) {
         this.name = name;
         this.project_id = project_id;
         this.token = token;
         if (Strings.isEmpty(name)) {
-            this.name = YapiConstants.menu;
+            this.name = YApiConstants.menu;
         }
     }
 }

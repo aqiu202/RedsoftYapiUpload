@@ -3,6 +3,7 @@ package com.redsoft.idea.plugin.yapi.schema;
 import com.redsoft.idea.plugin.yapi.schema.base.EnumableSchema;
 import com.redsoft.idea.plugin.yapi.schema.base.SchemaType;
 
+@SuppressWarnings("unused")
 public final class StringSchema extends EnumableSchema {
 
     public StringSchema() {
@@ -21,35 +22,31 @@ public final class StringSchema extends EnumableSchema {
         return pattern;
     }
 
-    public StringSchema setPattern(String pattern) {
+    public void setPattern(String pattern) {
         this.pattern = pattern;
-        return this;
     }
 
     public String getFormat() {
         return format;
     }
 
-    public StringSchema setFormat(String format) {
+    public void setFormat(String format) {
         this.format = format;
-        return this;
     }
 
     public Integer getMinLength() {
         return minLength;
     }
 
-    public StringSchema setMinLength(Integer minLength) {
+    public void setMinLength(Integer minLength) {
         this.minLength = minLength;
-        return this;
     }
 
     public Integer getMaxLength() {
         return maxLength;
     }
 
-    public StringSchema setMaxLength(Integer maxLength) {
+    public void setMaxLength(Integer maxLength) {
         this.maxLength = maxLength;
-        return this;
     }
 }

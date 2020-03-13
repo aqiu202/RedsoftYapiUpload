@@ -7,7 +7,8 @@ import java.io.Serializable;
  *
  * @date 2019/1/31 12:08 PM
  */
-public class YapiResponse implements Serializable {
+@SuppressWarnings("unused")
+public class YApiResponse implements Serializable {
 
   /**
    * 状态码
@@ -46,16 +47,16 @@ public class YapiResponse implements Serializable {
     this.data = data;
   }
 
-  public YapiResponse() {
+  public YApiResponse() {
   }
 
-  public YapiResponse(Object data) {
+  public YApiResponse(Object data) {
     this.errcode = 0;
     this.errmsg = "success";
     this.data = data;
   }
 
-  public YapiResponse(Integer errcode, String errmsg) {
+  public YApiResponse(Integer errcode, String errmsg) {
     this.errcode = errcode;
     this.errmsg = errmsg;
   }

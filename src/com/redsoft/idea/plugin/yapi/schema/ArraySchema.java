@@ -3,6 +3,7 @@ package com.redsoft.idea.plugin.yapi.schema;
 import com.redsoft.idea.plugin.yapi.schema.base.ItemJsonSchema;
 import com.redsoft.idea.plugin.yapi.schema.base.SchemaType;
 
+@SuppressWarnings("unused")
 public class ArraySchema extends ItemJsonSchema {
 
     public ArraySchema() {
@@ -30,27 +31,24 @@ public class ArraySchema extends ItemJsonSchema {
         return uniqueItems;
     }
 
-    public ArraySchema setUniqueItems(boolean uniqueItems) {
+    public void setUniqueItems(boolean uniqueItems) {
         this.uniqueItems = uniqueItems;
-        return this;
     }
 
     public Integer getMinItems() {
         return minItems;
     }
 
-    public ArraySchema setMinItems(Integer minItems) {
+    public void setMinItems(Integer minItems) {
         this.minItems = minItems;
-        return this;
     }
 
-    public ArraySchema setMinItems(Integer minItems, boolean enableBasicScope) {
+    public void setMinItems(Integer minItems, boolean enableBasicScope) {
         if(minItems == null && enableBasicScope) {
             this.minItems = Integer.MIN_VALUE;
         } else {
             this.minItems = minItems;
         }
-        return this;
     }
 
     public Integer getMaxItems() {
@@ -62,12 +60,11 @@ public class ArraySchema extends ItemJsonSchema {
         return this;
     }
 
-    public ArraySchema setMaxItems(Integer maxItems, boolean enableBasicScope) {
+    public void setMaxItems(Integer maxItems, boolean enableBasicScope) {
         if(maxItems == null && enableBasicScope) {
             this.maxItems = Integer.MAX_VALUE;
         } else {
             this.maxItems = maxItems;
         }
-        return this;
     }
 }

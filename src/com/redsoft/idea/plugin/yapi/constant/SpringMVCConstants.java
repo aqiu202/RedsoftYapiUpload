@@ -28,8 +28,8 @@ public interface SpringMVCConstants {
     String PathVariable = "org.springframework.web.bind.annotation.PathVariable";
 
     String RestController = "org.springframework.web.bind.annotation.RestController";
-    String ResponseBody = "org.springframework.web.bind.annotation.ResponseBody";
 
+    String ResponseBody = "org.springframework.web.bind.annotation.ResponseBody";
 
     String MultipartFile = "org.springframework.web.multipart.MultipartFile";
 

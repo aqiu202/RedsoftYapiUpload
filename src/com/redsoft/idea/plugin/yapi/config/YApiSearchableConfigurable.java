@@ -1,6 +1,5 @@
 package com.redsoft.idea.plugin.yapi.config;
 
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.jgoodies.common.base.Strings;
@@ -27,13 +26,13 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
     @NotNull
     @Override
     public String getId() {
-        return "Redsoft_Yapi_Upload";
+        return "Redsoft_YApi_Upload";
     }
 
     @Nls
     @Override
     public String getDisplayName() {
-        return "Redsoft Yapi Upload";
+        return "Redsoft YApi Upload";
     }
 
     @Nullable
@@ -61,7 +60,7 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
     }
 
     @Override
-    public void apply() throws ConfigurationException {
+    public void apply() {
         persistent.loadState(YApiPropertyConvertHolder.getConvert().serialize(this.yApiProperty));
     }
 
