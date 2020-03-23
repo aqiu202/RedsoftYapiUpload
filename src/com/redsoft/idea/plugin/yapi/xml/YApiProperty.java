@@ -1,6 +1,5 @@
 package com.redsoft.idea.plugin.yapi.xml;
 
-import com.intellij.util.xmlb.annotations.Attribute;
 import java.util.Objects;
 
 public class YApiProperty {
@@ -8,24 +7,27 @@ public class YApiProperty {
     private final static String DEFAULT_URL = "http://127.0.0.1:3000/";
     private final static int DEFAULT_PROJECT_ID = 1;
     private final static String DEFAULT_TOKEN = "";
+    private final static int DEFAULT_STRATEGY = 0;
 
     private String url = DEFAULT_URL;
-    private Integer projectId = DEFAULT_PROJECT_ID;
+    private int projectId = DEFAULT_PROJECT_ID;
     private String token = DEFAULT_TOKEN;
+    private int strategy = DEFAULT_STRATEGY;
     private boolean enableBasicScope;
 
     public YApiProperty() {
 
     }
 
-    public YApiProperty(String url, Integer projectId, String token, boolean enableBasicScope) {
+    public YApiProperty(String url, int projectId, String token, int strategy,
+            boolean enableBasicScope) {
         this.url = url;
         this.projectId = projectId;
         this.token = token;
+        this.strategy = strategy;
         this.enableBasicScope = enableBasicScope;
     }
 
-    @Attribute
     public String getUrl() {
         return url;
     }
@@ -34,16 +36,14 @@ public class YApiProperty {
         this.url = url;
     }
 
-    @Attribute
-    public Integer getProjectId() {
+    public int getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Integer projectId) {
+    public void setProjectId(int projectId) {
         this.projectId = projectId;
     }
 
-    @Attribute
     public String getToken() {
         return token;
     }
@@ -52,7 +52,14 @@ public class YApiProperty {
         this.token = token;
     }
 
-    @Attribute
+    public int getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(int strategy) {
+        this.strategy = strategy;
+    }
+
     public boolean isEnableBasicScope() {
         return enableBasicScope;
     }
@@ -63,7 +70,8 @@ public class YApiProperty {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.url, this.projectId, this.token, this.enableBasicScope);
+        return Objects
+                .hash(this.url, this.projectId, this.token, this.strategy, this.enableBasicScope);
     }
 
     @Override
@@ -78,6 +86,7 @@ public class YApiProperty {
         return Objects.equals(url, that.url) &&
                 Objects.equals(projectId, that.projectId) &&
                 Objects.equals(token, that.token) &&
+                Objects.equals(strategy, that.strategy) &&
                 Objects.equals(enableBasicScope, that.enableBasicScope);
     }
 }

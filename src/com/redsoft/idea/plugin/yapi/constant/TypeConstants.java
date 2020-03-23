@@ -86,6 +86,7 @@ public class TypeConstants {
         noramlTypesPackages.put("float", 1.0F);
         noramlTypesPackages.put("double", 1.0D);
         noramlTypesPackages.put("char", 'a');
+        noramlTypesPackages.put("MultipartFile", "file");
         noramlTypesPackages.put("java.lang.Boolean", false);
         noramlTypesPackages.put("java.lang.Byte", 1);
         noramlTypesPackages.put("java.lang.Short", (short) 0);
@@ -94,6 +95,7 @@ public class TypeConstants {
         noramlTypesPackages.put("java.lang.Float", 1L);
         noramlTypesPackages.put("java.lang.Double", 1.0D);
         noramlTypesPackages.put("java.sql.Timestamp", new Timestamp(System.currentTimeMillis()));
+        noramlTypesPackages.put("org.springframework.web.multipart.MultipartFile", "file");
         noramlTypesPackages
                 .put("java.util.Date",
                         LocalDateTime.now().format(dateTimeFormat));

@@ -2,11 +2,7 @@ package com.redsoft.idea.plugin.yapi.parser;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
@@ -26,6 +22,8 @@ import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jgoodies.common.base.Strings;
+import com.redsoft.idea.plugin.yapi.constant.NotificationConstants;
+import com.redsoft.idea.plugin.yapi.constant.PropertyNamingStrategy;
 import com.redsoft.idea.plugin.yapi.constant.ServletConstants;
 import com.redsoft.idea.plugin.yapi.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapi.constant.TypeConstants;
@@ -50,6 +48,7 @@ import com.redsoft.idea.plugin.yapi.schema.StringSchema;
 import com.redsoft.idea.plugin.yapi.schema.base.ItemJsonSchema;
 import com.redsoft.idea.plugin.yapi.schema.base.SchemaType;
 import com.redsoft.idea.plugin.yapi.util.DesUtil;
+import com.redsoft.idea.plugin.yapi.util.PropertyNamingUtils;
 import com.redsoft.idea.plugin.yapi.util.PsiAnnotationSearchUtil;
 import com.redsoft.idea.plugin.yapi.util.ValidUtil;
 import java.math.BigDecimal;
@@ -68,17 +67,15 @@ import java.util.Set;
  **/
 public class YApiParser {
 
-    private NotificationGroup notificationGroup;
-
     private Project project;
+    private PropertyNamingStrategy strategy;
+    private PropertyNamingStrategy c_strategy = null;
+    private PropertyNamingStrategy m_strategy = null;
     private boolean enableBasicScope;
 
-    {
-        notificationGroup = new NotificationGroup("Java2Json.NotificationGroup",
-                NotificationDisplayType.BALLOON, true);
-    }
-
-    public List<YApiDTO> parse(AnActionEvent e, boolean enableBasicScope) {
+    public List<YApiDTO> parse(AnActionEvent e, PropertyNamingStrategy strategy,
+            boolean enableBasicScope) {
+        this.strategy = strategy;
         this.enableBasicScope = enableBasicScope;
         Editor editor = e.getData(CommonDataKeys.EDITOR);
         PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
@@ -86,20 +83,19 @@ public class YApiParser {
                 .getSelectedText();
         this.project = e.getProject();
         if (Strings.isEmpty(selectedText)) {
-            Notification error = notificationGroup
-                    .createNotification("请选中类或者方法", NotificationType.ERROR);
-            Notifications.Bus.notify(error, this.project);
+            NotificationConstants.NOTIFICATION_GROUP
+                    .createNotification("请选中类或者方法", NotificationType.ERROR).notify(this.project);
             return null;
         }
         PsiElement referenceAt = Objects.requireNonNull(psiFile)
                 .findElementAt(Objects.requireNonNull(editor).getCaretModel().getOffset());
         PsiClass selectedClass = PsiTreeUtil.getContextOfType(referenceAt, PsiClass.class);
         //获取该类是否已经过时
-        if (PsiAnnotationSearchUtil.hasDeprecated(Objects.requireNonNull(selectedClass)) || DesUtil.deprecated(
-                Objects.requireNonNull(selectedClass.getDocComment()).getText())) {
-            Notification error = notificationGroup
-                    .createNotification("该类已过时", NotificationType.WARNING);
-            Notifications.Bus.notify(error, this.project);
+        if (PsiAnnotationSearchUtil.hasDeprecated(Objects.requireNonNull(selectedClass)) || (
+                selectedClass.getDocComment() != null && DesUtil
+                        .deprecated(selectedClass.getDocComment().getText()))) {
+            NotificationConstants.NOTIFICATION_GROUP
+                    .createNotification("该类已过时", NotificationType.WARNING).notify(this.project);
             return null;
         }
         String classMenu = null;
@@ -115,36 +111,40 @@ public class YApiParser {
         if (selectedText.equals(selectedClass.getName())) {
             PsiMethod[] psiMethods = selectedClass.getMethods();
             for (PsiMethod psiMethodTarget : psiMethods) {
+                //lombok插件的构造方法忽略
+                if (psiMethodTarget.getName().equals(selectedClass.getName())) {
+                    continue;
+                }
                 //去除私有方法
                 if (!psiMethodTarget.getModifierList().hasModifierProperty("private")) {
                     //带有 @Deprecated 注解的方法跳过
-                    if (PsiAnnotationSearchUtil.hasDeprecated(psiMethodTarget) || DesUtil
-                            .deprecated(
-                                    Objects.requireNonNull(psiMethodTarget.getDocComment())
-                                            .getText())) {
+                    if (PsiAnnotationSearchUtil.hasDeprecated(psiMethodTarget) || (
+                            psiMethodTarget.getDocComment() != null && DesUtil
+                                    .deprecated(psiMethodTarget.getDocComment().getText()))) {
                         continue;
                     }
-                    YApiDTO yapiApiDTO = null;
+                    YApiDTO yApiDTO = null;
                     try {
-                        yapiApiDTO = handleMethod(selectedClass, psiMethodTarget);
+                        yApiDTO = handleMethod(selectedClass, psiMethodTarget);
                     } catch (Exception ex) {
-                        Notification error = notificationGroup
+                        NotificationConstants.NOTIFICATION_GROUP
                                 .createNotification("解析接口信息失败：" + ex.getMessage(),
-                                        NotificationType.ERROR);
-                        Notifications.Bus.notify(error, this.project);
+                                        NotificationType.ERROR).notify(this.project);
+                    } finally {
+                        this.m_strategy = null;
                     }
-                    if (Objects.isNull(yapiApiDTO)) {
+                    if (Objects.isNull(yApiDTO)) {
                         continue;
                     }
                     //如果方法注释中没有有接口分类信息，使用类中声明的接口分类
-                    if (Objects.isNull(yapiApiDTO.getMenu())) {
-                        yapiApiDTO.setMenu(classMenu);
+                    if (Objects.isNull(yApiDTO.getMenu())) {
+                        yApiDTO.setMenu(classMenu);
                     }
                     //分类描述信息设置
                     if (Objects.nonNull(menuDesc)) {
-                        yapiApiDTO.setMenuDesc(menuDesc);
+                        yApiDTO.setMenuDesc(menuDesc);
                     }
-                    yapiApiDTOS.add(yapiApiDTO);
+                    yapiApiDTOS.add(yApiDTO);
                 }
             }
         } else {//如果用户选中的是方法
@@ -160,34 +160,31 @@ public class YApiParser {
             if (Objects.nonNull(psiMethodTarget)) {
                 YApiDTO yapiApiDTO = null;
                 try {
-                    if (PsiAnnotationSearchUtil.hasDeprecated(psiMethodTarget) || DesUtil
-                            .deprecated(
-                                    Objects.requireNonNull(psiMethodTarget.getDocComment())
-                                            .getText())) {
-                        Notification error = notificationGroup
+                    if (PsiAnnotationSearchUtil.hasDeprecated(psiMethodTarget) || (
+                            psiMethodTarget.getDocComment() != null && DesUtil
+                                    .deprecated(psiMethodTarget.getDocComment().getText()))) {
+                        NotificationConstants.NOTIFICATION_GROUP
                                 .createNotification(
                                         "该方法或者类(或注释中)含有@Deprecated注解，如需上传，请删除该注解:" + selectedText,
-                                        NotificationType.WARNING);
-                        Notifications.Bus.notify(error, this.project);
+                                        NotificationType.WARNING).notify(this.project);
                         return null;
                     } else {
                         yapiApiDTO = handleMethod(selectedClass, psiMethodTarget);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    Notification error = notificationGroup
+                    NotificationConstants.NOTIFICATION_GROUP
                             .createNotification("解析接口信息失败：" + ex.getMessage(),
-                                    NotificationType.ERROR);
-                    Notifications.Bus.notify(error, this.project);
+                                    NotificationType.ERROR).notify(this.project);
                 }
                 if (Objects.isNull(Objects.requireNonNull(yapiApiDTO).getMenu())) {
                     yapiApiDTO.setMenu(classMenu);
                 }
                 yapiApiDTOS.add(yapiApiDTO);
             } else {
-                Notification error = notificationGroup
-                        .createNotification("找不到方法:" + selectedText, NotificationType.ERROR);
-                Notifications.Bus.notify(error, this.project);
+                NotificationConstants.NOTIFICATION_GROUP
+                        .createNotification("找不到方法:" + selectedText, NotificationType.ERROR)
+                        .notify(this.project);
                 return null;
             }
         }
@@ -210,7 +207,7 @@ public class YApiParser {
      * 根据方法生成 YApiApiDTO （设置请求参数和path,method,desc,menu等字段）
      */
     private YApiDTO handleMethod(PsiClass selectedClass, PsiMethod psiMethodTarget) {
-        YApiDTO yapiApiDTO = new YApiDTO();
+        YApiDTO yApiDTO = new YApiDTO();
         // 获得路径
         StringBuilder path = new StringBuilder();
         String status = null;
@@ -221,6 +218,11 @@ public class YApiParser {
             String s = DesUtil.getStatus(classDoc.getText());
             if (Strings.isNotBlank(s)) {
                 status = s;
+            }
+            //获取类注释上的@strategy注释（接口字段命名策略）
+            String cs = DesUtil.getStrategy(classDoc.getText());
+            if (Strings.isNotBlank(cs)) {
+                this.c_strategy = PropertyNamingStrategy.of(cs);
             }
             //获取类注释上的@path注解（自定义路由用）
             String cpath = DesUtil.getPath(classDoc.getText());
@@ -239,6 +241,11 @@ public class YApiParser {
             String s = DesUtil.getStatus(methodDoc.getText());
             if (Strings.isNotBlank(s)) {
                 status = s;
+            }
+            //获取方法上的@strategy注释（接口字段命名策略）
+            String ms = DesUtil.getStrategy(methodDoc.getText());
+            if (Strings.isNotBlank(ms)) {
+                this.m_strategy = PropertyNamingStrategy.of(ms);
             }
             //获取方法注释上的@path注解（自定义路由用）
             String mpath = DesUtil.getPath(methodDoc.getText());
@@ -265,10 +272,10 @@ public class YApiParser {
             }
         }
         if (Strings.isNotBlank(status)) {
-            yapiApiDTO.setStatus(YApiStatusEnum.getStatus(status));
+            yApiDTO.setStatus(YApiStatusEnum.getStatus(status));
         }
         if (customPath != null) {
-            yapiApiDTO.setPath(this.buildPath(customPath));
+            yApiDTO.setPath(this.buildPath(customPath));
         }
         //获取类上面的RequestMapping 中的value
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
@@ -282,38 +289,38 @@ public class YApiParser {
         if (psiAnnotationMethod != null) {
             if (customPath == null) {
                 path.append(this.buildPath(this.getPathByAnno(psiAnnotationMethod)));
-                yapiApiDTO.setPath(this.buildPath(path));
+                yApiDTO.setPath(this.buildPath(path));
             }
             PsiAnnotationMemberValue method = psiAnnotationMethod.findAttributeValue("method");
             if (method != null) {
-                yapiApiDTO.setMethod(method.getText().toUpperCase());
+                yApiDTO.setMethod(method.getText().toUpperCase());
             }
         } else {
             PsiAnnotation psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                     .findAnnotation(psiMethodTarget, SpringMVCConstants.GetMapping);
             if (psiAnnotationMethodSemple != null) {
-                yapiApiDTO.setMethod("GET");
+                yApiDTO.setMethod("GET");
             } else {
                 psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                         .findAnnotation(psiMethodTarget, SpringMVCConstants.PostMapping);
                 if (psiAnnotationMethodSemple != null) {
-                    yapiApiDTO.setMethod("POST");
+                    yApiDTO.setMethod("POST");
                 } else {
                     psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                             .findAnnotation(psiMethodTarget, SpringMVCConstants.PutMapping);
                     if (psiAnnotationMethodSemple != null) {
-                        yapiApiDTO.setMethod("PUT");
+                        yApiDTO.setMethod("PUT");
                     } else {
                         psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                                 .findAnnotation(psiMethodTarget, SpringMVCConstants.DeleteMapping);
                         if (psiAnnotationMethodSemple != null) {
-                            yapiApiDTO.setMethod("DELETE");
+                            yApiDTO.setMethod("DELETE");
                         } else {
                             psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                                     .findAnnotation(psiMethodTarget,
                                             SpringMVCConstants.PatchMapping);
                             if (psiAnnotationMethodSemple != null) {
-                                yapiApiDTO.setMethod("PATCH");
+                                yApiDTO.setMethod("PATCH");
                             }
                         }
                     }
@@ -321,7 +328,7 @@ public class YApiParser {
             }
             if (customPath == null && psiAnnotationMethodSemple != null) {
                 path.append(this.buildPath(this.getPathByAnno(psiAnnotationMethodSemple)));
-                yapiApiDTO.setPath(buildPath(path));
+                yApiDTO.setPath(buildPath(path));
             }
         }
 
@@ -331,26 +338,26 @@ public class YApiParser {
         if (!Strings.isEmpty(classDesc)) {
             classDesc = classDesc.replace("<", "&lt;").replace(">", "&gt;");
         }
-        yapiApiDTO.setDesc(Objects.nonNull(yapiApiDTO.getDesc()) ? yapiApiDTO.getDesc()
+        yApiDTO.setDesc(Objects.nonNull(yApiDTO.getDesc()) ? yApiDTO.getDesc()
                 : " <pre><code>  " + classDesc + "</code> </pre>");
         // 生成响应参数
         if (!this.isResponseJson(selectedClass, psiMethodTarget)) {
-            yapiApiDTO.setRes_body_type("raw");
+            yApiDTO.setRes_body_type("raw");
         }
         PsiType returnType = psiMethodTarget.getReturnType();
-        if ("raw".equals(yapiApiDTO.getRes_body_type())) {
-            yapiApiDTO.setResponse(this.getRawResponseJson(returnType));
+        if ("raw".equals(yApiDTO.getRes_body_type())) {
+            yApiDTO.setResponse(this.getRawResponseJson(returnType));
         } else {
-            yapiApiDTO.setResponse(this.getSchemaResponse(returnType));
+            yApiDTO.setResponse(this.getSchemaResponse(returnType));
         }
-        getRequest(yapiApiDTO, psiMethodTarget);
-        if (Strings.isEmpty(yapiApiDTO.getTitle())) {
+        getRequest(yApiDTO, psiMethodTarget);
+        if (Strings.isEmpty(yApiDTO.getTitle())) {
             String title = DesUtil.getDescription(psiMethodTarget);
             if (Strings.isNotBlank(title)) {
-                yapiApiDTO.setTitle(title.replaceAll("\t", "").trim());
+                yApiDTO.setTitle(title.replaceAll("\t", "").trim());
             }
         }
-        return yapiApiDTO;
+        return yApiDTO;
     }
 
     private String getRawResponseJson(PsiType psiType) {
@@ -767,12 +774,8 @@ public class YApiParser {
     }
 
 
-    private String getPojoJson(PsiType psiType, boolean needSchema) {
-        return this.getSchema(psiType, needSchema).toPrettyJson();
-    }
-
     private String getPojoJson(PsiType psiType) {
-        return this.getPojoJson(psiType, true);
+        return this.getSchema(psiType, true).toPrettyJson();
     }
 
     private ItemJsonSchema getSchema(PsiType psiType, boolean needSchema) {
@@ -1057,7 +1060,7 @@ public class YApiParser {
                         Objects.requireNonNull(psiClass.getQualifiedName()))) {
                     continue;
                 }
-                String fieldName = field.getName();
+                String fieldName = this.handleFieldName(field.getName());
                 if (hasChildren) {
                     String gType = field.getType().getCanonicalText();
                     String[] gTypes = gType.split("<");
@@ -1101,4 +1104,12 @@ public class YApiParser {
         }
         return pathStr;
     }
+
+    private String handleFieldName(String fieldName) {
+        PropertyNamingStrategy s =
+                this.m_strategy == null ? (this.c_strategy == null ? this.strategy
+                        : this.c_strategy) : this.m_strategy;
+        return PropertyNamingUtils.convert(fieldName, s);
+    }
+
 }

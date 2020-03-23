@@ -14,10 +14,6 @@ public interface YApiConstants {
     String menu = "未分类";
 
     /**
-     * yapi 地址
-     */
-    String yapiAddress = "http://47.96.254.39:3000";
-    /**
      * 新增或者更新接口
      */
     String yapiSave = "/api/interface/save";

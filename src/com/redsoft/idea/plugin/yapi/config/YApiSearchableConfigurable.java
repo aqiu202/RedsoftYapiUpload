@@ -54,6 +54,7 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
         this.yApiProperty = new YApiProperty(yApiConfigurationForm.getUrlField().getText(),
                 projectId,
                 yApiConfigurationForm.getTokenField().getText(),
+                yApiConfigurationForm.getNamingStrategyComboBox().getSelectedIndex(),
                 yApiConfigurationForm.getEnableBasicScopeCheckBox().isSelected());
         return !this.yApiProperty
                 .equals(YApiPropertyConvertHolder.getConvert().deserialize(persistent.getState()));
@@ -77,6 +78,8 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
             yApiConfigurationForm.getUrlField().setText(url);
         }
         yApiConfigurationForm.getProjectIdField().setText(String.valueOf(property.getProjectId()));
+        int strategy = property.getStrategy();
+        yApiConfigurationForm.getNamingStrategyComboBox().setSelectedIndex(strategy);
         String token = property.getToken();
         if (Strings.isNotBlank(token)) {
             yApiConfigurationForm.getTokenField().setText(token);

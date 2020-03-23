@@ -1,16 +1,14 @@
 package com.redsoft.idea.plugin.yapi.action;
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapi.config.YApiPersistentState;
+import com.redsoft.idea.plugin.yapi.constant.NotificationConstants;
+import com.redsoft.idea.plugin.yapi.constant.PropertyNamingStrategy;
 import com.redsoft.idea.plugin.yapi.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapi.model.YApiDTO;
 import com.redsoft.idea.plugin.yapi.model.YApiResponse;
@@ -25,12 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class YApiUploadAction extends AnAction {
 
-    private static NotificationGroup notificationGroup;
-
-    static {
-        notificationGroup = new NotificationGroup("Java2Json.NotificationGroup",
-                NotificationDisplayType.BALLOON, true);
-    }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -48,13 +40,14 @@ public class YApiUploadAction extends AnAction {
         boolean enableBasicScope = property.isEnableBasicScope();
         // 配置校验
         if (Strings.isEmpty(projectToken) || Strings.isEmpty(yapiUrl) || projectId <= 0) {
-            Notification error = notificationGroup
-                    .createNotification("请检查配置参数是否正常", NotificationType.ERROR);
-            Notifications.Bus.notify(error, project);
+            NotificationConstants.NOTIFICATION_GROUP
+                    .createNotification("请检查配置参数是否正常", NotificationType.ERROR).notify(project);
             return;
         }
         //获得api 需上传的接口列表 参数对象
-        List<YApiDTO> yapiApiDTOS = new YApiParser().parse(e, enableBasicScope);
+        List<YApiDTO> yapiApiDTOS = new YApiParser()
+                .parse(e, PropertyNamingStrategy.of(String.valueOf(property.getStrategy())),
+                        enableBasicScope);
         if (yapiApiDTOS != null) {
             for (YApiDTO yapiApiDTO : yapiApiDTOS) {
                 YApiSaveParam yapiSaveParam = new YApiSaveParam(projectToken, yapiApiDTO.getTitle(),
@@ -81,28 +74,28 @@ public class YApiUploadAction extends AnAction {
                     YApiResponse yapiResponse = new YApiUpload()
                             .uploadSave(yapiSaveParam, project.getBasePath());
                     if (yapiResponse.getErrcode() != 0) {
-                        Notification error = notificationGroup
+                        NotificationConstants.NOTIFICATION_GROUP
                                 .createNotification("抱歉，api上传失败:" + yapiResponse.getErrmsg(),
-                                        NotificationType.ERROR);
-                        Notifications.Bus.notify(error, project);
+                                        NotificationType.ERROR).notify(project);
                     } else {
                         String host = yapiUrl.endsWith("/") ? yapiUrl : (yapiUrl + "/");
                         String url = host + "project/" + projectId + "/interface/api/cat_"
                                 + YApiUpload.catMap
                                 .get(String.valueOf(projectId))
                                 .get(yapiSaveParam.getMenu());
-                        Notification error = notificationGroup
-                                .createNotification("接口上传成功:  " + url,
-                                        NotificationType.INFORMATION);
-                        Notifications.Bus.notify(error, project);
+                        NotificationConstants.NOTIFICATION_GROUP
+                                .createNotification("Redsoft YApi Upload", "",
+                                        "<p>接口上传成功:  <a href=\"" + url + "\">" + url + "</a></p>",
+                                        NotificationType.INFORMATION).notify(project);
                     }
                 } catch (Exception e1) {
-                    Notification error = notificationGroup
-                            .createNotification("抱歉，api上传失败:" + e1, NotificationType.ERROR);
-                    Notifications.Bus.notify(error, project);
+                    NotificationConstants.NOTIFICATION_GROUP
+                            .createNotification("抱歉，api上传失败:" + e1, NotificationType.ERROR)
+                            .notify(project);
                 }
             }
             YApiUpload.catMap.clear();
         }
     }
+
 }

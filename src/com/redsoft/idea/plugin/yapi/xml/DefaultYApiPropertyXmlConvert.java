@@ -9,6 +9,7 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert {
     private static final String KEY_URL = "url";
     private static final String KEY_PROJECT_ID = "project-id";
     private static final String KEY_TOKEN = "token";
+    private static final String KEY_STRATEGY = "property-naming-strategy";
     private static final String KEY_ENABLE_BASIC_SCOPE = "enable-basic-scope";
 
     @Override
@@ -16,6 +17,7 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert {
         String url = property.getUrl();
         int projectId = property.getProjectId();
         String token = property.getToken();
+        int strategy = property.getStrategy();
         boolean enableBasicScope = property.isEnableBasicScope();
         Element element = new Element("redsoft");
         if (Strings.isNotBlank(url)) {
@@ -25,6 +27,7 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert {
         if (Strings.isNotBlank(token)) {
             element.setAttribute(KEY_TOKEN, token);
         }
+        element.setAttribute(KEY_STRATEGY, Integer.toString(strategy));
         element.setAttribute(KEY_ENABLE_BASIC_SCOPE, Boolean.toString(enableBasicScope));
         return element;
     }
@@ -46,6 +49,12 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert {
         if (Strings.isNotBlank(token)) {
             property.setToken(token);
         }
+        String s = element.getAttributeValue(KEY_STRATEGY);
+        int strategy = 0;
+        if (Strings.isNotBlank(s)) {
+            strategy = Integer.parseInt(s);
+        }
+        property.setStrategy(strategy);
         String e = element.getAttributeValue(KEY_ENABLE_BASIC_SCOPE);
         boolean enableBasicScope = Boolean.parseBoolean(e);
         property.setEnableBasicScope(enableBasicScope);

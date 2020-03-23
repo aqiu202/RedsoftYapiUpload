@@ -57,7 +57,7 @@ public class YApiDTO implements Serializable {
     /**
      * 描述
      */
-    private String desc = "<h3>请补充描述</h3>";
+    private String desc = "";
     /**
      * 菜单
      */

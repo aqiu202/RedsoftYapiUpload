@@ -1,10 +1,12 @@
 package com.redsoft.idea.plugin.yapi.ui;
 
+import com.intellij.openapi.ui.ComboBox;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -16,6 +18,7 @@ public class YApiConfigurationForm {
     private JCheckBox enableBasicScopeCheckBox;
     private JPanel panel;
     private JFormattedTextField projectIdField;
+    private JComboBox<String> namingStrategyComboBox;
 
     public JPanel getPanel() {
         return panel;
@@ -31,6 +34,10 @@ public class YApiConfigurationForm {
 
     public JTextField getTokenField() {
         return tokenField;
+    }
+
+    public JComboBox<String> getNamingStrategyComboBox() {
+        return namingStrategyComboBox;
     }
 
     public JCheckBox getEnableBasicScopeCheckBox() {
@@ -56,5 +63,7 @@ public class YApiConfigurationForm {
                 }
             }
         });
+        this.namingStrategyComboBox = new ComboBox<>(
+                new String[]{"None", "KebabCase", "SnakeCase", "LowerCase", "UpperCamelCase"});
     }
 }

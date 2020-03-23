@@ -116,7 +116,11 @@ public class DesUtil {
      * @date 2019/5/18
      */
     public static String getMenu(String text) {
-        return getAnno(text, "@menu");
+        String menu = getAnno(text, "@menu");
+        if (Strings.isBlank(menu)) {
+            menu = getAnno(text, "@Menu");
+        }
+        return menu;
     }
 
     /**
@@ -124,7 +128,11 @@ public class DesUtil {
      * @date 2019/5/18
      */
     public static String getPrefix(String text) {
-        return getAnno(text, "@prefix");
+        String prefix = getAnno(text, "@prefix");
+        if (Strings.isBlank(prefix)) {
+            prefix = getAnno(text, "@Prefix");
+        }
+        return prefix;
     }
 
     /**
@@ -132,7 +140,11 @@ public class DesUtil {
      * @date 2019/5/18
      */
     public static String getPath(String text) {
-        return getAnno(text, "@path");
+        String path = getAnno(text, "@path");
+        if (Strings.isBlank(path)) {
+            path = getAnno(text, "@Path");
+        }
+        return path;
     }
 
     /**
@@ -140,7 +152,23 @@ public class DesUtil {
      * @date 2019/5/18
      */
     public static String getStatus(String text) {
-        return getAnno(text, "@status");
+        String status = getAnno(text, "@status");
+        if (Strings.isBlank(status)) {
+            status = getAnno(text, "@Status");
+        }
+        return status;
+    }
+
+    /**
+     * @description 获得接口字段命名策略
+     * @date 2020/3/22
+     */
+    public static String getStrategy(String text) {
+        String strategy = getAnno(text, "@strategy");
+        if (Strings.isBlank(strategy)) {
+            strategy = getAnno(text, "@Strategy");
+        }
+        return strategy;
     }
 
     /**
@@ -148,7 +176,11 @@ public class DesUtil {
      * @date 2019/5/18
      */
     public static String getMenuDesc(String text) {
-        return getAnno(text, "@menuDesc");
+        String menuDesc = getAnno(text, "@menuDesc");
+        if (Strings.isBlank(menuDesc)) {
+            menuDesc = getAnno(text, "@MenuDesc");
+        }
+        return menuDesc;
     }
 
     /**
@@ -163,7 +195,6 @@ public class DesUtil {
         if (menuList.length > 1) {
             return DesUtil.trimFirstAndLastChar(
                     menuList[1].split("\\*")[0].replace("*", "")
-//                            .replace("/", "")
                             .replace("\n", " "), ' ');
         } else {
             return null;
@@ -199,7 +230,8 @@ public class DesUtil {
                     .findClass(linkAddress, GlobalSearchScope.allScope(project));
             if (Objects.isNull(psiClassLink)) {
                 //可能没有获得全路径，尝试获得全路径
-                String[] importPaths = Objects.requireNonNull(field.getParent().getContext()).getText().split("import");
+                String[] importPaths = Objects.requireNonNull(field.getParent().getContext())
+                        .getText().split("import");
                 if (importPaths.length > 1) {
                     for (String importPath : importPaths) {
                         if (importPath.contains(linkAddress.split("\\.")[0])) {
