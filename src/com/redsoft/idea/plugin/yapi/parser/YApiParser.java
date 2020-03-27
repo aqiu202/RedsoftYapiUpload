@@ -22,6 +22,7 @@ import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jgoodies.common.base.Strings;
+import com.redsoft.idea.plugin.yapi.constant.HttpMethodConstants;
 import com.redsoft.idea.plugin.yapi.constant.NotificationConstants;
 import com.redsoft.idea.plugin.yapi.constant.PropertyNamingStrategy;
 import com.redsoft.idea.plugin.yapi.constant.ServletConstants;
@@ -299,28 +300,28 @@ public class YApiParser {
             PsiAnnotation psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                     .findAnnotation(psiMethodTarget, SpringMVCConstants.GetMapping);
             if (psiAnnotationMethodSemple != null) {
-                yApiDTO.setMethod("GET");
+                yApiDTO.setMethod(HttpMethodConstants.GET);
             } else {
                 psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                         .findAnnotation(psiMethodTarget, SpringMVCConstants.PostMapping);
                 if (psiAnnotationMethodSemple != null) {
-                    yApiDTO.setMethod("POST");
+                    yApiDTO.setMethod(HttpMethodConstants.POST);
                 } else {
                     psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                             .findAnnotation(psiMethodTarget, SpringMVCConstants.PutMapping);
                     if (psiAnnotationMethodSemple != null) {
-                        yApiDTO.setMethod("PUT");
+                        yApiDTO.setMethod(HttpMethodConstants.PUT);
                     } else {
                         psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                                 .findAnnotation(psiMethodTarget, SpringMVCConstants.DeleteMapping);
                         if (psiAnnotationMethodSemple != null) {
-                            yApiDTO.setMethod("DELETE");
+                            yApiDTO.setMethod(HttpMethodConstants.DELETE);
                         } else {
                             psiAnnotationMethodSemple = PsiAnnotationSearchUtil
                                     .findAnnotation(psiMethodTarget,
                                             SpringMVCConstants.PatchMapping);
                             if (psiAnnotationMethodSemple != null) {
-                                yApiDTO.setMethod("PATCH");
+                                yApiDTO.setMethod(HttpMethodConstants.PATCH);
                             }
                         }
                     }

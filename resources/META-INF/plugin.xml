@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>RedsoftYapiUpload</id>
     <name>RedsoftYapiUpload</name>
-    <version>1.3.6</version>
+    <version>1.3.7</version>
     <vendor email="aqiuqiuweb@163.com" url="http://www.qdredsoft.com">青岛红柿子软件技术有限公司</vendor>
 
     <description><![CDATA[
@@ -138,6 +138,8 @@
                 instance="com.redsoft.idea.plugin.yapi.config.YApiSearchableConfigurable"/>
         <projectService
                 serviceImplementation="com.redsoft.idea.plugin.yapi.config.YApiPersistentState"/>
+        <defaultLiveTemplatesProvider implementation="com.redsoft.idea.plugin.yapi.template.YApiTemplateProvider"/>
+        <liveTemplateContext implementation="com.redsoft.idea.plugin.yapi.template.YapiTemplateContextType"/>
     </extensions>
 
     <actions>

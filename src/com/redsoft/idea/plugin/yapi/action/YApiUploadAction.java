@@ -1,5 +1,6 @@
 package com.redsoft.idea.plugin.yapi.action;
 
+import com.intellij.notification.NotificationListener.UrlOpeningListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -86,7 +87,9 @@ public class YApiUploadAction extends AnAction {
                         NotificationConstants.NOTIFICATION_GROUP
                                 .createNotification("Redsoft YApi Upload", "",
                                         "<p>接口上传成功:  <a href=\"" + url + "\">" + url + "</a></p>",
-                                        NotificationType.INFORMATION).notify(project);
+                                        NotificationType.INFORMATION,
+                                        new UrlOpeningListener(true))
+                                .notify(project);
                     }
                 } catch (Exception e1) {
                     NotificationConstants.NOTIFICATION_GROUP
