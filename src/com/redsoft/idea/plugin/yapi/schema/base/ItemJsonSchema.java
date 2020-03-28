@@ -12,6 +12,7 @@ public class ItemJsonSchema {
     @SerializedName("default")
     private String _default;
     private String description;
+    private String mock;
 
     public ItemJsonSchema(SchemaType type) {
         this.type = type;
@@ -41,6 +42,14 @@ public class ItemJsonSchema {
     public ItemJsonSchema setDescription(String description) {
         this.description = description;
         return this;
+    }
+
+    public String getMock() {
+        return mock;
+    }
+
+    public void setMock(String mock) {
+        this.mock = mock;
     }
 
     public String get$schema() {

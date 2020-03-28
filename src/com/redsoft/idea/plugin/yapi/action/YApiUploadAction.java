@@ -46,27 +46,27 @@ public class YApiUploadAction extends AnAction {
             return;
         }
         //获得api 需上传的接口列表 参数对象
-        List<YApiDTO> yapiApiDTOS = new YApiParser()
+        List<YApiDTO> yApiDTOS = new YApiParser()
                 .parse(e, PropertyNamingStrategy.of(String.valueOf(property.getStrategy())),
                         enableBasicScope);
-        if (yapiApiDTOS != null) {
-            for (YApiDTO yapiApiDTO : yapiApiDTOS) {
-                YApiSaveParam yapiSaveParam = new YApiSaveParam(projectToken, yapiApiDTO.getTitle(),
-                        yapiApiDTO.getPath(), yapiApiDTO.getParams(), yapiApiDTO.getRequestBody(),
-                        yapiApiDTO.getResponse(), projectId, yapiUrl, true,
-                        yapiApiDTO.getMethod(), yapiApiDTO.getDesc(), yapiApiDTO.getHeader());
-                yapiSaveParam.setReq_body_form(yapiApiDTO.getReq_body_form());
-                yapiSaveParam.setReq_body_type(yapiApiDTO.getReq_body_type());
-                yapiSaveParam.setReq_params(yapiApiDTO.getReq_params());
-                yapiSaveParam.setRes_body(yapiApiDTO.getResponse());
-                yapiSaveParam.setStatus(yapiApiDTO.getStatus());
-                yapiSaveParam.setRes_body_type(yapiApiDTO.getRes_body_type());
-                String menuDesc = yapiApiDTO.getMenuDesc();
+        if (yApiDTOS != null) {
+            for (YApiDTO yApiDTO : yApiDTOS) {
+                YApiSaveParam yapiSaveParam = new YApiSaveParam(projectToken, yApiDTO.getTitle(),
+                        yApiDTO.getPath(), yApiDTO.getParams(), yApiDTO.getRequestBody(),
+                        yApiDTO.getResponse(), projectId, yapiUrl, true,
+                        yApiDTO.getMethod(), yApiDTO.getDesc(), yApiDTO.getHeader());
+                yapiSaveParam.setReq_body_form(yApiDTO.getReq_body_form());
+                yapiSaveParam.setReq_body_type(yApiDTO.getReq_body_type());
+                yapiSaveParam.setReq_params(yApiDTO.getReq_params());
+                yapiSaveParam.setRes_body(yApiDTO.getResponse());
+                yapiSaveParam.setStatus(yApiDTO.getStatus());
+                yapiSaveParam.setRes_body_type(yApiDTO.getRes_body_type());
+                String menuDesc = yApiDTO.getMenuDesc();
                 if (Objects.nonNull(menuDesc)) {
-                    yapiSaveParam.setMenuDesc(yapiApiDTO.getMenuDesc());
+                    yapiSaveParam.setMenuDesc(yApiDTO.getMenuDesc());
                 }
-                if (!Strings.isEmpty(yapiApiDTO.getMenu())) {
-                    yapiSaveParam.setMenu(yapiApiDTO.getMenu());
+                if (!Strings.isEmpty(yApiDTO.getMenu())) {
+                    yapiSaveParam.setMenu(yApiDTO.getMenu());
                 } else {
                     yapiSaveParam.setMenu(YApiConstants.menu);
                 }

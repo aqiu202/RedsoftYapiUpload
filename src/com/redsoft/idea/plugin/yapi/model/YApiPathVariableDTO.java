@@ -47,15 +47,15 @@ public class YApiPathVariableDTO {
         this.example = example;
     }
 
-    public void full(ValueWraper valueWraper) {
-        if (Objects.nonNull(valueWraper.getName())) {
-            this.setName(valueWraper.getName());
+    public void full(ValueWrapper valueWrapper) {
+        if (Objects.nonNull(valueWrapper.getName())) {
+            this.setName(valueWrapper.getName());
         }
-        if (Objects.nonNull(valueWraper.getDesc())) {
-            this.setDesc(valueWraper.getDesc());
+        if (Objects.nonNull(valueWrapper.getDesc())) {
+            this.setDesc(valueWrapper.getDesc());
         }
-        if (Objects.nonNull(valueWraper.getExample())) {
-            this.setExample(valueWraper.getExample());
+        if (Objects.nonNull(valueWrapper.getExample())) {
+            this.setExample(valueWrapper.getExample());
         }
     }
 

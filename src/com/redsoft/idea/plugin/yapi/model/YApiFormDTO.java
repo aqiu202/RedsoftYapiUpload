@@ -9,7 +9,7 @@ import java.util.Objects;
  * @date 2019/2/11 5:05 PM
  */
 @SuppressWarnings("unused")
-public class YApiFormDTO extends ValueWraper implements Serializable {
+public class YApiFormDTO extends ValueWrapper implements Serializable {
 
   private String _id;
 

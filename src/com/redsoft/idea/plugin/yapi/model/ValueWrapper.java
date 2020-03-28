@@ -2,7 +2,7 @@ package com.redsoft.idea.plugin.yapi.model;
 
 import java.util.Objects;
 
-public class ValueWraper {
+public class ValueWrapper {
 
     /**
      * 是否必填
@@ -54,27 +54,27 @@ public class ValueWraper {
         this.example = example;
     }
 
-    public void full(ValueWraper valueWraper) {
-        if (Objects.nonNull(valueWraper.getName())) {
-            this.setName(valueWraper.getName());
+    public void full(ValueWrapper valueWrapper) {
+        if (Objects.nonNull(valueWrapper.getName())) {
+            this.setName(valueWrapper.getName());
         }
-        if (Objects.nonNull(valueWraper.getDesc())) {
-            this.setDesc(valueWraper.getDesc());
+        if (Objects.nonNull(valueWrapper.getDesc())) {
+            this.setDesc(valueWrapper.getDesc());
         }
-        if (Objects.nonNull(valueWraper.getRequired())) {
-            this.setRequired(valueWraper.getRequired());
+        if (Objects.nonNull(valueWrapper.getRequired())) {
+            this.setRequired(valueWrapper.getRequired());
         }
-        if (Objects.nonNull(valueWraper.getExample())) {
-            this.setExample(valueWraper.getExample());
+        if (Objects.nonNull(valueWrapper.getExample())) {
+            this.setExample(valueWrapper.getExample());
         }
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ValueWraper)) {
+        if (!(o instanceof ValueWrapper)) {
             return false;
         }
-        ValueWraper target = (ValueWraper) o;
+        ValueWrapper target = (ValueWrapper) o;
         return this.name.equals(target.getName());
     }
 

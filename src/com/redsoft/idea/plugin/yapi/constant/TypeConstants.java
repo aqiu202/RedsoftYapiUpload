@@ -1,5 +1,6 @@
 package com.redsoft.idea.plugin.yapi.constant;
 
+import com.google.gson.JsonObject;
 import com.redsoft.idea.plugin.yapi.model.LongRange;
 import com.redsoft.idea.plugin.yapi.schema.base.SchemaType;
 import java.sql.Timestamp;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -32,10 +34,6 @@ public class TypeConstants {
     public static final Map<String, SchemaType> mapTypeMappings = new HashMap<>();
 
     public static final Map<String, Object> noramlTypesPackages = new HashMap<>();
-
-//    public static final Map<String, Object> collectTypes = new HashMap<>();
-//
-//    public static final Map<String, Object> collectTypesPackages = new HashMap<>();
 
     public static final Map<String, LongRange> baseRangeMappings = new HashMap<>();
     /**
@@ -71,9 +69,6 @@ public class TypeConstants {
         normalTypes.put("Timestamp", new Timestamp(System.currentTimeMillis()));
         normalTypes.put("MultipartFile", "file");
         normalTypes.put("MultipartFile[]", "file[]");
-//        collectTypes.put("HashMap", "HashMap");
-//        collectTypes.put("Map", "Map");
-//        collectTypes.put("LinkedHashMap", "LinkedHashMap");
 
     }
 
@@ -150,9 +145,6 @@ public class TypeConstants {
         mapTypeMappings.put("java.util.LinkedHashMap", SchemaType.object);
         mapTypeMappings.put("java.util.TreeMap", SchemaType.object);
 
-//        collectTypesPackages.put("java.util.LinkedHashMap", "LinkedHashMap");
-//        collectTypesPackages.put("java.util.HashMap", "HashMap");
-//        collectTypesPackages.put("java.util.Map", "Map");
     }
 
     static {
@@ -180,5 +172,64 @@ public class TypeConstants {
 
     public static boolean hasBaseRange(String typePkName) {
         return baseRangeMappings.containsKey(typePkName);
+    }
+
+    public static String formatMockType(String type) {
+        return formatMockType(type, null);
+    }
+
+    /**
+     * mock type
+     * @param type type
+     */
+    public static String formatMockType(String type, String exampleMock) {
+        //支持传入自定义mock
+        if (StringUtils.isNotBlank(exampleMock)) {
+            return exampleMock;
+        }
+        switch (type) {
+            case "int":
+            case "java.lang.Long":
+            case "java.lang.Integer":
+            case "java.lang.Short":
+            case "Short":
+            case "Integer":
+            case "Long":
+            case "short":
+            case "long":
+                return "@integer";
+            case "boolean":
+            case "java.lang.Boolean":
+            case "Boolean":
+                return "@boolean";
+            case "byte":
+            case "java.lang.Byte":
+            case "Byte":
+                return "@byte";
+            case "float":
+            case "java.math.BigDecimal":
+            case "java.lang.Double":
+            case "java.lang.Float":
+            case "BigDecimal":
+            case "Double":
+            case "Float":
+            case "double":
+                return "@float";
+            case "char":
+                return "@char";
+            case "Date":
+            case "java.time.LocalDateTime":
+            case "java.time.LocalTime":
+            case "java.time.LocalDate":
+            case "java.util.Date":
+            case "java.sql.Timestamp":
+            case "Timestamp":
+            case "LocalDateTime":
+            case "LocalTime":
+            case "LocalDate":
+                return "@timestamp";
+            default:
+                return "@string";
+        }
     }
 }
