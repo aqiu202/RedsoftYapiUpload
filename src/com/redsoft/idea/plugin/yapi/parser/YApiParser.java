@@ -49,6 +49,8 @@ import com.redsoft.idea.plugin.yapi.schema.SchemaHelper;
 import com.redsoft.idea.plugin.yapi.schema.StringSchema;
 import com.redsoft.idea.plugin.yapi.schema.base.ItemJsonSchema;
 import com.redsoft.idea.plugin.yapi.schema.base.SchemaType;
+import com.redsoft.idea.plugin.yapi.support.YApiSupports;
+import com.redsoft.idea.plugin.yapi.support.swagger.YApiSwaggerSupport;
 import com.redsoft.idea.plugin.yapi.util.DesUtil;
 import com.redsoft.idea.plugin.yapi.util.PropertyNamingUtils;
 import com.redsoft.idea.plugin.yapi.util.PsiAnnotationSearchUtil;
@@ -74,6 +76,8 @@ public class YApiParser {
     private PropertyNamingStrategy c_strategy = null;
     private PropertyNamingStrategy m_strategy = null;
     private boolean enableBasicScope;
+
+    private YApiSupports supports = new YApiSupports(YApiSwaggerSupport.INSTANCE);
 
     public List<YApiDTO> parse(AnActionEvent e, PropertyNamingStrategy strategy,
             boolean enableBasicScope) {
@@ -569,7 +573,6 @@ public class YApiParser {
                             yApiDTO.setReq_body_type("form");
                             Set<YApiFormDTO> formParams = getRequestForm(psiParameter,
                                     psiMethodTarget);
-                            //TODO 添加统一参数处理
                             if (yApiDTO.getReq_body_form() != null) {
                                 yApiDTO.getReq_body_form().addAll(formParams);
                             } else {
@@ -695,6 +698,7 @@ public class YApiParser {
                 ValueWrapper valueWrapper = handleParamAnnotation(psiAnnotation, psiParameter);
                 form.full(valueWrapper);
             }
+            this.supports.handleParam(psiParameter, form);
             requestForm.add(form);
         } else {//非基本类型
             PsiClass psiClass = JavaPsiFacade.getInstance(this.project)
@@ -720,6 +724,7 @@ public class YApiParser {
                             TypeConstants.normalTypes.get(field.getType().getPresentableText())
                                     .toString());
                 }
+                this.supports.handleField(field, form);
                 requestForm.add(form);
             }
         }
@@ -814,10 +819,10 @@ public class YApiParser {
         if (TypeConstants.isBaseType(typePkName)) {
             SchemaType schemaType = TypeConstants.normalTypeMappings.get(typePkName);
             itemJsonSchema = getBaseFieldSchema(schemaType, psiField);
+            itemJsonSchema.setMock(TypeConstants.formatMockType(type.getPresentableText()));
         } else {
             itemJsonSchema = getOtherFieldSchema(psiField);
         }
-        //TODO 统一处理字段结果
         return itemJsonSchema;
     }
 
@@ -999,7 +1004,7 @@ public class YApiParser {
      * @return {@link ItemJsonSchema}
      * @author aqiu
      * @date 2019-07-03 09:43
-     * @description 通过类型获取Schema信息
+     * @description 通过类型获取Schema信息（非基本类型）
      **/
     private ItemJsonSchema getOtherTypeSchema(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();

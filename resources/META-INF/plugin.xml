@@ -134,10 +134,11 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+        <applicationService serviceImplementation="com.redsoft.idea.plugin.yapi.config.YApiPersistentState"/>
         <projectConfigurable
                 instance="com.redsoft.idea.plugin.yapi.config.YApiSearchableConfigurable"/>
         <projectService
-                serviceImplementation="com.redsoft.idea.plugin.yapi.config.YApiPersistentState"/>
+                serviceImplementation="com.redsoft.idea.plugin.yapi.config.YApiProjectPersistentState"/>
         <defaultLiveTemplatesProvider implementation="com.redsoft.idea.plugin.yapi.template.YApiTemplateProvider"/>
         <liveTemplateContext implementation="com.redsoft.idea.plugin.yapi.template.YapiTemplateContextType"/>
     </extensions>

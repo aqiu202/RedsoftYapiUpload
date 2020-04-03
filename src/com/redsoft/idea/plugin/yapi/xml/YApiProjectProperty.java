@@ -2,7 +2,7 @@ package com.redsoft.idea.plugin.yapi.xml;
 
 import java.util.Objects;
 
-public class YApiProperty {
+public class YApiProjectProperty {
 
     private final static String DEFAULT_URL = "http://127.0.0.1:3000/";
     private final static int DEFAULT_PROJECT_ID = 1;
@@ -15,11 +15,11 @@ public class YApiProperty {
     private int strategy = DEFAULT_STRATEGY;
     private boolean enableBasicScope;
 
-    public YApiProperty() {
+    public YApiProjectProperty() {
 
     }
 
-    public YApiProperty(String url, int projectId, String token, int strategy,
+    public YApiProjectProperty(String url, int projectId, String token, int strategy,
             boolean enableBasicScope) {
         this.url = url;
         this.projectId = projectId;
@@ -82,7 +82,7 @@ public class YApiProperty {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        YApiProperty that = (YApiProperty) obj;
+        YApiProjectProperty that = (YApiProjectProperty) obj;
         return Objects.equals(url, that.url) &&
                 Objects.equals(projectId, that.projectId) &&
                 Objects.equals(token, that.token) &&

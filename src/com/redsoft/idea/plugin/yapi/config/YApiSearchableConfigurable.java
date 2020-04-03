@@ -4,7 +4,7 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapi.ui.YApiConfigurationForm;
-import com.redsoft.idea.plugin.yapi.xml.YApiProperty;
+import com.redsoft.idea.plugin.yapi.xml.YApiProjectProperty;
 import com.redsoft.idea.plugin.yapi.xml.YApiPropertyConvertHolder;
 import javax.swing.JComponent;
 import org.jetbrains.annotations.Nls;
@@ -15,12 +15,15 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
 
     private YApiConfigurationForm yApiConfigurationForm;
 
-    private YApiProperty yApiProperty;
+    private YApiProjectProperty yApiProjectProperty;
 
-    private final YApiPersistentState persistent;
+    private final YApiProjectPersistentState persistent;
+
+    private final Project project;
 
     YApiSearchableConfigurable(Project project) {
-        this.persistent = YApiPersistentState.getInstance(project);
+        this.project = project;
+        this.persistent = YApiProjectPersistentState.getInstance(project);
     }
 
     @NotNull
@@ -51,18 +54,20 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
         if (Strings.isNotBlank(idStr)) {
             projectId = Integer.parseInt(idStr);
         }
-        this.yApiProperty = new YApiProperty(yApiConfigurationForm.getUrlField().getText(),
+        this.yApiProjectProperty = new YApiProjectProperty(
+                yApiConfigurationForm.getUrlField().getText(),
                 projectId,
                 yApiConfigurationForm.getTokenField().getText(),
                 yApiConfigurationForm.getNamingStrategyComboBox().getSelectedIndex(),
                 yApiConfigurationForm.getEnableBasicScopeCheckBox().isSelected());
-        return !this.yApiProperty
-                .equals(YApiPropertyConvertHolder.getConvert().deserialize(persistent.getState()));
+        return !this.yApiProjectProperty
+                .equals(ProjectConfigReader.read(this.project));
     }
 
     @Override
     public void apply() {
-        persistent.loadState(YApiPropertyConvertHolder.getConvert().serialize(this.yApiProperty));
+        persistent.loadState(
+                YApiPropertyConvertHolder.getConvert().serialize(this.yApiProjectProperty));
     }
 
     @Override
@@ -71,8 +76,10 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
     }
 
     private void loadValue() {
-        YApiProperty property = YApiPropertyConvertHolder.getConvert()
-                .deserialize(persistent.getState());
+        YApiProjectProperty property = ProjectConfigReader.read(this.project);
+        if (property == null) {
+            property = new YApiProjectProperty();
+        }
         String url = property.getUrl();
         if (Strings.isNotBlank(url)) {
             yApiConfigurationForm.getUrlField().setText(url);
@@ -84,6 +91,7 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
         if (Strings.isNotBlank(token)) {
             yApiConfigurationForm.getTokenField().setText(token);
         }
+
     }
 
 

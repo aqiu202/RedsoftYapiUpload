@@ -4,10 +4,9 @@ import com.intellij.notification.NotificationListener.UrlOpeningListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.jgoodies.common.base.Strings;
-import com.redsoft.idea.plugin.yapi.config.YApiPersistentState;
+import com.redsoft.idea.plugin.yapi.config.ProjectConfigReader;
 import com.redsoft.idea.plugin.yapi.constant.NotificationConstants;
 import com.redsoft.idea.plugin.yapi.constant.PropertyNamingStrategy;
 import com.redsoft.idea.plugin.yapi.constant.YApiConstants;
@@ -16,8 +15,7 @@ import com.redsoft.idea.plugin.yapi.model.YApiResponse;
 import com.redsoft.idea.plugin.yapi.model.YApiSaveParam;
 import com.redsoft.idea.plugin.yapi.parser.YApiParser;
 import com.redsoft.idea.plugin.yapi.upload.YApiUpload;
-import com.redsoft.idea.plugin.yapi.xml.YApiProperty;
-import com.redsoft.idea.plugin.yapi.xml.YApiPropertyConvertHolder;
+import com.redsoft.idea.plugin.yapi.xml.YApiProjectProperty;
 import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +26,10 @@ public class YApiUploadAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getProject();
-        YApiProperty property = YApiPropertyConvertHolder.getConvert().deserialize(
-                ServiceManager
-                        .getService(Objects.requireNonNull(project), YApiPersistentState.class)
-                        .getState());
+        YApiProjectProperty property = ProjectConfigReader.read(project);
+        if (property == null) {
+            return;
+        }
         // token
         String projectToken = property.getToken();
         // 项目ID

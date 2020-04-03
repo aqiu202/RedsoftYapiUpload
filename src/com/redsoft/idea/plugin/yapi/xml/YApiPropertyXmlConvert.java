@@ -1,10 +1,11 @@
 package com.redsoft.idea.plugin.yapi.xml;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
 
 public interface YApiPropertyXmlConvert {
 
-    Element serialize(YApiProperty property);
+    Element serialize(YApiProjectProperty property);
 
-    YApiProperty deserialize(Element element);
+    YApiProjectProperty deserialize(@NonNls Element element);
 }

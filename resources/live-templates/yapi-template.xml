@@ -1,5 +1,5 @@
 <templateSet group="YApi">
-    <template name="-yc" value="**&#x000D;
+    <template name="_yc" value="**&#x000D;
  * @author $user$&#x000D;
  * @date $date$ $time$&#x000D;
  * @description //TODO&#x000D;
@@ -12,7 +12,7 @@
             <option name="JAVA" value="true" />
         </context>
     </template>
-    <template name="-ym" value="**&#x000D;
+    <template name="_ym" value="**&#x000D;
  * @author $user$&#x000D;
  * @date $date$ $time$&#x000D;
  * @description //TODO$param$&#x000D;

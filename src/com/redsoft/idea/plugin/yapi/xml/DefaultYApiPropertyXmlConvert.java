@@ -13,7 +13,7 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert {
     private static final String KEY_ENABLE_BASIC_SCOPE = "enable-basic-scope";
 
     @Override
-    public Element serialize(@NotNull YApiProperty property) {
+    public Element serialize(@NotNull YApiProjectProperty property) {
         String url = property.getUrl();
         int projectId = property.getProjectId();
         String token = property.getToken();
@@ -33,8 +33,8 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert {
     }
 
     @Override
-    public YApiProperty deserialize(@NotNull Element element) {
-        YApiProperty property = new YApiProperty();
+    public YApiProjectProperty deserialize(@NotNull Element element) {
+        YApiProjectProperty property = new YApiProjectProperty();
         String url = element.getAttributeValue(KEY_URL);
         if (Strings.isNotBlank(url)) {
             property.setUrl(url);
