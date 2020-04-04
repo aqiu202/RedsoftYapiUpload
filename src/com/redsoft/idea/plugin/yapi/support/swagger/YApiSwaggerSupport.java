@@ -14,7 +14,8 @@ import org.jetbrains.annotations.NonNls;
 public class YApiSwaggerSupport implements YApiSupport {
 
 
-    private YApiSwaggerSupport(){}
+    private YApiSwaggerSupport() {
+    }
 
     public static final YApiSwaggerSupport INSTANCE = new YApiSwaggerSupport();
 
@@ -34,16 +35,18 @@ public class YApiSwaggerSupport implements YApiSupport {
 
     @Override
     public void handleParam(PsiParameter psiParameter, @NonNls ValueWrapper wrapper) {
-        if(Strings.isBlank(wrapper.getDesc())) {
-            String desc = PsiAnnotationSearchUtil.getPsiParameterAnnotationValue(psiParameter, SwaggerConstants.API_PARAM);
+        if (Strings.isBlank(wrapper.getDesc())) {
+            String desc = PsiAnnotationSearchUtil
+                    .getPsiParameterAnnotationValue(psiParameter, SwaggerConstants.API_PARAM);
             wrapper.setDesc(desc);
         }
     }
 
     @Override
     public void handleField(PsiField psiField, @NonNls ValueWrapper wrapper) {
-        if(Strings.isBlank(wrapper.getDesc())) {
-            String desc = PsiAnnotationSearchUtil.getPsiParameterAnnotationValue(psiField, SwaggerConstants.API_MODEL_PROPERTY);
+        if (Strings.isBlank(wrapper.getDesc())) {
+            String desc = PsiAnnotationSearchUtil
+                    .getPsiParameterAnnotationValue(psiField, SwaggerConstants.API_MODEL_PROPERTY);
             wrapper.setDesc(desc);
         }
     }

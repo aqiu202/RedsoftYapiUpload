@@ -5,6 +5,6 @@ import com.intellij.notification.NotificationGroup;
 
 public interface NotificationConstants {
 
-    NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("Redsoft YApi Upload",
+    NotificationGroup NOTIFICATION_GROUP = new NotificationGroup(YApiConstants.name,
             NotificationDisplayType.BALLOON, true);
 }

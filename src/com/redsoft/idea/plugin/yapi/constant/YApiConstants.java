@@ -8,6 +8,8 @@ package com.redsoft.idea.plugin.yapi.constant;
 @SuppressWarnings("unused")
 public interface YApiConstants {
 
+    String name = "Redsoft YApi Upload";
+
     /**
      * 目录
      */

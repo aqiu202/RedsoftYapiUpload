@@ -3,6 +3,7 @@ package com.redsoft.idea.plugin.yapi.config;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.jgoodies.common.base.Strings;
+import com.redsoft.idea.plugin.yapi.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapi.ui.YApiConfigurationForm;
 import com.redsoft.idea.plugin.yapi.xml.YApiProjectProperty;
 import com.redsoft.idea.plugin.yapi.xml.YApiPropertyConvertHolder;
@@ -35,7 +36,7 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
     @Nls
     @Override
     public String getDisplayName() {
-        return "Redsoft YApi Upload";
+        return YApiConstants.name;
     }
 
     @Nullable
@@ -77,9 +78,6 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
 
     private void loadValue() {
         YApiProjectProperty property = ProjectConfigReader.read(this.project);
-        if (property == null) {
-            property = new YApiProjectProperty();
-        }
         String url = property.getUrl();
         if (Strings.isNotBlank(url)) {
             yApiConfigurationForm.getUrlField().setText(url);

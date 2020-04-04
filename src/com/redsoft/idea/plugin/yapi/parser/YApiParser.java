@@ -90,7 +90,8 @@ public class YApiParser {
         this.project = e.getProject();
         if (Strings.isEmpty(selectedText)) {
             NotificationConstants.NOTIFICATION_GROUP
-                    .createNotification("请选中类或者方法", NotificationType.ERROR).notify(this.project);
+                    .createNotification(YApiConstants.name, "提示", "请选中类或者方法",
+                            NotificationType.ERROR).notify(this.project);
             return null;
         }
         PsiElement referenceAt = Objects.requireNonNull(psiFile)
@@ -101,7 +102,9 @@ public class YApiParser {
                 selectedClass.getDocComment() != null && DesUtil
                         .deprecated(selectedClass.getDocComment().getText()))) {
             NotificationConstants.NOTIFICATION_GROUP
-                    .createNotification("该类已过时", NotificationType.WARNING).notify(this.project);
+                    .createNotification(YApiConstants.name, "该类已过时",
+                            "该类(或注释中)含有@Deprecated注解，如需上传，请删除该注解", NotificationType.WARNING)
+                    .notify(this.project);
             return null;
         }
         String classMenu = null;
@@ -134,7 +137,8 @@ public class YApiParser {
                         yApiDTO = handleMethod(selectedClass, psiMethodTarget);
                     } catch (Exception ex) {
                         NotificationConstants.NOTIFICATION_GROUP
-                                .createNotification("解析接口信息失败：" + ex.getMessage(),
+                                .createNotification(YApiConstants.name, "接口信息解析失败",
+                                        "失败原因：" + ex.getMessage(),
                                         NotificationType.ERROR).notify(this.project);
                     } finally {
                         this.m_strategy = null;
@@ -170,7 +174,7 @@ public class YApiParser {
                             psiMethodTarget.getDocComment() != null && DesUtil
                                     .deprecated(psiMethodTarget.getDocComment().getText()))) {
                         NotificationConstants.NOTIFICATION_GROUP
-                                .createNotification(
+                                .createNotification(YApiConstants.name, "接口或类已过时",
                                         "该方法或者类(或注释中)含有@Deprecated注解，如需上传，请删除该注解:" + selectedText,
                                         NotificationType.WARNING).notify(this.project);
                         return null;
@@ -180,7 +184,8 @@ public class YApiParser {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     NotificationConstants.NOTIFICATION_GROUP
-                            .createNotification("解析接口信息失败：" + ex.getMessage(),
+                            .createNotification(YApiConstants.name, "接口信息解析失败",
+                                    "失败原因：" + ex.getMessage(),
                                     NotificationType.ERROR).notify(this.project);
                 }
                 if (Objects.isNull(Objects.requireNonNull(yApiDTO).getMenu())) {
@@ -189,7 +194,8 @@ public class YApiParser {
                 yApiDTOS.add(yApiDTO);
             } else {
                 NotificationConstants.NOTIFICATION_GROUP
-                        .createNotification("找不到方法:" + selectedText, NotificationType.ERROR)
+                        .createNotification(YApiConstants.name, "找不到方法", "方法名称:" + selectedText,
+                                NotificationType.ERROR)
                         .notify(this.project);
                 return null;
             }

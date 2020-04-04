@@ -55,25 +55,31 @@ public final class ValidUtil {
         return hasAnnotation(psiModifierListOwner, ValidConstants.NegativeOrZero);
     }
 
-    public static IntegerRange rangeSize(PsiModifierListOwner psiModifierListOwner, boolean enableBasicScope) {
+    public static IntegerRange rangeSize(PsiModifierListOwner psiModifierListOwner,
+            boolean enableBasicScope) {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.Size);
         if (Objects.nonNull(psiAnnotation)) {
             return new IntegerRange(
-                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("min")).getText()),
-                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("max")).getText()),
+                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("min"))
+                            .getText()),
+                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("max"))
+                            .getText()),
                     enableBasicScope);
         }
-        return new IntegerRange(null, null,enableBasicScope);
+        return new IntegerRange(null, null, enableBasicScope);
     }
 
-    public static IntegerRange rangeLength(PsiModifierListOwner psiModifierListOwner, boolean enableBasicScope) {
+    public static IntegerRange rangeLength(PsiModifierListOwner psiModifierListOwner,
+            boolean enableBasicScope) {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.Length);
         if (Objects.nonNull(psiAnnotation)) {
             return new IntegerRange(
-                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("min")).getText()),
-                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("max")).getText()),
+                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("min"))
+                            .getText()),
+                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("max"))
+                            .getText()),
                     enableBasicScope);
         }
         return new IntegerRange(null, null, enableBasicScope);
@@ -82,8 +88,9 @@ public final class ValidUtil {
     public static Long getMin(PsiModifierListOwner psiModifierListOwner) {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.Min);
-        if(Objects.nonNull(psiAnnotation)) {
-            return Long.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
+        if (Objects.nonNull(psiAnnotation)) {
+            return Long.valueOf(
+                    Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
         }
         return null;
     }
@@ -91,35 +98,39 @@ public final class ValidUtil {
     public static Long getMax(PsiModifierListOwner psiModifierListOwner) {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.Max);
-        if(Objects.nonNull(psiAnnotation)) {
-            return Long.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
+        if (Objects.nonNull(psiAnnotation)) {
+            return Long.valueOf(
+                    Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
         }
         return null;
     }
 
-    public static LongRange range(PsiModifierListOwner psiModifierListOwner, boolean enableBasicScope) {
+    public static LongRange range(PsiModifierListOwner psiModifierListOwner,
+            boolean enableBasicScope) {
         LongRange result = null;
         Long min;
         Long max;
-        if(Objects.nonNull(min = getMin(psiModifierListOwner))) {
+        if (Objects.nonNull(min = getMin(psiModifierListOwner))) {
             result = new LongRange();
             result.setMin(min);
         }
-        if(Objects.nonNull(max = getMax(psiModifierListOwner))) {
-            if(Objects.isNull(result)) {
+        if (Objects.nonNull(max = getMax(psiModifierListOwner))) {
+            if (Objects.isNull(result)) {
                 result = new LongRange();
             }
             result.setMax(max);
         }
-        if(Objects.isNull(result)){
+        if (Objects.isNull(result)) {
             PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                     .findAnnotation(psiModifierListOwner, ValidConstants.Range);
             if (Objects.nonNull(psiAnnotation)) {
                 return new LongRange(
                         Long.valueOf(
-                                Objects.requireNonNull(psiAnnotation.findAttributeValue("min")).getText()),
+                                Objects.requireNonNull(psiAnnotation.findAttributeValue("min"))
+                                        .getText()),
                         Long.valueOf(
-                                Objects.requireNonNull(psiAnnotation.findAttributeValue("max")).getText()),
+                                Objects.requireNonNull(psiAnnotation.findAttributeValue("max"))
+                                        .getText()),
                         enableBasicScope);
             }
         }
@@ -130,17 +141,17 @@ public final class ValidUtil {
         DecimalRange result = null;
         BigDecimal min;
         BigDecimal max;
-        if(Objects.nonNull(min = getDecimalMin(psiModifierListOwner))) {
+        if (Objects.nonNull(min = getDecimalMin(psiModifierListOwner))) {
             result = new DecimalRange();
             result.setMin(min);
         }
-        if(Objects.nonNull(max = getDecimalMax(psiModifierListOwner))) {
-            if(Objects.isNull(result)) {
+        if (Objects.nonNull(max = getDecimalMax(psiModifierListOwner))) {
+            if (Objects.isNull(result)) {
                 result = new DecimalRange();
             }
             result.setMax(max);
         }
-        if(Objects.isNull(result)) {
+        if (Objects.isNull(result)) {
             PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                     .findAnnotation(psiModifierListOwner, ValidConstants.Digits);
             if (Objects.nonNull(psiAnnotation)) {
@@ -166,7 +177,8 @@ public final class ValidUtil {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.DecimalMin);
         if (Objects.nonNull(psiAnnotation)) {
-            return new BigDecimal(Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
+            return new BigDecimal(
+                    Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
         }
         return null;
     }
@@ -175,7 +187,8 @@ public final class ValidUtil {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.DecimalMax);
         if (Objects.nonNull(psiAnnotation)) {
-            return new BigDecimal(Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
+            return new BigDecimal(
+                    Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
         }
         return null;
     }
@@ -184,8 +197,9 @@ public final class ValidUtil {
         PsiAnnotation psiAnnotation = PsiAnnotationSearchUtil
                 .findAnnotation(psiModifierListOwner, ValidConstants.Pattern);
         if (Objects.nonNull(psiAnnotation)) {
-            String pattern = Objects.requireNonNull(psiAnnotation.findAttributeValue("regexp")).getText();
-            if(Strings.isNotBlank(pattern)) {
+            String pattern = Objects.requireNonNull(psiAnnotation.findAttributeValue("regexp"))
+                    .getText();
+            if (Strings.isNotBlank(pattern)) {
                 return pattern.replace("\\\\", "\\").replace("\"", "");
             }
         }

@@ -7,6 +7,7 @@ public class DecimalRange implements Range {
     public DecimalRange() {
 
     }
+
     public DecimalRange(BigDecimal min, BigDecimal max) {
         this.min = min;
         this.max = max;

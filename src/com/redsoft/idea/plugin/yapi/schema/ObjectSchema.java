@@ -10,7 +10,7 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class ObjectSchema extends ItemJsonSchema {
 
-    public ObjectSchema(){
+    public ObjectSchema() {
         super(SchemaType.object);
     }
 
@@ -40,7 +40,7 @@ public class ObjectSchema extends ItemJsonSchema {
     }
 
     public void addRequired(String key) {
-        if(this.required == null) {
+        if (this.required == null) {
             this.required = new ArrayList<>();
         }
         this.required.add(key);

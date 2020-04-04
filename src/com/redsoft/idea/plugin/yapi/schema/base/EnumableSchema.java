@@ -34,7 +34,7 @@ public class EnumableSchema extends ItemJsonSchema implements Enumable {
     }
 
     public EnumableSchema addEnum(String _enum) {
-        if(this._enum == null) {
+        if (this._enum == null) {
             this._enum = new ArrayList<>();
         }
         this._enum.add(_enum);

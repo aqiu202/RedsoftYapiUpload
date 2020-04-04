@@ -8,17 +8,17 @@ package com.redsoft.idea.plugin.yapi.model;
 @SuppressWarnings("unused")
 public class YApiHeaderDTO extends ValueWrapper {
 
-  /**
-   * 值
-   */
-  private String value;
+    /**
+     * 值
+     */
+    private String value;
 
-  public String getValue() {
-    return value;
-  }
+    public String getValue() {
+        return value;
+    }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
+    public void setValue(String value) {
+        this.value = value;
+    }
 
 }

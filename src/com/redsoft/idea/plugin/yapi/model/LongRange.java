@@ -26,7 +26,7 @@ public class LongRange implements Range {
     }
 
     public void setMin(Long min, boolean enableBasicScope) {
-        if(min == null && enableBasicScope) {
+        if (min == null && enableBasicScope) {
             this.min = Long.MIN_VALUE;
         } else {
             this.min = min;
@@ -43,7 +43,7 @@ public class LongRange implements Range {
     }
 
     public void setMax(Long max, boolean enableBasicScope) {
-        if(max == null && enableBasicScope) {
+        if (max == null && enableBasicScope) {
             this.max = Long.MAX_VALUE;
         } else {
             this.max = max;

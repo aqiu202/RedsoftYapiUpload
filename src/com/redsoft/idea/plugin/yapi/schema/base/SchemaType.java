@@ -33,7 +33,7 @@ public enum SchemaType {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.name;
     }
 }

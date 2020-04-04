@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @SuppressWarnings("unused")
 public final class NumberSchema extends EnumableSchema {
 
-    public NumberSchema(){
+    public NumberSchema() {
         super(SchemaType.number);
     }
 

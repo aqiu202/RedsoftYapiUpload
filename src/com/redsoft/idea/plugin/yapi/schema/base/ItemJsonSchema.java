@@ -2,6 +2,7 @@ package com.redsoft.idea.plugin.yapi.schema.base;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
+import com.redsoft.idea.plugin.yapi.model.Mock;
 
 @SuppressWarnings("unused")
 public class ItemJsonSchema {
@@ -12,7 +13,7 @@ public class ItemJsonSchema {
     @SerializedName("default")
     private String _default;
     private String description;
-    private String mock;
+    private Mock mock;
 
     public ItemJsonSchema(SchemaType type) {
         this.type = type;
@@ -44,11 +45,11 @@ public class ItemJsonSchema {
         return this;
     }
 
-    public String getMock() {
+    public Mock getMock() {
         return mock;
     }
 
-    public void setMock(String mock) {
+    public void setMock(Mock mock) {
         this.mock = mock;
     }
 

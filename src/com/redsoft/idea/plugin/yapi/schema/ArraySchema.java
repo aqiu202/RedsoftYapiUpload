@@ -44,7 +44,7 @@ public class ArraySchema extends ItemJsonSchema {
     }
 
     public void setMinItems(Integer minItems, boolean enableBasicScope) {
-        if(minItems == null && enableBasicScope) {
+        if (minItems == null && enableBasicScope) {
             this.minItems = Integer.MIN_VALUE;
         } else {
             this.minItems = minItems;
@@ -61,7 +61,7 @@ public class ArraySchema extends ItemJsonSchema {
     }
 
     public void setMaxItems(Integer maxItems, boolean enableBasicScope) {
-        if(maxItems == null && enableBasicScope) {
+        if (maxItems == null && enableBasicScope) {
             this.maxItems = Integer.MAX_VALUE;
         } else {
             this.maxItems = maxItems;

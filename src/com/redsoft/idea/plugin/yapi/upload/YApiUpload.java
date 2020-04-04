@@ -38,7 +38,8 @@ public class YApiUpload {
      * @description 调用保存接口
      * @date 2019/5/15
      */
-    public YApiResponse uploadSave(YApiSaveParam yapiSaveParam, @SuppressWarnings("unused") String path)
+    public YApiResponse uploadSave(YApiSaveParam yapiSaveParam,
+            @SuppressWarnings("unused") String path)
             throws IOException {
         if (Strings.isEmpty(yapiSaveParam.getTitle())) {
             yapiSaveParam.setTitle(yapiSaveParam.getPath());

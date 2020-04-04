@@ -27,9 +27,6 @@ public class YApiUploadAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getProject();
         YApiProjectProperty property = ProjectConfigReader.read(project);
-        if (property == null) {
-            return;
-        }
         // token
         String projectToken = property.getToken();
         // 项目ID
@@ -40,7 +37,8 @@ public class YApiUploadAction extends AnAction {
         // 配置校验
         if (Strings.isEmpty(projectToken) || Strings.isEmpty(yapiUrl) || projectId <= 0) {
             NotificationConstants.NOTIFICATION_GROUP
-                    .createNotification("请检查配置参数是否正常", NotificationType.ERROR).notify(project);
+                    .createNotification(YApiConstants.name, "配置信息异常", "请检查配置参数是否正常",
+                            NotificationType.ERROR).notify(project);
             return;
         }
         //获得api 需上传的接口列表 参数对象
@@ -74,7 +72,8 @@ public class YApiUploadAction extends AnAction {
                             .uploadSave(yapiSaveParam, project.getBasePath());
                     if (yapiResponse.getErrcode() != 0) {
                         NotificationConstants.NOTIFICATION_GROUP
-                                .createNotification("抱歉，api上传失败:" + yapiResponse.getErrmsg(),
+                                .createNotification(YApiConstants.name, "上传失败",
+                                        "api上传失败原因:" + yapiResponse.getErrmsg(),
                                         NotificationType.ERROR).notify(project);
                     } else {
                         String host = yapiUrl.endsWith("/") ? yapiUrl : (yapiUrl + "/");
@@ -83,15 +82,16 @@ public class YApiUploadAction extends AnAction {
                                 .get(String.valueOf(projectId))
                                 .get(yapiSaveParam.getMenu());
                         NotificationConstants.NOTIFICATION_GROUP
-                                .createNotification("Redsoft YApi Upload", "",
-                                        "<p>接口上传成功:  <a href=\"" + url + "\">" + url + "</a></p>",
+                                .createNotification(YApiConstants.name, "上传成功",
+                                        "<p>接口文档地址:  <a href=\"" + url + "\">" + url + "</a></p>",
                                         NotificationType.INFORMATION,
                                         new UrlOpeningListener(true))
                                 .notify(project);
                     }
                 } catch (Exception e1) {
                     NotificationConstants.NOTIFICATION_GROUP
-                            .createNotification("抱歉，api上传失败:" + e1, NotificationType.ERROR)
+                            .createNotification(YApiConstants.name, "上传失败", "api上传失败原因:" + e1,
+                                    NotificationType.ERROR)
                             .notify(project);
                 }
             }

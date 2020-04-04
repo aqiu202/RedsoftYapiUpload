@@ -10,54 +10,54 @@ import java.io.Serializable;
 @SuppressWarnings("unused")
 public class YApiResponse implements Serializable {
 
-  /**
-   * 状态码
-   */
-  private Integer errcode;
-  /**
-   * 状态信息
-   */
-  private String errmsg;
-  /**
-   * 返回结果
-   */
-  private Object data;
+    /**
+     * 状态码
+     */
+    private Integer errcode;
+    /**
+     * 状态信息
+     */
+    private String errmsg;
+    /**
+     * 返回结果
+     */
+    private Object data;
 
-  public Integer getErrcode() {
-    return errcode;
-  }
+    public Integer getErrcode() {
+        return errcode;
+    }
 
-  public void setErrcode(Integer errcode) {
-    this.errcode = errcode;
-  }
+    public void setErrcode(Integer errcode) {
+        this.errcode = errcode;
+    }
 
-  public String getErrmsg() {
-    return errmsg;
-  }
+    public String getErrmsg() {
+        return errmsg;
+    }
 
-  public void setErrmsg(String errmsg) {
-    this.errmsg = errmsg;
-  }
+    public void setErrmsg(String errmsg) {
+        this.errmsg = errmsg;
+    }
 
-  public Object getData() {
-    return data;
-  }
+    public Object getData() {
+        return data;
+    }
 
-  public void setData(Object data) {
-    this.data = data;
-  }
+    public void setData(Object data) {
+        this.data = data;
+    }
 
-  public YApiResponse() {
-  }
+    public YApiResponse() {
+    }
 
-  public YApiResponse(Object data) {
-    this.errcode = 0;
-    this.errmsg = "success";
-    this.data = data;
-  }
+    public YApiResponse(Object data) {
+        this.errcode = 0;
+        this.errmsg = "success";
+        this.data = data;
+    }
 
-  public YApiResponse(Integer errcode, String errmsg) {
-    this.errcode = errcode;
-    this.errmsg = errmsg;
-  }
+    public YApiResponse(Integer errcode, String errmsg) {
+        this.errcode = errcode;
+        this.errmsg = errmsg;
+    }
 }

@@ -17,7 +17,7 @@ public class IntegerRange implements Range {
     }
 
     public void setMin(Integer min, boolean enableBasicScope) {
-        if(min == null && enableBasicScope) {
+        if (min == null && enableBasicScope) {
             this.min = Integer.MIN_VALUE;
         } else {
             this.min = min;
@@ -30,7 +30,7 @@ public class IntegerRange implements Range {
     }
 
     public void setMax(Integer max, boolean enableBasicScope) {
-        if(max == null && enableBasicScope) {
+        if (max == null && enableBasicScope) {
             this.max = Integer.MAX_VALUE;
         } else {
             this.max = max;

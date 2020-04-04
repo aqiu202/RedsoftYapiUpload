@@ -1,7 +1,7 @@
 package com.redsoft.idea.plugin.yapi.constant;
 
-import com.google.gson.JsonObject;
 import com.redsoft.idea.plugin.yapi.model.LongRange;
+import com.redsoft.idea.plugin.yapi.model.Mock;
 import com.redsoft.idea.plugin.yapi.schema.base.SchemaType;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -174,7 +174,7 @@ public class TypeConstants {
         return baseRangeMappings.containsKey(typePkName);
     }
 
-    public static String formatMockType(String type) {
+    public static Mock formatMockType(String type) {
         return formatMockType(type, null);
     }
 
@@ -182,10 +182,10 @@ public class TypeConstants {
      * mock type
      * @param type type
      */
-    public static String formatMockType(String type, String exampleMock) {
+    public static Mock formatMockType(String type, String exampleMock) {
         //支持传入自定义mock
         if (StringUtils.isNotBlank(exampleMock)) {
-            return exampleMock;
+            return new Mock(exampleMock);
         }
         switch (type) {
             case "int":
@@ -197,15 +197,15 @@ public class TypeConstants {
             case "Long":
             case "short":
             case "long":
-                return "@integer";
+                return new Mock("@integer");
             case "boolean":
             case "java.lang.Boolean":
             case "Boolean":
-                return "@boolean";
+                return new Mock("@boolean");
             case "byte":
             case "java.lang.Byte":
             case "Byte":
-                return "@byte";
+                return new Mock("@byte");
             case "float":
             case "java.math.BigDecimal":
             case "java.lang.Double":
@@ -214,9 +214,9 @@ public class TypeConstants {
             case "Double":
             case "Float":
             case "double":
-                return "@float";
+                return new Mock("@float");
             case "char":
-                return "@char";
+                return new Mock("@char");
             case "Date":
             case "java.time.LocalDateTime":
             case "java.time.LocalTime":
@@ -227,9 +227,9 @@ public class TypeConstants {
             case "LocalDateTime":
             case "LocalTime":
             case "LocalDate":
-                return "@timestamp";
+                return new Mock("@timestamp");
             default:
-                return "@string";
+                return new Mock("@string");
         }
     }
 }
