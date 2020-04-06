@@ -16,7 +16,7 @@
       <em>减少开发人员接口信息的重复录入</em><br>
       <em>避免重复的工作，减轻开发压力，提高工作效率！同时还规范了代码注释</em>
       <p><b>github地址: <a href="https://github.com/aqiu202/RedsoftYApiUpload">RedsoftYApiUpload</a></b></p>
-      <p><b>使用方法见<a href="https://github.com/aqiu202/RedsoftYApiUpload/wiki/使用指南">使用指南</b></p>
+      <p><b>使用方法见<a href="https://github.com/aqiu202/RedsoftYApiUpload/wiki/使用指南">使用指南</a></b></p>
     ]]></description>
 
     <change-notes><![CDATA[
@@ -68,6 +68,7 @@
         <li>Add global interface field naming policy configuration and @strategy annotation resolution</li>
         <li>@RequestParam file type parameter transfer parameter bug modification</li>
       </ol>
+      <p>...</p>
       <hr>
       <br>
       <h4>初始版本1.0</h4>
@@ -117,6 +118,13 @@
         <li>添加全局接口字段命名策略配置和@strategy注释解析</li>
         <li>@RequestParam文件类型参数传参bug修改</li>
       </ol>
+      <h4>版本1.3.7，添加Swagger参数解析支持，内置注释模板等</h4>
+      <ol>
+        <li>添加Swagger参数解析支持</li>
+        <li>内置注释模板，无需再单独配置注释模板</li>
+        <li>优化1-兼容之前的配置方式</li>
+        <li>优化2-响应参数自动设置mock</li>
+      </ol>
     ]]>
     </change-notes>
 
@@ -134,7 +142,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <applicationService serviceImplementation="com.redsoft.idea.plugin.yapi.config.YApiPersistentState"/>
+        <applicationService serviceImplementation="com.redsoft.idea.plugin.yapi.config.YApiApplicationPersistentState"/>
         <projectConfigurable
                 instance="com.redsoft.idea.plugin.yapi.config.YApiSearchableConfigurable"/>
         <projectService
@@ -142,6 +150,12 @@
         <defaultLiveTemplatesProvider implementation="com.redsoft.idea.plugin.yapi.template.YApiTemplateProvider"/>
         <liveTemplateContext implementation="com.redsoft.idea.plugin.yapi.template.YapiTemplateContextType"/>
     </extensions>
+
+    <project-components>
+        <component>
+            <implementation-class>com.redsoft.idea.plugin.yapi.component.YApiInitComponent</implementation-class>
+        </component>
+    </project-components>
 
     <actions>
         <!-- Add your actions here -->

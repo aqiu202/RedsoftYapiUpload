@@ -13,7 +13,8 @@ import org.jetbrains.annotations.NotNull;
 @State(name = "ProjectRedsoftYApiUpload")
 public class YApiProjectPersistentState implements PersistentStateComponent<Element> {
 
-    private final YApiPropertyXmlConvert convert = YApiPropertyConvertHolder.getConvert();
+    private final YApiPropertyXmlConvert<YApiProjectProperty> convert = YApiPropertyConvertHolder
+            .getConvert();
     private YApiProjectProperty yApiProjectProperty;
 
     YApiProjectPersistentState() {

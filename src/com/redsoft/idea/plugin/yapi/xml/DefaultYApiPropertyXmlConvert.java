@@ -4,7 +4,7 @@ import com.jgoodies.common.base.Strings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert {
+public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert<YApiProjectProperty> {
 
     private static final String KEY_URL = "url";
     private static final String KEY_PROJECT_ID = "project-id";

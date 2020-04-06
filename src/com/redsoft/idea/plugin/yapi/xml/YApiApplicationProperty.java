@@ -4,10 +4,18 @@ import java.util.Objects;
 
 public class YApiApplicationProperty {
 
-    private String version = "1.3.7";
+    private String version = "1.0.0";
 
     public YApiApplicationProperty() {
 
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     @Override
