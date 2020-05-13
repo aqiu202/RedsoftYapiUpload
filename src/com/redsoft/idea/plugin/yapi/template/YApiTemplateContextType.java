@@ -4,9 +4,9 @@ import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-public class YapiTemplateContextType extends TemplateContextType {
+public class YApiTemplateContextType extends TemplateContextType {
 
-    protected YapiTemplateContextType() {
+    protected YApiTemplateContextType() {
         super("JAVA", "Java");
     }
 

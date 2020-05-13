@@ -77,7 +77,7 @@ public class YApiParser {
     private PropertyNamingStrategy m_strategy = null;
     private boolean enableBasicScope;
 
-    private YApiSupports supports = new YApiSupports(YApiSwaggerSupport.INSTANCE);
+    private final YApiSupports supports = new YApiSupports(YApiSwaggerSupport.INSTANCE);
 
     public List<YApiDTO> parse(AnActionEvent e, PropertyNamingStrategy strategy,
             boolean enableBasicScope) {
