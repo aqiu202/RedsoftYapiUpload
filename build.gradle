@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.4.18'
+}
+
+group 'com.redsoft.idea.plugin'
+version '1.3.8'
+
+repositories {
+    maven {
+        url 'http://47.105.108.6:10000/repository/maven-public/'
+    }
+    mavenCentral()
+}
+
+dependencies {
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    plugins = ["java"]
+    version '2019.3'
+    updateSinceUntilBuild = false
+}
+patchPluginXml {
+
+}
