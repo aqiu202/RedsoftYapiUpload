@@ -19,6 +19,7 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     plugins = ["java"]
+    type = 'IU'
     version '2019.3'
     updateSinceUntilBuild = false
 }

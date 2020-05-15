@@ -4,9 +4,9 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifierListOwner;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.constant.ValidConstants;
-import com.redsoft.idea.plugin.yapiv2.model.DecimalRange;
-import com.redsoft.idea.plugin.yapiv2.model.IntegerRange;
-import com.redsoft.idea.plugin.yapiv2.model.LongRange;
+import com.redsoft.idea.plugin.yapiv2.range.DecimalRange;
+import com.redsoft.idea.plugin.yapiv2.range.IntegerRange;
+import com.redsoft.idea.plugin.yapiv2.range.LongRange;
 import java.math.BigDecimal;
 import java.util.Objects;
 

@@ -16,7 +16,7 @@ public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
     /**
      * 路径
      */
-    private String path = "/";
+    private String path = "";
     /**
      * 头信息
      */

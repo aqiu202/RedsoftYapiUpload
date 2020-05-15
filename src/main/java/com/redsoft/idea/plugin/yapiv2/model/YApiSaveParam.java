@@ -321,36 +321,4 @@ public class YApiSaveParam implements Serializable {
     public YApiSaveParam() {
     }
 
-    public YApiSaveParam(String token, String title, String path, String req_body_other,
-            String res_body, Integer projectId, String yapiUrl, String desc) {
-        this.token = token;
-        this.title = title;
-        this.path = path;
-        this.res_body = res_body;
-        this.req_body_other = req_body_other;
-        this.projectId = projectId;
-        this.yapiUrl = yapiUrl;
-        this.desc = desc;
-    }
-
-
-    public YApiSaveParam(String token, String title, String path, Set<YApiQuery> req_query,
-            String req_body_other, String res_body, Integer projectId, String yapiUrl,
-            boolean res_body_is_json_schema, String method, String desc,
-            Set<YApiHeader> header) {
-        this.token = token;
-        this.title = title;
-        this.path = path;
-        this.req_query = req_query;
-        this.res_body = res_body;
-        this.req_body_other = req_body_other;
-        this.projectId = projectId;
-        this.yapiUrl = yapiUrl;
-        this.res_body_is_json_schema = res_body_is_json_schema;
-        this.method = method;
-        this.desc = desc;
-        this.req_headers = header;
-    }
-
-
 }

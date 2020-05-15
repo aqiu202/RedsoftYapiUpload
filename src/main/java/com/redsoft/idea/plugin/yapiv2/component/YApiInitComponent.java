@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.redsoft.idea.plugin.yapiv2.config.YApiApplicationPersistentState;
+import com.redsoft.idea.plugin.yapiv2.config.impl.ApplicationConfigReader;
 import com.redsoft.idea.plugin.yapiv2.constant.NotificationConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.PluginConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
@@ -23,11 +24,7 @@ public class YApiInitComponent implements ProjectComponent {
 
     @Override
     public void projectOpened() {
-        Element element = YApiApplicationPersistentState.getInstance().getState();
-        YApiApplicationProperty property = null;
-        if (element != null) {
-            property = YApiPropertyConvertHolder.getApplicationConvert().deserialize(element);
-        }
+        YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
             String changeLogTitle = "<h4>版本1.3.7，添加Swagger参数解析支持，内置注释模板等</h4>";
             String changeLogContent = "<ol>"

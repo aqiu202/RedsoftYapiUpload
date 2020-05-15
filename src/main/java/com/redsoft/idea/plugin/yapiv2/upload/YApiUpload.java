@@ -12,7 +12,7 @@ import com.redsoft.idea.plugin.yapiv2.model.YApiSaveParam;
 import com.redsoft.idea.plugin.yapiv2.util.HttpClientUtils;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,14 +48,13 @@ public class YApiUpload {
         if ("form".equals(yapiSaveParam.getReq_body_type())) {
             yapiHeader.setName("Content-Type");
             yapiHeader.setValue("application/x-www-form-urlencoded");
-            yapiSaveParam.setReq_body_form(yapiSaveParam.getReq_body_form());
         } else {
             yapiHeader.setName("Content-Type");
             yapiHeader.setValue("application/json");
-            yapiSaveParam.setReq_body_type("json");
+//            yapiSaveParam.setReq_body_type("json");
         }
         if (Objects.isNull(yapiSaveParam.getReq_headers())) {
-            Set<YApiHeader> list = new LinkedHashSet<>();
+            Set<YApiHeader> list = new HashSet<>();
             list.add(yapiHeader);
             yapiSaveParam.setReq_headers(list);
         } else {
@@ -64,9 +63,10 @@ public class YApiUpload {
         YApiResponse yapiResponse = this.getCatIdOrCreate(yapiSaveParam);
         if (yapiResponse.getErrcode() == 0 && yapiResponse.getData() != null) {
             yapiSaveParam.setCatid(String.valueOf(yapiResponse.getData()));
-            String response = HttpClientUtils.ObjectToString(HttpClientUtils.getHttpclient().execute(
-                    this.getHttpPost(yapiSaveParam.getYApiUrl() + YApiConstants.yapiSave,
-                            gson.toJson(yapiSaveParam))), "utf-8");
+            String response = HttpClientUtils
+                    .ObjectToString(HttpClientUtils.getHttpclient().execute(
+                            this.getHttpPost(yapiSaveParam.getYApiUrl() + YApiConstants.yapiSave,
+                                    gson.toJson(yapiSaveParam))), "utf-8");
             return gson.fromJson(response, YApiResponse.class);
         } else {
             return yapiResponse;

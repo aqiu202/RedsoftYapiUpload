@@ -21,7 +21,11 @@ public class YApiProjectProperty {
 
     public YApiProjectProperty(String url, int projectId, String token, int strategy,
             boolean enableBasicScope) {
-        this.url = url;
+        if (url.matches(".*/+$")) {
+            this.url = url.replaceAll("/+$", "");
+        } else {
+            this.url = url;
+        }
         this.projectId = projectId;
         this.token = token;
         this.strategy = strategy;
@@ -33,7 +37,11 @@ public class YApiProjectProperty {
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        if (url.matches(".*/+$")) {
+            this.url = url.replaceAll("/+$", "");
+        } else {
+            this.url = url;
+        }
     }
 
     public int getProjectId() {

@@ -1,6 +1,6 @@
 package com.redsoft.idea.plugin.yapiv2.schema;
 
-import com.redsoft.idea.plugin.yapiv2.model.LongRange;
+import com.redsoft.idea.plugin.yapiv2.range.LongRange;
 import com.redsoft.idea.plugin.yapiv2.schema.base.EnumableSchema;
 import com.redsoft.idea.plugin.yapiv2.schema.base.SchemaType;
 

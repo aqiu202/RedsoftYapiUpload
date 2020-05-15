@@ -1,6 +1,6 @@
 package com.redsoft.idea.plugin.yapiv2.constant;
 
-import com.redsoft.idea.plugin.yapiv2.model.LongRange;
+import com.redsoft.idea.plugin.yapiv2.range.LongRange;
 import com.redsoft.idea.plugin.yapiv2.model.Mock;
 import com.redsoft.idea.plugin.yapiv2.schema.base.SchemaType;
 import java.sql.Timestamp;
@@ -33,7 +33,7 @@ public class TypeConstants {
     public static final Map<String, SchemaType> arrayTypeMappings = new HashMap<>();
     public static final Map<String, SchemaType> mapTypeMappings = new HashMap<>();
 
-    public static final Map<String, Object> noramlTypesPackages = new HashMap<>();
+    public static final Map<String, Object> normalTypesPackages = new HashMap<>();
 
     public static final Map<String, LongRange> baseRangeMappings = new HashMap<>();
     /**
@@ -73,40 +73,40 @@ public class TypeConstants {
     }
 
     static {
-        noramlTypesPackages.put("int", 1);
-        noramlTypesPackages.put("boolean", true);
-        noramlTypesPackages.put("byte", 1);
-        noramlTypesPackages.put("short", 1);
-        noramlTypesPackages.put("long", 1L);
-        noramlTypesPackages.put("float", 1.0F);
-        noramlTypesPackages.put("double", 1.0D);
-        noramlTypesPackages.put("char", 'a');
-        noramlTypesPackages.put("MultipartFile", "file");
-        noramlTypesPackages.put("java.lang.Boolean", false);
-        noramlTypesPackages.put("java.lang.Byte", 1);
-        noramlTypesPackages.put("java.lang.Short", (short) 0);
-        noramlTypesPackages.put("java.lang.Integer", 1);
-        noramlTypesPackages.put("java.lang.Long", 1L);
-        noramlTypesPackages.put("java.lang.Float", 1L);
-        noramlTypesPackages.put("java.lang.Double", 1.0D);
-        noramlTypesPackages.put("java.sql.Timestamp", new Timestamp(System.currentTimeMillis()));
-        noramlTypesPackages.put("org.springframework.web.multipart.MultipartFile", "file");
-        noramlTypesPackages
+        normalTypesPackages.put("int", 1);
+        normalTypesPackages.put("boolean", true);
+        normalTypesPackages.put("byte", 1);
+        normalTypesPackages.put("short", 1);
+        normalTypesPackages.put("long", 1L);
+        normalTypesPackages.put("float", 1.0F);
+        normalTypesPackages.put("double", 1.0D);
+        normalTypesPackages.put("char", 'a');
+        normalTypesPackages.put("MultipartFile", "file");
+        normalTypesPackages.put("java.lang.Boolean", false);
+        normalTypesPackages.put("java.lang.Byte", 1);
+        normalTypesPackages.put("java.lang.Short", (short) 0);
+        normalTypesPackages.put("java.lang.Integer", 1);
+        normalTypesPackages.put("java.lang.Long", 1L);
+        normalTypesPackages.put("java.lang.Float", 1L);
+        normalTypesPackages.put("java.lang.Double", 1.0D);
+        normalTypesPackages.put("java.sql.Timestamp", new Timestamp(System.currentTimeMillis()));
+        normalTypesPackages.put("org.springframework.web.multipart.MultipartFile", "file");
+        normalTypesPackages
                 .put("java.util.Date",
                         LocalDateTime.now().format(dateTimeFormat));
-        noramlTypesPackages
+        normalTypesPackages
                 .put("java.sql.Date", LocalDate.now().format(dateFormat));
-        noramlTypesPackages
+        normalTypesPackages
                 .put("java.sql.Time", LocalTime.now().format(timeFormat));
-        noramlTypesPackages
+        normalTypesPackages
                 .put("java.time.LocalDateTime",
                         LocalDateTime.now().format(dateTimeFormat));
-        noramlTypesPackages
+        normalTypesPackages
                 .put("java.time.LocalDate", LocalDate.now().format(dateFormat));
-        noramlTypesPackages
+        normalTypesPackages
                 .put("java.time.LocalTime", LocalTime.now().format(timeFormat));
-        noramlTypesPackages.put("java.lang.String", "String");
-        noramlTypesPackages.put("java.math.BigDecimal", 1);
+        normalTypesPackages.put("java.lang.String", "String");
+        normalTypesPackages.put("java.math.BigDecimal", 1);
 
         normalTypeMappings.put("int", SchemaType.integer);
         normalTypeMappings.put("boolean", SchemaType.bool);
@@ -133,7 +133,9 @@ public class TypeConstants {
         normalTypeMappings.put("java.lang.String", SchemaType.string);
         normalTypeMappings.put("java.math.BigDecimal", SchemaType.number);
 
+        arrayTypeMappings.put("java.lang.Iterable", SchemaType.array);
         arrayTypeMappings.put("java.util.List", SchemaType.array);
+        arrayTypeMappings.put("java.util.Collection", SchemaType.array);
         arrayTypeMappings.put("java.util.ArrayList", SchemaType.array);
         arrayTypeMappings.put("java.util.LinkedList", SchemaType.array);
         arrayTypeMappings.put("java.util.Set", SchemaType.array);

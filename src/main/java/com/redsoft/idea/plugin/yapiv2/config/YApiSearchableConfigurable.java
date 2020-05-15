@@ -3,6 +3,7 @@ package com.redsoft.idea.plugin.yapiv2.config;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.jgoodies.common.base.Strings;
+import com.redsoft.idea.plugin.yapiv2.config.impl.ProjectConfigReader;
 import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapiv2.ui.YApiConfigurationForm;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;

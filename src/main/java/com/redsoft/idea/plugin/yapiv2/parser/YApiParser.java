@@ -5,14 +5,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifier;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.base.DeprecatedAssert;
-import com.redsoft.idea.plugin.yapiv2.base.PsiClassParser;
-import com.redsoft.idea.plugin.yapiv2.base.PsiMethodParser;
 import com.redsoft.idea.plugin.yapiv2.base.impl.DeprecatedAssertImpl;
-import com.redsoft.idea.plugin.yapiv2.base.impl.PsiClassParserImpl;
-import com.redsoft.idea.plugin.yapiv2.base.impl.PsiMethodParserImpl;
+import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiClassParserImpl;
+import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiMethodParserImpl;
 import com.redsoft.idea.plugin.yapiv2.constant.NotificationConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
@@ -39,12 +36,12 @@ public class YApiParser {
     public Set<YApiParam> parse(AnActionEvent e) {
         Project project = ProjectHolder.getCurrentProject();
         String selectedText = PsiUtils.getSelectedText(e);
-        if (Strings.isEmpty(selectedText)) {
-            NotificationConstants.NOTIFICATION_GROUP
-                    .createNotification(YApiConstants.name, "提示", "请选中类或者方法",
-                            NotificationType.ERROR).notify(project);
-            return null;
-        }
+//        if (Strings.isEmpty(selectedText)) {
+//            NotificationConstants.NOTIFICATION_GROUP
+//                    .createNotification(YApiConstants.name, "提示", "请选中类或者方法",
+//                            NotificationType.ERROR).notify(project);
+//            return null;
+//        }
         PsiClass selectedClass = PsiUtils.currentClass(e);
         //TODO 判断类是否过期
         //获取该类是否已经过时
@@ -56,35 +53,38 @@ public class YApiParser {
             return null;
         }
         Set<YApiParam> yApiParams = new HashSet<>();
-        if (selectedText.equals(selectedClass.getName())) {
-            PsiMethod[] psiMethods = selectedClass.getMethods();
+        if (Strings.isBlank(selectedText) || selectedText.equals(selectedClass.getName())) {
             //TODO 如果选中的是类，则轮询该类所有的方法，解析接口
-            for (PsiMethod psiMethodTarget : psiMethods) {
-                //lombok插件的构造方法忽略
-                if (psiMethodTarget.getName().equals(selectedClass.getName())) {
-                    continue;
-                }
-                //去除私有方法
-                if (!psiMethodTarget.getModifierList().hasModifierProperty(PsiModifier.PRIVATE)) {
-                    //带有 @Deprecated 注解的方法跳过
-                    if (deprecatedAssert.isDeprecated(psiMethodTarget)) {
-                        continue;
-                    }
-                    try {
-                        YApiParam param = methodParser.parse(selectedClass, psiMethodTarget);
-                        yApiParams.add(param);
-                    } catch (Exception ex) {
-                        NotificationConstants.NOTIFICATION_GROUP
-                                .createNotification(YApiConstants.name, "接口信息解析失败",
-                                        "失败原因：" + ex.getMessage(),
-                                        NotificationType.ERROR).notify(project);
-                    }
-                }
-            }
-        } else {//如果用户选中的是方法
-            //TODO 如果选中的是方法，获取该方法
             List<YApiParam> params = classParser.parse(selectedClass);
             yApiParams.addAll(params);
+        } else {//如果用户选中的是方法
+            //TODO 如果选中的是方法，获取该方法
+            PsiMethod[] psiMethods = selectedClass.getMethods();
+            PsiMethod psiMethodTarget = null;
+            for (PsiMethod psiMethod : psiMethods) {
+                if (psiMethod.getName().equals(selectedText)) {
+                    psiMethodTarget = psiMethod;
+                    break;
+                }
+            }
+            if (Objects.nonNull(psiMethodTarget)) {
+                //带有 @Deprecated 注解的方法跳过
+                if (deprecatedAssert.isDeprecated(psiMethodTarget)) {
+                    NotificationConstants.NOTIFICATION_GROUP
+                            .createNotification(YApiConstants.name, "接口已过时",
+                                    "该方法或者类(或注释中)含有@Deprecated注解，如需上传，请删除该注解:" + selectedText,
+                                    NotificationType.WARNING).notify(project);
+                }
+                try {
+                    YApiParam param = methodParser.parse(selectedClass, psiMethodTarget);
+                    yApiParams.add(param);
+                } catch (Exception ex) {
+                    NotificationConstants.NOTIFICATION_GROUP
+                            .createNotification(YApiConstants.name, "接口信息解析失败",
+                                    "失败原因：" + ex.getMessage(),
+                                    NotificationType.ERROR).notify(project);
+                }
+            }
         }
         return yApiParams;
     }

@@ -8,7 +8,7 @@ import com.redsoft.idea.plugin.yapiv2.schema.base.SchemaType;
 
 public interface JsonSchemaParser {
 
-    ItemJsonSchema getObjectSchema(String typePkName);
+    ItemJsonSchema getPojoSchema(String typePkName);
 
     ItemJsonSchema getOtherTypeSchema(PsiType psiType);
 

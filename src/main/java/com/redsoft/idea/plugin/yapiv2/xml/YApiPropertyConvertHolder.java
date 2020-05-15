@@ -4,8 +4,8 @@ public class YApiPropertyConvertHolder {
 
     private static class InnerClass {
 
-        private static YApiPropertyXmlConvert<YApiProjectProperty> CONVERT = new DefaultYApiPropertyXmlConvert();
-        private static YApiPropertyXmlConvert<YApiApplicationProperty> APP_CONVERT = new DefaultYApiApplicationPropertyXmlConvert();
+        private static final YApiPropertyXmlConvert<YApiProjectProperty> CONVERT = new DefaultYApiPropertyXmlConvert();
+        private static final YApiPropertyXmlConvert<YApiApplicationProperty> APP_CONVERT = new DefaultYApiApplicationPropertyXmlConvert();
 
     }
 

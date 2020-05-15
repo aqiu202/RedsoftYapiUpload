@@ -1,5 +1,6 @@
 package com.redsoft.idea.plugin.yapiv2.util;
 
+import com.jgoodies.common.base.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class PathUtils {
@@ -7,12 +8,15 @@ public final class PathUtils {
     private PathUtils() {
     }
 
-    public static String pathFormat(@NotNull StringBuilder path) {
-        return pathFormat(path.toString());
+    public static String pathFormat(@NotNull String path) {
+        return pathFormat(path, true);
     }
 
-    public static String pathFormat(@NotNull String path) {
+    public static String pathFormat(@NotNull String path, boolean defaultRoot) {
         String pathStr = path.trim();
+        if (!defaultRoot && Strings.isEmpty(pathStr)) {
+            return "";
+        }
         String split = "/";
         pathStr = pathStr.startsWith(split) ? pathStr : (split + pathStr);
         if (pathStr.endsWith("/") && pathStr.length() > 1) {

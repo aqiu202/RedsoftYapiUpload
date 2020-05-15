@@ -11,12 +11,13 @@ import com.intellij.psi.PsiType;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.base.JsonSchemaParser;
+import com.redsoft.idea.plugin.yapiv2.config.impl.ProjectConfigReader;
 import com.redsoft.idea.plugin.yapiv2.constant.PropertyNamingStrategy;
 import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
-import com.redsoft.idea.plugin.yapiv2.model.DecimalRange;
-import com.redsoft.idea.plugin.yapiv2.model.IntegerRange;
-import com.redsoft.idea.plugin.yapiv2.model.LongRange;
+import com.redsoft.idea.plugin.yapiv2.range.DecimalRange;
+import com.redsoft.idea.plugin.yapiv2.range.IntegerRange;
+import com.redsoft.idea.plugin.yapiv2.range.LongRange;
 import com.redsoft.idea.plugin.yapiv2.schema.ArraySchema;
 import com.redsoft.idea.plugin.yapiv2.schema.BooleanSchema;
 import com.redsoft.idea.plugin.yapiv2.schema.IntegerSchema;
@@ -42,18 +43,20 @@ import java.util.Objects;
 public class JsonSchemaParserImpl implements JsonSchemaParser {
 
     private final YApiProjectProperty property;
+    private final Project project;
 
-    public JsonSchemaParserImpl(YApiProjectProperty property) {
-        this.property = property;
+    public JsonSchemaParserImpl() {
+        this.property = ProjectConfigReader.getProjectConfigurationFromCache();
+        this.project = ProjectHolder.getCurrentProject();
     }
 
-    public ItemJsonSchema getObjectSchema(String typePkName) {
+    public ItemJsonSchema getPojoSchema(String typePkName) {
         ObjectSchema objectSchema = new ObjectSchema();
         String[] types = typePkName.split("<");
         typePkName = types[0];
-        PsiClass psiClass = JavaPsiFacade.getInstance(ProjectHolder.getCurrentProject())
+        PsiClass psiClass = JavaPsiFacade.getInstance(this.project)
                 .findClass(typePkName,
-                        GlobalSearchScope.allScope(ProjectHolder.getCurrentProject()));
+                        GlobalSearchScope.allScope(this.project));
         if (Objects.nonNull(psiClass)) {
             boolean hasChildren;
             PsiClassType classType = null;
@@ -61,14 +64,14 @@ public class JsonSchemaParserImpl implements JsonSchemaParser {
                 String childrenType = types[1].split(">")[0];
                 childrenType = childrenType.replace("? extends ", "")
                         .replace("? super ", "");
-                classType = PsiType.getTypeByName(childrenType, ProjectHolder.getCurrentProject(),
-                        GlobalSearchScope.allScope(ProjectHolder.getCurrentProject()));
+                classType = PsiType.getTypeByName(childrenType, this.project,
+                        GlobalSearchScope.allScope(this.project));
             } else if (hasChildren = types.length == 3) {
                 String childrenType = types[1].split(">")[0] + "<" + types[2].split(">")[0] + ">";
                 childrenType = childrenType.replace("? extends ", "")
                         .replace("? super ", "");
-                classType = PsiType.getTypeByName(childrenType, ProjectHolder.getCurrentProject(),
-                        GlobalSearchScope.allScope(ProjectHolder.getCurrentProject()));
+                classType = PsiType.getTypeByName(childrenType, this.project,
+                        GlobalSearchScope.allScope(this.project));
             }
             for (PsiField field : psiClass.getAllFields()) {
                 if (
@@ -91,17 +94,14 @@ public class JsonSchemaParserImpl implements JsonSchemaParser {
                         objectSchema.addProperty(fieldName,
                                 new ArraySchema().setItems(this.getSchema(classType, false))
                                         .setDescription(
-                                                DesUtils.getLinkRemark(field,
-                                                        ProjectHolder.getCurrentProject())));
+                                                DesUtils.getLinkRemark(field, this.project)));
                     } else if (TypeConstants.genericList
                             .contains(gType)) {
                         objectSchema.addProperty(fieldName, this.getSchema(classType, false)
-                                .setDescription(DesUtils.getLinkRemark(field,
-                                        ProjectHolder.getCurrentProject())));
+                                .setDescription(DesUtils.getLinkRemark(field, this.project)));
                     } else {
                         objectSchema.addProperty(fieldName, this.getFieldSchema(field)
-                                .setDescription(DesUtils.getLinkRemark(field,
-                                        ProjectHolder.getCurrentProject())));
+                                .setDescription(DesUtils.getLinkRemark(field, this.project)));
                     }
                 } else {
                     objectSchema.addProperty(fieldName, this.getFieldSchema(field));
@@ -121,7 +121,7 @@ public class JsonSchemaParserImpl implements JsonSchemaParser {
         //如果是基本类型
         if (TypeConstants.isBaseType(typePkName)) {
             result = SchemaHelper.parse(TypeConstants.normalTypeMappings.get(typePkName));
-            result.setDefault(TypeConstants.noramlTypesPackages.get(typePkName).toString());
+            result.setDefault(TypeConstants.normalTypesPackages.get(typePkName).toString());
             result.setMock(TypeConstants.formatMockType(psiType.getPresentableText()));
         } else {
             result = this.getOtherTypeSchema(psiType);
@@ -152,10 +152,10 @@ public class JsonSchemaParserImpl implements JsonSchemaParser {
         } else if (typePkName.endsWith("[]")) {
             //数组形式的返回值（且不是集合类型前缀）
             typePkName = typePkName.replace("[]", "");
-            result = new ArraySchema().setItems(this.getObjectSchema(typePkName));
+            result = new ArraySchema().setItems(this.getPojoSchema(typePkName));
         } else {
             //其他情况 object
-            result = this.getObjectSchema(typePkName);
+            result = this.getPojoSchema(typePkName);
         }
         return result;
     }
@@ -179,7 +179,7 @@ public class JsonSchemaParserImpl implements JsonSchemaParser {
                 item = SchemaHelper
                         .parse(TypeConstants.normalTypeMappings.get(childrenType));
             } else {
-                item = this.getObjectSchema(childrenType);
+                item = this.getPojoSchema(childrenType);
             }
             arraySchema.setItems(isWrapArray ? new ArraySchema().setItems(item) : item);
         } else {
@@ -207,7 +207,7 @@ public class JsonSchemaParserImpl implements JsonSchemaParser {
             a.setMinItems(integerRange.getMin(), this.property.isEnableBasicScope());
             a.setMaxItems(integerRange.getMax(), this.property.isEnableBasicScope());
         }
-        result.setDescription(DesUtils.getLinkRemark(psiField, ProjectHolder.getCurrentProject()));
+        result.setDescription(DesUtils.getLinkRemark(psiField, this.project));
         return result;
     }
 
@@ -284,8 +284,8 @@ public class JsonSchemaParserImpl implements JsonSchemaParser {
             default:
                 return new StringSchema();
         }
-        result.setDescription(DesUtils.getLinkRemark(psiField, ProjectHolder.getCurrentProject()));
-        result.setDefault(TypeConstants.noramlTypesPackages.get(typePkName).toString());
+        result.setDescription(DesUtils.getLinkRemark(psiField, this.project));
+        result.setDefault(TypeConstants.normalTypesPackages.get(typePkName).toString());
         return result;
     }
 
@@ -315,7 +315,7 @@ public class JsonSchemaParserImpl implements JsonSchemaParser {
         String type = types[0];
         //如果是基本类型
         if (TypeConstants.isBaseType(typePkName)) {
-            return TypeConstants.noramlTypesPackages.get(typePkName).toString();
+            return TypeConstants.normalTypesPackages.get(typePkName).toString();
         } else {
             //如果是Map类型
             if (PsiUtils.isMap(psiType)) {
@@ -364,7 +364,7 @@ public class JsonSchemaParserImpl implements JsonSchemaParser {
             //如果是基本类型
             List<Object> tmp = new ArrayList<>();
             if (TypeConstants.isBaseType(childrenType)) {
-                tmp.add(TypeConstants.noramlTypesPackages.get(childrenType));
+                tmp.add(TypeConstants.normalTypesPackages.get(childrenType));
             } else {
                 //如果是其他类型
                 tmp.add(this.getObjectRaw(childrenType));
@@ -382,10 +382,9 @@ public class JsonSchemaParserImpl implements JsonSchemaParser {
     }
 
     private Object getObjectRaw(String typePkName) {
-        Project project = ProjectHolder.getCurrentProject();
         Map<String, Object> result = new HashMap<>();
-        PsiClass psiClass = JavaPsiFacade.getInstance(project)
-                .findClass(typePkName, GlobalSearchScope.allScope(project));
+        PsiClass psiClass = JavaPsiFacade.getInstance(this.project)
+                .findClass(typePkName, GlobalSearchScope.allScope(this.project));
         if (Objects.nonNull(psiClass)) {
             for (PsiField field : psiClass.getAllFields()) {
                 if (

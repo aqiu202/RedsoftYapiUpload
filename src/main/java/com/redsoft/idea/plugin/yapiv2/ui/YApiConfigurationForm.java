@@ -1,6 +1,8 @@
 package com.redsoft.idea.plugin.yapiv2.ui;
 
 import com.intellij.openapi.ui.ComboBox;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
@@ -9,6 +11,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class YApiConfigurationForm {
 
@@ -64,5 +68,12 @@ public class YApiConfigurationForm {
         });
         this.namingStrategyComboBox = new ComboBox<>(
                 new String[]{"None", "KebabCase", "SnakeCase", "LowerCase", "UpperCamelCase"});
+    }
+
+    private void formatUrl(){
+        String old = this.urlField.getText();
+        if (old.matches(".*/+$")) {
+            urlField.setText(old.replaceAll("/+$", ""));
+        }
     }
 }
