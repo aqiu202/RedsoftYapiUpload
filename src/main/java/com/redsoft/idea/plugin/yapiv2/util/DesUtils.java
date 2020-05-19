@@ -43,33 +43,6 @@ public final class DesUtils {
         return source;
     }
 
-
-    /**
-     * @description 获得描述
-     * @date 2019/2/2
-     */
-    public static String getDescription(PsiMethod psiMethodTarget) {
-        if (psiMethodTarget.getDocComment() != null) {
-            PsiDocTag[] psiDocTags = psiMethodTarget.getDocComment().getTags();
-            for (PsiDocTag psiDocTag : psiDocTags) {
-                if (psiDocTag.getText().contains("@description") || psiDocTag.getText()
-                        .contains("@Description")) {
-                    return trimFirstAndLastChar(
-                            psiDocTag.getText().replace("@description", "")
-                                    .replace("@Description", "")
-                                    .replace(":", "").replace("*", "").replace("\n", " "), ' ');
-                }
-            }
-            return trimFirstAndLastChar(
-                    psiMethodTarget.getDocComment().getText().split("@")[0]
-                            .replace("@description", "")
-                            .replace("@Description", "").replace(":", "").replace("*", "")
-                            .replace("/", "")
-                            .replace("\n", " "), ' ');
-        }
-        return null;
-    }
-
     /**
      * @description 通过paramName 获得描述
      * @date 2019/5/22
@@ -112,54 +85,6 @@ public final class DesUtils {
     }
 
     /**
-     * @description 获得菜单名称
-     * @date 2019/5/18
-     */
-    public static String getMenu(String text) {
-        String menu = getAnno(text, "@menu");
-        if (Strings.isBlank(menu)) {
-            menu = getAnno(text, "@Menu");
-        }
-        return menu;
-    }
-
-    /**
-     * @description 获得路径前缀（用于带网关的接口）
-     * @date 2019/5/18
-     */
-    public static String getPrefix(String text) {
-        String prefix = getAnno(text, "@prefix");
-        if (Strings.isBlank(prefix)) {
-            prefix = getAnno(text, "@Prefix");
-        }
-        return prefix;
-    }
-
-    /**
-     * @description 获得自定义路径
-     * @date 2019/5/18
-     */
-    public static String getPath(String text) {
-        String path = getAnno(text, "@path");
-        if (Strings.isBlank(path)) {
-            path = getAnno(text, "@Path");
-        }
-        return path;
-    }
-
-    /**
-     * @description 获得接口状态
-     * @date 2019/5/18
-     */
-    public static String getStatus(String text) {
-        String status = getAnno(text, "@status");
-        if (Strings.isBlank(status)) {
-            status = getAnno(text, "@Status");
-        }
-        return status;
-    }
-
-    /**
      * @description 获得接口字段命名策略
      * @date 2020/3/22
      */
@@ -169,18 +94,6 @@ public final class DesUtils {
             strategy = getAnno(text, "@Strategy");
         }
         return strategy;
-    }
-
-    /**
-     * @description 获得菜单描述
-     * @date 2019/5/18
-     */
-    public static String getMenuDesc(String text) {
-        String menuDesc = getAnno(text, "@menuDesc");
-        if (Strings.isBlank(menuDesc)) {
-            menuDesc = getAnno(text, "@MenuDesc");
-        }
-        return menuDesc;
     }
 
     /**
@@ -199,17 +112,6 @@ public final class DesUtils {
         } else {
             return null;
         }
-    }
-
-    /**
-     * @description 是否不需要上传yapi
-     * @date 2019/5/18
-     */
-    public static boolean deprecated(String text) {
-        if (Strings.isEmpty(text) || !text.contains("*/")) {
-            return false;
-        }
-        return text.contains("@Deprecated") || text.contains("@deprecated");
     }
 
     /**

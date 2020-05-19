@@ -9,15 +9,14 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.redsoft.idea.plugin.yapiv2.req.PsiParamFilter;
-import com.redsoft.idea.plugin.yapiv2.req.SimpleRequestBodyParamResolver;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.model.YApiQuery;
+import com.redsoft.idea.plugin.yapiv2.req.PsiParamFilter;
+import com.redsoft.idea.plugin.yapiv2.req.SimpleRequestBodyParamResolver;
 import com.redsoft.idea.plugin.yapiv2.util.DesUtils;
-import com.redsoft.idea.plugin.yapiv2.util.ProjectHolder;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
 import com.redsoft.idea.plugin.yapiv2.util.ValidUtils;
 import java.util.HashSet;
@@ -27,6 +26,12 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 public class RequestQueryResolverImpl implements SimpleRequestBodyParamResolver {
+
+    private final Project project;
+
+    public RequestQueryResolverImpl(Project project) {
+        this.project = project;
+    }
 
     @NotNull
     @Override
@@ -65,7 +70,6 @@ public class RequestQueryResolverImpl implements SimpleRequestBodyParamResolver 
                     + typeName + ")");
             results.add(yapiQuery);
         } else {
-            Project project = ProjectHolder.getCurrentProject();
             PsiClass psiClass = JavaPsiFacade.getInstance(project)
                     .findClass(typeClassName, GlobalSearchScope.allScope(project));
             for (PsiField field : Objects.requireNonNull(psiClass).getAllFields()) {

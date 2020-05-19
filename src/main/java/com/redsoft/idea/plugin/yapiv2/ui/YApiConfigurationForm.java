@@ -1,8 +1,6 @@
 package com.redsoft.idea.plugin.yapiv2.ui;
 
 import com.intellij.openapi.ui.ComboBox;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
@@ -11,8 +9,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 public class YApiConfigurationForm {
 
@@ -22,6 +18,7 @@ public class YApiConfigurationForm {
     private JPanel panel;
     private JFormattedTextField projectIdField;
     private ComboBox<String> namingStrategyComboBox;
+    private ComboBox<String> dataModeComboBox;
 
     public JPanel getPanel() {
         return panel;
@@ -47,6 +44,10 @@ public class YApiConfigurationForm {
         return enableBasicScopeCheckBox;
     }
 
+    public ComboBox<String> getDataModeComboBox() {
+        return dataModeComboBox;
+    }
+
     private void createUIComponents() {
         this.projectIdField = new JFormattedTextField(new DecimalFormat("#0"));
         this.projectIdField.addKeyListener(new KeyAdapter() {
@@ -68,12 +69,7 @@ public class YApiConfigurationForm {
         });
         this.namingStrategyComboBox = new ComboBox<>(
                 new String[]{"None", "KebabCase", "SnakeCase", "LowerCase", "UpperCamelCase"});
+        this.dataModeComboBox = new ComboBox<>(new String[]{"json-schema", "json5"});
     }
 
-    private void formatUrl(){
-        String old = this.urlField.getText();
-        if (old.matches(".*/+$")) {
-            urlField.setText(old.replaceAll("/+$", ""));
-        }
-    }
 }

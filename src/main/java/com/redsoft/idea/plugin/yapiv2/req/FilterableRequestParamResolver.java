@@ -3,8 +3,6 @@ package com.redsoft.idea.plugin.yapiv2.req;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
-import com.redsoft.idea.plugin.yapiv2.req.PsiParamListFilter;
-import com.redsoft.idea.plugin.yapiv2.req.RequestParamResolver;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 

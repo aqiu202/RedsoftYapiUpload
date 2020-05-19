@@ -15,9 +15,8 @@ import org.jdom.Element;
 
 public class ProjectConfigReader {
 
-    private ProjectConfigReader(){}
-
-    private static YApiProjectProperty projectProperty;
+    private ProjectConfigReader() {
+    }
 
     private final static ProjectConfigurationReader<YApiProjectProperty> reader = (project -> {
         YApiProjectPersistentState projectState = ServiceManager
@@ -53,11 +52,7 @@ public class ProjectConfigReader {
     });
 
     public static YApiProjectProperty read(Project project) {
-        projectProperty = reader.read(project);
-        return projectProperty;
+        return reader.read(project);
     }
 
-    public static YApiProjectProperty getProjectConfigurationFromCache() {
-        return projectProperty;
-    }
 }

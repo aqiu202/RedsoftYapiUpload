@@ -61,6 +61,7 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
                 projectId,
                 yApiConfigurationForm.getTokenField().getText(),
                 yApiConfigurationForm.getNamingStrategyComboBox().getSelectedIndex(),
+                yApiConfigurationForm.getDataModeComboBox().getSelectedIndex(),
                 yApiConfigurationForm.getEnableBasicScopeCheckBox().isSelected());
         return !this.yApiProjectProperty
                 .equals(ProjectConfigReader.read(this.project));
@@ -86,6 +87,8 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
         yApiConfigurationForm.getProjectIdField().setText(String.valueOf(property.getProjectId()));
         int strategy = property.getStrategy();
         yApiConfigurationForm.getNamingStrategyComboBox().setSelectedIndex(strategy);
+        int dataMode = property.getDataMode();
+        yApiConfigurationForm.getDataModeComboBox().setSelectedIndex(dataMode);
         String token = property.getToken();
         if (Strings.isNotBlank(token)) {
             yApiConfigurationForm.getTokenField().setText(token);

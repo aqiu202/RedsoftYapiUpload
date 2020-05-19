@@ -1,7 +1,7 @@
 package com.redsoft.idea.plugin.yapiv2.constant;
 
-import com.redsoft.idea.plugin.yapiv2.range.LongRange;
 import com.redsoft.idea.plugin.yapiv2.model.Mock;
+import com.redsoft.idea.plugin.yapiv2.range.LongRange;
 import com.redsoft.idea.plugin.yapiv2.schema.base.SchemaType;
 import java.sql.Timestamp;
 import java.time.LocalDate;

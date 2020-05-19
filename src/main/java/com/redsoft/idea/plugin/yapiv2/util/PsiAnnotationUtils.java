@@ -43,7 +43,7 @@ public final class PsiAnnotationUtils {
         }
         for (String qualifiedName : qualifiedNames) {
             PsiAnnotation annotation = annotationOwner.findAnnotation(qualifiedName);
-            if(annotation != null) {
+            if (annotation != null) {
                 return annotation;
             }
         }

@@ -15,6 +15,7 @@ public class YApiPropertyConvertHolder {
     public static YApiPropertyXmlConvert<YApiProjectProperty> getConvert() {
         return InnerClass.CONVERT;
     }
+
     public static YApiPropertyXmlConvert<YApiApplicationProperty> getApplicationConvert() {
         return InnerClass.APP_CONVERT;
     }

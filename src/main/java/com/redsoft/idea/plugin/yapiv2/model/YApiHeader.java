@@ -8,12 +8,14 @@ package com.redsoft.idea.plugin.yapiv2.model;
 @SuppressWarnings("unused")
 public class YApiHeader extends ValueWrapper {
 
-    public YApiHeader(){}
+    public YApiHeader() {
+    }
 
     public YApiHeader(String name, String value) {
         this.name = name;
         this.value = value;
     }
+
     /**
      * 值
      */

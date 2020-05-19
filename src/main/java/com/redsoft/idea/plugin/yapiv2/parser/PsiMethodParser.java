@@ -12,6 +12,6 @@ import org.jetbrains.annotations.NotNull;
  **/
 public interface PsiMethodParser {
 
-    YApiParam parse(@NotNull PsiClass c,@NotNull PsiMethod m);
+    YApiParam parse(@NotNull PsiClass c, @NotNull PsiMethod m);
 
 }

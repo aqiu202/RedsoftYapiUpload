@@ -16,22 +16,15 @@ import com.redsoft.idea.plugin.yapiv2.model.YApiSaveParam;
 import com.redsoft.idea.plugin.yapiv2.parser.YApiParser;
 import com.redsoft.idea.plugin.yapiv2.upload.YApiUpload;
 import com.redsoft.idea.plugin.yapiv2.util.Builders;
-import com.redsoft.idea.plugin.yapiv2.util.ProjectHolder;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
-import java.util.Objects;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 public class YApiUploadAction extends AnAction {
 
-    private final YApiParser yApiParser = new YApiParser();
-
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        //TODO 接收到事件
         Project project = e.getData(CommonDataKeys.PROJECT);
-        ProjectHolder.setCurrentProject(project);
-        //TODO 读取配置
         YApiProjectProperty property = ProjectConfigReader.read(project);
         // token
         String projectToken = property.getToken();
@@ -46,24 +39,16 @@ public class YApiUploadAction extends AnAction {
                             NotificationType.ERROR).notify(project);
             return;
         }
-        //TODO 根据配置信息解析接口信息
         //获得api 需上传的接口列表 参数对象
-        Set<YApiParam> yApiParams = yApiParser.parse(e);
+        Set<YApiParam> yApiParams = new YApiParser(property, project).parse(e);
         if (yApiParams != null) {
             for (YApiParam yApiParam : yApiParams) {
                 YApiSaveParam yapiSaveParam = Builders.of(yApiParam::convert)
                         .with(YApiSaveParam::setYApiUrl, yapiUrl)
                         .with(YApiSaveParam::setToken, projectToken)
                         .with(YApiSaveParam::setProjectId, projectId)
-                        .with(YApiSaveParam::setRes_body_is_json_schema, true)
                         .build();
-                String menuDesc = yApiParam.getMenuDesc();
-                if (Objects.nonNull(menuDesc)) {
-                    yapiSaveParam.setMenuDesc(yApiParam.getMenuDesc());
-                }
-                if (!Strings.isEmpty(yApiParam.getMenu())) {
-                    yapiSaveParam.setMenu(yApiParam.getMenu());
-                } else {
+                if (Strings.isEmpty(yApiParam.getMenu())) {
                     yapiSaveParam.setMenu(YApiConstants.menu);
                 }
                 try {

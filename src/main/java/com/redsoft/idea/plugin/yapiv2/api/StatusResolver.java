@@ -12,5 +12,6 @@ import org.jetbrains.annotations.Nullable;
  **/
 public interface StatusResolver {
 
-    void resolve(@Nullable PsiDocComment classDoc, @Nullable PsiDocComment methodDoc, @NotNull YApiParam target);
+    void resolve(@Nullable PsiDocComment classDoc, @Nullable PsiDocComment methodDoc,
+            @NotNull YApiParam target);
 }

@@ -23,7 +23,7 @@ public class MenuSetterImpl implements MenuSetter {
             value = PsiDocUtils.getTagValueByName(docComment, TAG_MENU);
         }
         //如果没有@description注释
-        if(Strings.isBlank(descValue)) {
+        if (Strings.isBlank(descValue)) {
             //描述默认读取描述信息
             descValue = value;
         }

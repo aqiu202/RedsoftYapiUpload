@@ -13,7 +13,8 @@ import org.jetbrains.annotations.NotNull;
 @State(name = "ApplicationRedsoftYApiUpload", storages = @Storage("redsoft-yapi.xml"))
 public class YApiApplicationPersistentState implements PersistentStateComponent<Element> {
 
-    private final YApiPropertyXmlConvert<YApiApplicationProperty> convert = YApiPropertyConvertHolder.getApplicationConvert();
+    private final YApiPropertyXmlConvert<YApiApplicationProperty> convert = YApiPropertyConvertHolder
+            .getApplicationConvert();
     private YApiApplicationProperty yApiApplicationProperty;
 
     YApiApplicationPersistentState() {
@@ -25,7 +26,8 @@ public class YApiApplicationPersistentState implements PersistentStateComponent<
 
     @Override
     public Element getState() {
-        return yApiApplicationProperty == null ? null : this.convert.serialize(yApiApplicationProperty);
+        return yApiApplicationProperty == null ? null
+                : this.convert.serialize(yApiApplicationProperty);
     }
 
     @Override

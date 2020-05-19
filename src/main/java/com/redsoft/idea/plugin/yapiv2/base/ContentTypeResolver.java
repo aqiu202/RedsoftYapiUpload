@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ContentTypeResolver {
 
-    final static String JSON = "application/json";
-    final static String FORM = "application/x-www-form-urlencoded";
-    final static String ROW = "text/plain";
-    final static String JSON_VALUE = "json";
-    final static String FORM_VALUE = "form";
-    final static String ROW_VALUE = "row";
+    String JSON = "application/json";
+    String FORM = "application/x-www-form-urlencoded";
+    String ROW = "text/plain";
+    String JSON_VALUE = "json";
+    String FORM_VALUE = "form";
+    String ROW_VALUE = "row";
 
     void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target);
 }

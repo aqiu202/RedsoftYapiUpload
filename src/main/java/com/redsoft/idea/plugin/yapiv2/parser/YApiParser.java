@@ -8,13 +8,13 @@ import com.intellij.psi.PsiMethod;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.base.DeprecatedAssert;
 import com.redsoft.idea.plugin.yapiv2.base.impl.DeprecatedAssertImpl;
-import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiClassParserImpl;
-import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiMethodParserImpl;
 import com.redsoft.idea.plugin.yapiv2.constant.NotificationConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
-import com.redsoft.idea.plugin.yapiv2.util.ProjectHolder;
+import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiClassParserImpl;
+import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiMethodParserImpl;
 import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
+import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -29,21 +29,17 @@ public class YApiParser {
 
     private final DeprecatedAssert deprecatedAssert = new DeprecatedAssertImpl();
 
-    private final PsiMethodParser methodParser = new PsiMethodParserImpl();
-    private final PsiClassParser classParser = new PsiClassParserImpl();
+    private final YApiProjectProperty property;
+    private final Project project;
 
+    public YApiParser(YApiProjectProperty property, Project project) {
+        this.property = property;
+        this.project = project;
+    }
 
     public Set<YApiParam> parse(AnActionEvent e) {
-        Project project = ProjectHolder.getCurrentProject();
         String selectedText = PsiUtils.getSelectedText(e);
-//        if (Strings.isEmpty(selectedText)) {
-//            NotificationConstants.NOTIFICATION_GROUP
-//                    .createNotification(YApiConstants.name, "提示", "请选中类或者方法",
-//                            NotificationType.ERROR).notify(project);
-//            return null;
-//        }
         PsiClass selectedClass = PsiUtils.currentClass(e);
-        //TODO 判断类是否过期
         //获取该类是否已经过时
         if (Objects.isNull(selectedClass) || deprecatedAssert.isDeprecated(selectedClass)) {
             NotificationConstants.NOTIFICATION_GROUP
@@ -54,11 +50,9 @@ public class YApiParser {
         }
         Set<YApiParam> yApiParams = new HashSet<>();
         if (Strings.isBlank(selectedText) || selectedText.equals(selectedClass.getName())) {
-            //TODO 如果选中的是类，则轮询该类所有的方法，解析接口
-            List<YApiParam> params = classParser.parse(selectedClass);
+            List<YApiParam> params = new PsiClassParserImpl(property, project).parse(selectedClass);
             yApiParams.addAll(params);
         } else {//如果用户选中的是方法
-            //TODO 如果选中的是方法，获取该方法
             PsiMethod[] psiMethods = selectedClass.getMethods();
             PsiMethod psiMethodTarget = null;
             for (PsiMethod psiMethod : psiMethods) {
@@ -76,9 +70,11 @@ public class YApiParser {
                                     NotificationType.WARNING).notify(project);
                 }
                 try {
-                    YApiParam param = methodParser.parse(selectedClass, psiMethodTarget);
+                    YApiParam param = new PsiMethodParserImpl(property, project)
+                            .parse(selectedClass, psiMethodTarget);
                     yApiParams.add(param);
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     NotificationConstants.NOTIFICATION_GROUP
                             .createNotification(YApiConstants.name, "接口信息解析失败",
                                     "失败原因：" + ex.getMessage(),

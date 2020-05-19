@@ -11,7 +11,6 @@ import com.redsoft.idea.plugin.yapiv2.constant.PluginConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiApplicationProperty;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiPropertyConvertHolder;
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 public class YApiInitComponent implements ProjectComponent {
@@ -26,16 +25,24 @@ public class YApiInitComponent implements ProjectComponent {
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
-            String changeLogTitle = "<h4>版本1.3.7，添加Swagger参数解析支持，内置注释模板等</h4>";
+//            String changeLogTitle = "<h4>版本1.3.7，添加Swagger参数解析支持，内置注释模板等</h4>";
+//            String changeLogContent = "<ol>"
+//                    + "        <li>添加Swagger参数解析支持</li>"
+//                    + "        <li>内置注释模板，无需再单独配置注释模板</li>"
+//                    + "        <li>优化1-兼容之前的配置方式</li>"
+//                    + "        <li>优化2-响应参数自动设置mock</li>"
+//                    + "      </ol>";
+            String changeLogTitle = "<h4>版本2.0.0，架构重构，返回数据json5解析等</h4>";
             String changeLogContent = "<ol>"
-                    + "        <li>添加Swagger参数解析支持</li>"
-                    + "        <li>内置注释模板，无需再单独配置注释模板</li>"
-                    + "        <li>优化1-兼容之前的配置方式</li>"
+                    + "        <li>添加返回数据json5格式解析</li>"
+                    + "        <li>内置注释模板优化，减少侵入</li>"
+                    + "        <li>摒弃@strategy和@path注释</li>"
                     + "        <li>优化2-响应参数自动设置mock</li>"
                     + "      </ol>";
             NotificationConstants.NOTIFICATION_GROUP.createNotification(YApiConstants.name, "更新内容",
                     changeLogTitle + "\n" + changeLogContent
-                            + "<p>更多信息请查看<a href=\"https://github.com/aqiu202/RedsoftYApiUpload/wiki/使用指南\">使用文档</a></p>",
+                            + "<p>更多信息请查看<a href=\"https://github.com/aqiu202/RedsoftYApiUpload/wiki/使用指南\">使用文档</a>||"
+                            + "<a href=\"https://github.com/aqiu202/RedsoftYapiUpload/issues\">问题反馈</a></p>",
                     NotificationType.INFORMATION, new UrlOpeningListener(false))
                     .notify(this.project);
             property = new YApiApplicationProperty();

@@ -8,11 +8,13 @@ public class YApiProjectProperty {
     private final static int DEFAULT_PROJECT_ID = 1;
     private final static String DEFAULT_TOKEN = "";
     private final static int DEFAULT_STRATEGY = 0;
+    private final static int DEFAULT_DATA_MODE = 0;
 
     private String url = DEFAULT_URL;
     private int projectId = DEFAULT_PROJECT_ID;
     private String token = DEFAULT_TOKEN;
     private int strategy = DEFAULT_STRATEGY;
+    private int dataMode = DEFAULT_DATA_MODE;
     private boolean enableBasicScope;
 
     public YApiProjectProperty() {
@@ -20,16 +22,13 @@ public class YApiProjectProperty {
     }
 
     public YApiProjectProperty(String url, int projectId, String token, int strategy,
-            boolean enableBasicScope) {
-        if (url.matches(".*/+$")) {
-            this.url = url.replaceAll("/+$", "");
-        } else {
-            this.url = url;
-        }
+            int dataMode, boolean enableBasicScope) {
         this.projectId = projectId;
         this.token = token;
         this.strategy = strategy;
+        this.dataMode = dataMode;
         this.enableBasicScope = enableBasicScope;
+        this.setUrl(url);
     }
 
     public String getUrl() {
@@ -68,6 +67,14 @@ public class YApiProjectProperty {
         this.strategy = strategy;
     }
 
+    public int getDataMode() {
+        return dataMode;
+    }
+
+    public void setDataMode(int dataMode) {
+        this.dataMode = dataMode;
+    }
+
     public boolean isEnableBasicScope() {
         return enableBasicScope;
     }
@@ -95,6 +102,7 @@ public class YApiProjectProperty {
                 Objects.equals(projectId, that.projectId) &&
                 Objects.equals(token, that.token) &&
                 Objects.equals(strategy, that.strategy) &&
+                Objects.equals(dataMode, that.dataMode) &&
                 Objects.equals(enableBasicScope, that.enableBasicScope);
     }
 }

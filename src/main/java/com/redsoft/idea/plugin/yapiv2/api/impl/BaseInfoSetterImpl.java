@@ -25,9 +25,9 @@ public class BaseInfoSetterImpl implements BaseInfoSetter {
         }
         target.setDesc("<pre><code>" + classDesc + "</code></pre>");
         PsiDocComment docComment = m.getDocComment();
-        if(Objects.nonNull(docComment)) {
+        if (Objects.nonNull(docComment)) {
             String title = PsiDocUtils.getTagDescription(docComment);
-            if(Strings.isBlank(title)) {
+            if (Strings.isBlank(title)) {
                 title = PsiDocUtils.getTagValueByName(docComment, DESCRIPTION_VALUE);
             }
             target.setTitle(title);
