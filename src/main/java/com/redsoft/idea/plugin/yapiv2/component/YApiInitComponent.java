@@ -35,9 +35,9 @@ public class YApiInitComponent implements ProjectComponent {
             String changeLogTitle = "<h4>版本2.0.0，架构重构，返回数据json5解析等</h4>";
             String changeLogContent = "<ol>"
                     + "        <li>添加返回数据json5格式解析</li>"
+                    + "        <li>javadoc解析方式优化，添加值的HTML格式解析</li>"
                     + "        <li>内置注释模板优化，减少侵入</li>"
                     + "        <li>摒弃@strategy和@path注释</li>"
-                    + "        <li>优化2-响应参数自动设置mock</li>"
                     + "      </ol>";
             NotificationConstants.NOTIFICATION_GROUP.createNotification(YApiConstants.name, "更新内容",
                     changeLogTitle + "\n" + changeLogContent

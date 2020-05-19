@@ -124,6 +124,14 @@
         <li>优化1-兼容之前的配置方式</li>
         <li>优化2-响应参数自动设置mock</li>
       </ol>
+      <hr>
+      <h4>版本2.0.0，架构重构，返回数据json5解析等</h4>
+      <ol>
+        <li>添加返回数据json5格式解析</li>
+        <li>javadoc解析方式优化，添加值的HTML格式解析</li>
+        <li>内置注释模板优化，减少侵入</li>
+        <li>摒弃@strategy和@path注释</li>
+     </ol>
     ]]>
     </change-notes>
 
@@ -135,28 +143,33 @@
     <!-- uncomment to enable plugin in all products
     -->
 
-<!--    <depends>com.intellij.modules.java</depends>-->
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <applicationService serviceImplementation="com.redsoft.idea.plugin.yapiv2.config.YApiApplicationPersistentState"/>
+        <applicationService
+                serviceImplementation="com.redsoft.idea.plugin.yapiv2.config.YApiApplicationPersistentState"/>
         <projectConfigurable
                 instance="com.redsoft.idea.plugin.yapiv2.config.YApiSearchableConfigurable"/>
         <projectService
                 serviceImplementation="com.redsoft.idea.plugin.yapiv2.config.YApiProjectPersistentState"/>
-        <defaultLiveTemplatesProvider implementation="com.redsoft.idea.plugin.yapiv2.template.YApiTemplateProvider"/>
-        <liveTemplateContext implementation="com.redsoft.idea.plugin.yapiv2.template.YApiTemplateContextType"/>
+        <defaultLiveTemplatesProvider
+                implementation="com.redsoft.idea.plugin.yapiv2.template.YApiTemplateProvider"/>
+        <liveTemplateContext
+                implementation="com.redsoft.idea.plugin.yapiv2.template.YApiTemplateContextType"/>
     </extensions>
 
     <project-components>
         <component>
-            <implementation-class>com.redsoft.idea.plugin.yapiv2.component.YApiInitComponent</implementation-class>
+            <implementation-class>com.redsoft.idea.plugin.yapiv2.component.YApiInitComponent
+            </implementation-class>
         </component>
     </project-components>
 
     <actions>
         <!-- Add your actions here -->
-        <action id="RedsoftYapiUpload" class="com.redsoft.idea.plugin.yapiv2.action.YApiUploadAction"
+        <action id="RedsoftYapiUpload"
+                class="com.redsoft.idea.plugin.yapiv2.action.YApiUploadAction"
                 text="上传到YApi"
                 description="YApi文档上传插件">
             <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>

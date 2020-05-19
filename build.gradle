@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.redsoft.idea.plugin'
-version '1.3.8'
+version '2.0.0'
 
 repositories {
     maven {
@@ -14,6 +14,9 @@ repositories {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
+
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
