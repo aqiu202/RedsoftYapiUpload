@@ -4,6 +4,7 @@ import com.jgoodies.common.base.Strings;
 
 public class Json<T> {
 
+    public final static String INTENT = "  ";
     protected final static int COMMENT_MODE_SINGLE = 1;
     protected final static int COMMENT_MODE_MULTIPLE = 2;
     protected int commentMode = COMMENT_MODE_SINGLE;
@@ -59,7 +60,7 @@ public class Json<T> {
     protected String intent(int level) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < level; i++) {
-            builder.append("  ");
+            builder.append(INTENT);
         }
         return builder.toString();
     }

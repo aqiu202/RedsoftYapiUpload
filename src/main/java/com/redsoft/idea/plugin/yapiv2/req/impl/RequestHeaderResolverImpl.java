@@ -29,7 +29,8 @@ public class RequestHeaderResolverImpl implements SimpleRequestParamResolver {
     @Override
     public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
             @NotNull YApiParam target) {
-        PsiAnnotation annotation = param.getAnnotation(SpringMVCConstants.RequestHeader);
+        PsiAnnotation annotation = PsiAnnotationUtils
+                .findAnnotation(param, SpringMVCConstants.RequestHeader);
         if (Objects.nonNull(annotation)) {
             YApiHeader header = new YApiHeader();
             header.full(this.handleParamAnnotation(param, annotation));

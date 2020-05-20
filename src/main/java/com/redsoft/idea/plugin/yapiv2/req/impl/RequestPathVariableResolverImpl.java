@@ -27,7 +27,7 @@ public class RequestPathVariableResolverImpl implements SimpleRequestParamResolv
     @Override
     public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
             @NotNull YApiParam target) {
-        PsiAnnotation annotation = param.getAnnotation(SpringMVCConstants.PathVariable);
+        PsiAnnotation annotation = PsiAnnotationUtils.findAnnotation(param, SpringMVCConstants.PathVariable);
         if (Objects.nonNull(annotation)) {
             YApiPathVariable pathVariable = new YApiPathVariable();
             pathVariable.full(this.handleParamAnnotation(param, annotation));

@@ -60,7 +60,7 @@ public class JsonItem<T> {
     private String intent(int level) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < level; i++) {
-            builder.append("  ");
+            builder.append(Json.INTENT);
         }
         return builder.toString();
     }
