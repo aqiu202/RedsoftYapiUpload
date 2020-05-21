@@ -41,7 +41,7 @@ public class YApiInitComponent implements ProjectComponent {
                     + "      </ol>"
                     + "<h4>版本2.0.1，修改bug</h4>"
                     + "      <ol>"
-                    + "        <li>对@ResponseBody注解的解析异常BUG修复</li>"
+                    + "        <li>参数含@RequestBody注解（body是json格式）的接口解析异常BUG修复</li>"
                     + "        <li>所有的注释支持html标签包裹</li>"
                     + "     </ol>";
             NotificationConstants.NOTIFICATION_GROUP.createNotification(YApiConstants.name, "更新内容",
