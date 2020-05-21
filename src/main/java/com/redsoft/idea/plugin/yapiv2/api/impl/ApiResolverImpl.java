@@ -12,17 +12,21 @@ import com.redsoft.idea.plugin.yapiv2.api.PathResolver;
 import com.redsoft.idea.plugin.yapiv2.api.StatusResolver;
 import com.redsoft.idea.plugin.yapiv2.base.ContentTypeResolver;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
+import com.redsoft.idea.plugin.yapiv2.model.YApiStatus;
 import com.redsoft.idea.plugin.yapiv2.req.RequestResolver;
 import com.redsoft.idea.plugin.yapiv2.req.impl.RequestContentTypeResolverImpl;
 import com.redsoft.idea.plugin.yapiv2.req.impl.RequestResolverImpl;
+import com.redsoft.idea.plugin.yapiv2.res.DocTagValueHandler;
 import com.redsoft.idea.plugin.yapiv2.res.ResponseResolver;
 import com.redsoft.idea.plugin.yapiv2.res.impl.ResponseContentTypeResolverImpl;
 import com.redsoft.idea.plugin.yapiv2.res.impl.ResponseResolverImpl;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.util.Objects;
+import java.util.function.Consumer;
+import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class ApiResolverImpl implements ApiResolver {
+public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
 
     private final PathResolver pathResolver = new PathResolverImpl();
     private final HttpMethodResolver httpMethodResolver = new HttpMethodResolverImpl();
@@ -33,6 +37,24 @@ public class ApiResolverImpl implements ApiResolver {
     private final BaseInfoSetter baseInfoSetter = new BaseInfoSetterImpl();
     private final RequestResolver requestResolver;
     private final ResponseResolver responseResolver;
+
+    private final Consumer<YApiParam> docTagValueResolver = (param) -> {
+        param.setTitle(this.handleDocTagValue(param.getTitle()));
+        param.setMenu(this.handleDocTagValue(param.getMenu()));
+        param.setMenuDesc(this.handleDocTagValue(param.getMenuDesc()));
+        param.setStatus(YApiStatus.getStatus(this.handleDocTagValue(param.getMenuDesc())));
+        if(CollectionUtils.isNotEmpty(param.getParams())) {
+            param.getParams().forEach(query -> query.setDesc(this.handleDocTagValue(query.getDesc())));
+        }
+        if(CollectionUtils.isNotEmpty(param.getReq_body_form())){
+            param.getReq_body_form()
+                    .forEach(form -> form.setDesc(this.handleDocTagValue(form.getDesc())));
+        }
+        if(CollectionUtils.isNotEmpty(param.getReq_params())){
+            param.getReq_params().forEach(pathVariable -> pathVariable
+                    .setDesc(this.handleDocTagValue(pathVariable.getDesc())));
+        }
+    };
 
     public ApiResolverImpl(YApiProjectProperty property, Project project) {
         requestResolver = new RequestResolverImpl(property, project);
@@ -53,6 +75,7 @@ public class ApiResolverImpl implements ApiResolver {
             menuSetter.set(classDoc, target);
         }
         requestResolver.resolve(m, target);
+        docTagValueResolver.accept(target);
         responseResolver.resolve(m.getReturnType(), target);
     }
 }

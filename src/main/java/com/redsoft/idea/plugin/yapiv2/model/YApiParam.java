@@ -50,7 +50,7 @@ public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
     /**
      * 原始类型 raw,form,json
      */
-    private String req_body_type;
+    private String req_body_type = "form";
     /**
      * 响应类型 json,raw
      */
@@ -81,6 +81,10 @@ public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
 
     /**
      * 请求参数body 是否为json_schema
+     */
+    private boolean req_body_is_json_schema = true;
+    /**
+     * 响应参数body 是否为json_schema
      */
     private boolean res_body_is_json_schema = true;
 
@@ -217,6 +221,14 @@ public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
         this.status = status;
     }
 
+    public boolean isReq_body_is_json_schema() {
+        return req_body_is_json_schema;
+    }
+
+    public void setReq_body_is_json_schema(boolean req_body_is_json_schema) {
+        this.req_body_is_json_schema = req_body_is_json_schema;
+    }
+
     public boolean isRes_body_is_json_schema() {
         return res_body_is_json_schema;
     }
@@ -251,6 +263,7 @@ public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
                 .with(YApiSaveParam::setReq_body_type, this.req_body_type)
                 .with(YApiSaveParam::setReq_body_form, this.req_body_form)
                 .with(YApiSaveParam::setReq_body_other, this.requestBody)
+                .with(YApiSaveParam::setReq_body_is_json_schema, this.req_body_is_json_schema)
                 .with(YApiSaveParam::setRes_body_is_json_schema, this.res_body_is_json_schema)
                 .with(YApiSaveParam::setReq_headers, this.headers)
                 .build();

@@ -3,6 +3,7 @@ package com.redsoft.idea.plugin.yapiv2.upload;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jgoodies.common.base.Strings;
+import com.redsoft.idea.plugin.yapiv2.base.ContentTypeResolver;
 import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiCatMenuParam;
 import com.redsoft.idea.plugin.yapiv2.model.YApiCatResponse;
@@ -10,6 +11,7 @@ import com.redsoft.idea.plugin.yapiv2.model.YApiHeader;
 import com.redsoft.idea.plugin.yapiv2.model.YApiResponse;
 import com.redsoft.idea.plugin.yapiv2.model.YApiSaveParam;
 import com.redsoft.idea.plugin.yapiv2.util.HttpClientUtils;
+import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +32,7 @@ import org.apache.http.entity.StringEntity;
 public class YApiUpload {
 
 
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     public static Map<String, Map<String, Integer>> catMap = new HashMap<>();
 
@@ -38,20 +40,19 @@ public class YApiUpload {
      * @description 调用保存接口
      * @date 2019/5/15
      */
-    public YApiResponse uploadSave(YApiSaveParam yapiSaveParam,
+    public YApiResponse uploadSave(YApiProjectProperty property, YApiSaveParam yapiSaveParam,
             @SuppressWarnings("unused") String path)
             throws IOException {
         if (Strings.isEmpty(yapiSaveParam.getTitle())) {
             yapiSaveParam.setTitle(yapiSaveParam.getPath());
         }
         YApiHeader yapiHeader = new YApiHeader();
-        if ("form".equals(yapiSaveParam.getReq_body_type())) {
+        if (ContentTypeResolver.FORM_VALUE.equals(yapiSaveParam.getReq_body_type())) {
             yapiHeader.setName("Content-Type");
-            yapiHeader.setValue("application/x-www-form-urlencoded");
+            yapiHeader.setValue(ContentTypeResolver.FORM);
         } else {
             yapiHeader.setName("Content-Type");
-            yapiHeader.setValue("application/json");
-//            yapiSaveParam.setReq_body_type("json");
+            yapiHeader.setValue(ContentTypeResolver.JSON);
         }
         if (Objects.isNull(yapiSaveParam.getReq_headers())) {
             Set<YApiHeader> list = new HashSet<>();
@@ -60,12 +61,12 @@ public class YApiUpload {
         } else {
             yapiSaveParam.getReq_headers().add(yapiHeader);
         }
-        YApiResponse yapiResponse = this.getCatIdOrCreate(yapiSaveParam);
+        YApiResponse yapiResponse = this.getCatIdOrCreate(property, yapiSaveParam);
         if (yapiResponse.getErrcode() == 0 && yapiResponse.getData() != null) {
             yapiSaveParam.setCatid(String.valueOf(yapiResponse.getData()));
             String response = HttpClientUtils
                     .ObjectToString(HttpClientUtils.getHttpclient().execute(
-                            this.getHttpPost(yapiSaveParam.getYApiUrl() + YApiConstants.yapiSave,
+                            this.getHttpPost(property.getUrl() + YApiConstants.yapiSave,
                                     gson.toJson(yapiSaveParam))), "utf-8");
             return gson.fromJson(response, YApiResponse.class);
         } else {
@@ -95,8 +96,11 @@ public class YApiUpload {
      * @description 获得分类或者创建分类
      * @date 2019/5/15
      */
-    public YApiResponse getCatIdOrCreate(YApiSaveParam yapiSaveParam) {
-        Map<String, Integer> catMenuMap = catMap.get(yapiSaveParam.getProjectId().toString());
+    public YApiResponse getCatIdOrCreate(YApiProjectProperty property,
+            YApiSaveParam yapiSaveParam) {
+        String projectId = Integer.toString(property.getProjectId());
+        String yApiUrl = property.getUrl();
+        Map<String, Integer> catMenuMap = catMap.get(projectId);
         if (catMenuMap != null) {
             if (!Strings.isEmpty(yapiSaveParam.getMenu())) {
                 if (Objects.nonNull(catMenuMap.get(yapiSaveParam.getMenu()))) {
@@ -112,14 +116,11 @@ public class YApiUpload {
         String response;
         try {
             response = HttpClientUtils.ObjectToString(HttpClientUtils.getHttpclient().execute(
-                    this.getHttpGet(
-                            yapiSaveParam.getYApiUrl() + YApiConstants.yapiCatMenu + "?project_id="
-                                    + yapiSaveParam
-                                    .getProjectId() + "&token=" + yapiSaveParam.getToken())),
+                    this.getHttpGet(yApiUrl + YApiConstants.yapiCatMenu + "?project_id="
+                            + projectId + "&token=" + yapiSaveParam.getToken())),
                     "utf-8");
             YApiResponse yapiResponse = gson.fromJson(response, YApiResponse.class);
-            Map<String, Integer> catMenuMapSub = catMap
-                    .get(yapiSaveParam.getProjectId().toString());
+            Map<String, Integer> catMenuMapSub = catMap.get(projectId);
             if (yapiResponse.getErrcode() == 0) {
                 @SuppressWarnings("unchecked")
                 List<YApiCatResponse> list = (List<YApiCatResponse>) yapiResponse.getData();
@@ -127,25 +128,25 @@ public class YApiUpload {
                 }.getType());
                 for (YApiCatResponse yapiCatResponse : list) {
                     if (yapiCatResponse.getName().equals(yapiSaveParam.getMenu())) {
-                        this.addMenu(catMenuMapSub, yapiCatResponse, yapiSaveParam);
+                        this.addMenu(property.getProjectId(), catMenuMapSub, yapiCatResponse);
                         return new YApiResponse(yapiCatResponse.get_id());
                     }
                 }
             }
             YApiCatMenuParam yapiCatMenuParam = new YApiCatMenuParam(yapiSaveParam.getMenu(),
-                    yapiSaveParam.getProjectId(), yapiSaveParam.getToken());
+                    property.getProjectId(), yapiSaveParam.getToken());
             String menuDesc = yapiSaveParam.getMenuDesc();
             if (Objects.nonNull(menuDesc)) {
                 yapiCatMenuParam.setDesc(menuDesc);
             }
             String responseCat = HttpClientUtils
                     .ObjectToString(HttpClientUtils.getHttpclient().execute(
-                            this.getHttpPost(yapiSaveParam.getYApiUrl() + YApiConstants.yapiAddCat,
+                            this.getHttpPost(yApiUrl + YApiConstants.yapiAddCat,
                                     gson.toJson(yapiCatMenuParam))), "utf-8");
             YApiCatResponse yapiCatResponse = gson
                     .fromJson(gson.fromJson(responseCat, YApiResponse.class).getData().toString(),
                             YApiCatResponse.class);
-            this.addMenu(catMenuMapSub, yapiCatResponse, yapiSaveParam);
+            this.addMenu(property.getProjectId(), catMenuMapSub, yapiCatResponse);
             return new YApiResponse(yapiCatResponse.get_id());
         } catch (IOException e) {
             e.printStackTrace();
@@ -153,14 +154,14 @@ public class YApiUpload {
         }
     }
 
-    private void addMenu(Map<String, Integer> catMenuMapSub, YApiCatResponse yapiCatResponse,
-            YApiSaveParam yapiSaveParam) {
+    private void addMenu(int projectId, Map<String, Integer> catMenuMapSub,
+            YApiCatResponse yapiCatResponse) {
         if (catMenuMapSub != null) {
             catMenuMapSub.put(yapiCatResponse.getName(), yapiCatResponse.get_id());
         } else {
             catMenuMapSub = new HashMap<>();
             catMenuMapSub.put(yapiCatResponse.getName(), yapiCatResponse.get_id());
-            catMap.put(yapiSaveParam.getProjectId().toString(), catMenuMapSub);
+            catMap.put(Integer.toString(projectId), catMenuMapSub);
         }
     }
 

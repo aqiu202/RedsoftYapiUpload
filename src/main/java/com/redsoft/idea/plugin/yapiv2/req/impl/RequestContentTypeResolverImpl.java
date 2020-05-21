@@ -15,8 +15,8 @@ public class RequestContentTypeResolverImpl implements ContentTypeResolver {
             return;
         }
 //        if (isResponseJson(c, m)) {
-        if (!PsiParamUtils.hasRequestBody(m.getParameterList().getParameters())) {
-            target.setReq_body_type(FORM_VALUE);
+        if (PsiParamUtils.hasRequestBody(m.getParameterList().getParameters())) {
+            target.setReq_body_type(JSON_VALUE);
         }
 //        } else {
 //            target.setReq_body_type(ROW_VALUE);

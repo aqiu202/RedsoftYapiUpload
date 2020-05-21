@@ -107,6 +107,8 @@ public class Json5ParserImpl extends AbstractObjectParser implements Json5Parser
                     continue;
                 }
                 String fieldName = this.handleFieldName(field.getName());
+                String desc = DesUtils.getLinkRemark(field, this.project);
+                desc = this.handleDocTagValue(desc);
                 if (hasChildren) {
                     String gType = field.getType().getCanonicalText();
                     String[] gTypes = gType.split("<");
@@ -114,19 +116,17 @@ public class Json5ParserImpl extends AbstractObjectParser implements Json5Parser
                             .contains(gTypes[1].split(">")[0]) && TypeConstants.arrayTypeMappings
                             .containsKey(gTypes[0])) {
                         jsonObject.addItem(new JsonItem<>(fieldName,
-                                new JsonArray<>(this.getJson(classType)),
-                                DesUtils.getLinkRemark(field, this.project)));
+                                new JsonArray<>(this.getJson(classType)), desc));
                     } else if (TypeConstants.genericList
                             .contains(gType)) {
-                        jsonObject.addItem(new JsonItem<>(fieldName, this.getJson(classType),
-                                DesUtils.getLinkRemark(field, this.project)));
+                        jsonObject
+                                .addItem(new JsonItem<>(fieldName, this.getJson(classType), desc));
                     } else {
-                        jsonObject.addItem(new JsonItem<>(fieldName, this.getJsonByField(field),
-                                DesUtils.getLinkRemark(field, this.project)));
+                        jsonObject.addItem(
+                                new JsonItem<>(fieldName, this.getJsonByField(field), desc));
                     }
                 } else {
-                    jsonObject.addItem(new JsonItem<>(fieldName, this.getJsonByField(field),
-                            DesUtils.getLinkRemark(field, this.project)));
+                    jsonObject.addItem(new JsonItem<>(fieldName, this.getJsonByField(field), desc));
                 }
             }
             return jsonObject;

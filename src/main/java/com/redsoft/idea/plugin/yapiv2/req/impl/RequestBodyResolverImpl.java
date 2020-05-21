@@ -18,8 +18,11 @@ public class RequestBodyResolverImpl implements SimpleRequestBodyParamResolver {
 
     private final ObjectParser objectParser;
 
+    private final int dataMode;
+
     public RequestBodyResolverImpl(YApiProjectProperty property, Project project) {
-        if (property.getDataMode() == 0) {
+        this.dataMode = property.getDataMode();
+        if (this.dataMode == 0) {
             this.objectParser = new JsonSchemaParserImpl(property, project);
         } else {
             this.objectParser = new Json5ParserImpl(property, project);
@@ -39,6 +42,7 @@ public class RequestBodyResolverImpl implements SimpleRequestBodyParamResolver {
     public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
             @NotNull YApiParam target) {
         target.setRequestBody(this.objectParser.getJsonResponse(param.getType()));
+        target.setReq_body_is_json_schema(this.dataMode == 0);
     }
 
 }

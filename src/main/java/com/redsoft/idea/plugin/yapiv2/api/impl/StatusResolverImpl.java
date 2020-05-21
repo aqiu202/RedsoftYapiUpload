@@ -1,5 +1,7 @@
 package com.redsoft.idea.plugin.yapiv2.api.impl;
 
+import static com.redsoft.idea.plugin.yapiv2.constant.DocCommentConstants.TAG_STATUS;
+
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.api.StatusResolver;
@@ -12,8 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class StatusResolverImpl implements StatusResolver {
 
-    private final static String TAG_STATUS = "status";
-
     @Override
     public void resolve(@Nullable PsiDocComment classDoc, @Nullable PsiDocComment methodDoc,
             @NotNull YApiParam target) {
@@ -21,13 +21,13 @@ public class StatusResolverImpl implements StatusResolver {
         if (Objects.nonNull(classDoc)) {
             String value = PsiDocUtils.getTagValueByName(classDoc, TAG_STATUS);
             if (Strings.isNotBlank(value)) {
-                status = YApiStatus.getStatus(value);
+                status = value;
             }
         }
         if (Objects.nonNull(methodDoc)) {
             String value = PsiDocUtils.getTagValueByName(methodDoc, TAG_STATUS);
             if (Strings.isNotBlank(value)) {
-                status = YApiStatus.getStatus(value);
+                status = value;
             }
         }
         target.setStatus(status);

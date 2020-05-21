@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jsoup.Jsoup;
 
 public final class PsiDocUtils {
 
@@ -18,29 +17,35 @@ public final class PsiDocUtils {
     }
 
     @Nullable
-    public static PsiDocTag getTagByName(@NotNull PsiDocComment docComment, String name) {
-        return docComment.findTagByName(name);
+    public static PsiDocTag getTagByName(@NotNull PsiDocComment docComment, String... names) {
+        PsiDocTag tag;
+        for (String name : names) {
+            if (Objects.nonNull(tag = docComment.findTagByName(name))) {
+                return tag;
+            }
+        }
+        return null;
     }
 
     @Nullable
-    public static String getTagValueByName(@NotNull PsiDocComment docComment, String name) {
-        PsiDocTag tag = getTagByName(docComment, name);
+    public static String getTagValueByName(@NotNull PsiDocComment docComment, String... names) {
+        PsiDocTag tag = getTagByName(docComment, names);
         PsiDocTagValue value;
         if (Objects.isNull(tag) || Objects.isNull(value = tag.getValueElement())) {
             return null;
         }
-        return Jsoup.parseBodyFragment(value.getText()).body().text();
+        return value.getText();
     }
 
     public static String getTagDescription(@NotNull PsiDocComment docComment) {
-        return Jsoup.parseBodyFragment(Stream.of(docComment.getDescriptionElements())
+        return Stream.of(docComment.getDescriptionElements())
                 .map(PsiElement::getText)
                 .map(String::trim)
                 .filter(Strings::isNotBlank)
-                .collect(Collectors.joining())).body().text();
+                .collect(Collectors.joining());
     }
 
-    public static boolean hasTag(@NotNull PsiDocComment docComment, String name) {
-        return Objects.nonNull(getTagByName(docComment, name));
+    public static boolean hasTag(@NotNull PsiDocComment docComment, String... names) {
+        return Objects.nonNull(getTagByName(docComment, names));
     }
 }

@@ -24,7 +24,7 @@ public final class DesUtils {
      * @param source 源字符串.
      * @param element 需要去除的字符.
      */
-    public static String trimFirstAndLastChar(String source, char element) {
+    private static String trimFirstAndLastChar(String source, char element) {
         boolean beginIndexFlag;
         boolean endIndexFlag;
         do {
@@ -84,35 +84,6 @@ public final class DesUtils {
         return "";
     }
 
-    /**
-     * @description 获得接口字段命名策略
-     * @date 2020/3/22
-     */
-    public static String getStrategy(String text) {
-        String strategy = getAnno(text, "@strategy");
-        if (Strings.isBlank(strategy)) {
-            strategy = getAnno(text, "@Strategy");
-        }
-        return strategy;
-    }
-
-    /**
-     * @description 获得特定注释内容
-     * @date 2019/5/18
-     */
-    public static String getAnno(String text, String arg) {
-        if (Strings.isEmpty(text) || !text.contains("*/")) {
-            return null;
-        }
-        String[] menuList = text.split("\\*/")[0].split(arg);
-        if (menuList.length > 1) {
-            return DesUtils.trimFirstAndLastChar(
-                    menuList[1].split("\\*")[0].replace("*", "")
-                            .replace("\n", " "), ' ');
-        } else {
-            return null;
-        }
-    }
 
     /**
      * @description 获得link 备注

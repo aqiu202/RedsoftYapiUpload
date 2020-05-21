@@ -27,13 +27,13 @@ public class YApiUploadAction extends AnAction {
         Project project = e.getData(CommonDataKeys.PROJECT);
         YApiProjectProperty property = ProjectConfigReader.read(project);
         // token
-        String projectToken = property.getToken();
+        String token = property.getToken();
         // 项目ID
         int projectId = property.getProjectId();
         // yapi地址
         String yapiUrl = property.getUrl();
         // 配置校验
-        if (Strings.isEmpty(projectToken) || Strings.isEmpty(yapiUrl) || projectId <= 0) {
+        if (Strings.isEmpty(token) || Strings.isEmpty(yapiUrl) || projectId <= 0) {
             NotificationConstants.NOTIFICATION_GROUP
                     .createNotification(YApiConstants.name, "配置信息异常", "请检查配置参数是否正常",
                             NotificationType.ERROR).notify(project);
@@ -44,9 +44,7 @@ public class YApiUploadAction extends AnAction {
         if (yApiParams != null) {
             for (YApiParam yApiParam : yApiParams) {
                 YApiSaveParam yapiSaveParam = Builders.of(yApiParam::convert)
-                        .with(YApiSaveParam::setYApiUrl, yapiUrl)
-                        .with(YApiSaveParam::setToken, projectToken)
-                        .with(YApiSaveParam::setProjectId, projectId)
+                        .with(YApiSaveParam::setToken, token)
                         .build();
                 if (Strings.isEmpty(yApiParam.getMenu())) {
                     yapiSaveParam.setMenu(YApiConstants.menu);
@@ -54,7 +52,7 @@ public class YApiUploadAction extends AnAction {
                 try {
                     // 上传
                     YApiResponse yapiResponse = new YApiUpload()
-                            .uploadSave(yapiSaveParam, project.getBasePath());
+                            .uploadSave(property, yapiSaveParam, project.getBasePath());
                     if (yapiResponse.getErrcode() != 0) {
                         NotificationConstants.NOTIFICATION_GROUP
                                 .createNotification(YApiConstants.name, "上传失败",
@@ -63,7 +61,7 @@ public class YApiUploadAction extends AnAction {
                     } else {
                         String url = yapiUrl + "/project/" + projectId + "/interface/api/cat_"
                                 + YApiUpload.catMap
-                                .get(String.valueOf(projectId))
+                                .get(Integer.toString(projectId))
                                 .get(yapiSaveParam.getMenu());
                         NotificationConstants.NOTIFICATION_GROUP
                                 .createNotification(YApiConstants.name, "上传成功",

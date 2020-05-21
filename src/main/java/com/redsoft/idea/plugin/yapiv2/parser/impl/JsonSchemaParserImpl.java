@@ -74,6 +74,8 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
                 }
                 String fieldName = this.handleFieldName(field.getName());
                 if (hasChildren) {
+                    String desc = DesUtils.getLinkRemark(field, this.project);
+                    desc = this.handleDocTagValue(desc);
                     String gType = field.getType().getCanonicalText();
                     String[] gTypes = gType.split("<");
                     if (gTypes.length > 1 && TypeConstants.genericList
@@ -81,15 +83,14 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
                             .containsKey(gTypes[0])) {
                         objectSchema.addProperty(fieldName,
                                 new ArraySchema().setItems(this.getSchema(classType, false))
-                                        .setDescription(
-                                                DesUtils.getLinkRemark(field, this.project)));
+                                        .setDescription(desc));
                     } else if (TypeConstants.genericList
                             .contains(gType)) {
                         objectSchema.addProperty(fieldName, this.getSchema(classType, false)
-                                .setDescription(DesUtils.getLinkRemark(field, this.project)));
+                                .setDescription(desc));
                     } else {
                         objectSchema.addProperty(fieldName, this.getFieldSchema(field)
-                                .setDescription(DesUtils.getLinkRemark(field, this.project)));
+                                .setDescription(desc));
                     }
                 } else {
                     objectSchema.addProperty(fieldName, this.getFieldSchema(field));
@@ -198,7 +199,9 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
             a.setMinItems(integerRange.getMin(), this.property.isEnableBasicScope());
             a.setMaxItems(integerRange.getMax(), this.property.isEnableBasicScope());
         }
-        result.setDescription(DesUtils.getLinkRemark(psiField, this.project));
+        String desc = DesUtils.getLinkRemark(psiField, this.project);
+        desc = this.handleDocTagValue(desc);
+        result.setDescription(desc);
         return result;
     }
 
@@ -276,7 +279,9 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
             default:
                 return new StringSchema();
         }
-        result.setDescription(DesUtils.getLinkRemark(psiField, this.project));
+        String desc = DesUtils.getLinkRemark(psiField, this.project);
+        desc = this.handleDocTagValue(desc);
+        result.setDescription(desc);
         result.setDefault(TypeConstants.normalTypesPackages.get(typePkName).toString());
         return result;
     }

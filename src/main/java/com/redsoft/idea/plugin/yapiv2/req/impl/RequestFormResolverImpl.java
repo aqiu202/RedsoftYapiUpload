@@ -58,8 +58,8 @@ public class RequestFormResolverImpl implements SimpleRequestBodyParamResolver {
         }
         //如果是基本类型或者文件
         String remark =
-                DesUtils.getParamDesc(m, paramName) + "(" + param
-                        .getType().getPresentableText() + ")";
+                DesUtils.getParamDesc(m, paramName) + "(" + param.getType().getPresentableText()
+                        + ")";
         if (TypeConstants.isNormalType(typeName) || SpringMVCConstants.MultipartFile
                 .equals(typeClassName)) {
             PsiAnnotation psiAnnotation = PsiAnnotationUtils
@@ -95,8 +95,7 @@ public class RequestFormResolverImpl implements SimpleRequestBodyParamResolver {
                 form.setRequired(ValidUtils.notNullOrBlank(field) ? "1" : "0");
                 form.setType(SpringMVCConstants.MultipartFile.equals(fieldType) ? "file" : "text");
                 form.setName(field.getName());
-                remark = DesUtils.getLinkRemark(field, project);
-                form.setDesc(remark);
+                form.setDesc(DesUtils.getLinkRemark(field, project));
                 Object obj = TypeConstants.normalTypes
                         .get(field.getType().getPresentableText());
                 if (Objects.nonNull(obj)) {

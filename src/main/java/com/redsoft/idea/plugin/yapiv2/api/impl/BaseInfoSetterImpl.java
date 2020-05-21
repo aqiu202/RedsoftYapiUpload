@@ -1,5 +1,7 @@
 package com.redsoft.idea.plugin.yapiv2.api.impl;
 
+import static com.redsoft.idea.plugin.yapiv2.constant.DocCommentConstants.TAG_DESCRIPTION;
+
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.javadoc.PsiDocComment;
@@ -12,8 +14,6 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
 public class BaseInfoSetterImpl implements BaseInfoSetter {
-
-    private final static String DESCRIPTION_VALUE = "description";
 
     @Override
     public void set(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
@@ -28,7 +28,7 @@ public class BaseInfoSetterImpl implements BaseInfoSetter {
         if (Objects.nonNull(docComment)) {
             String title = PsiDocUtils.getTagDescription(docComment);
             if (Strings.isBlank(title)) {
-                title = PsiDocUtils.getTagValueByName(docComment, DESCRIPTION_VALUE);
+                title = PsiDocUtils.getTagValueByName(docComment, TAG_DESCRIPTION);
             }
             target.setTitle(title);
         }

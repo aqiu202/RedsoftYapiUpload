@@ -62,7 +62,10 @@ public class YApiSaveParam implements Serializable {
      * 返回参数
      */
     private String res_body;
-
+    /**
+     * 请求参数body 是否为json_schema
+     */
+    private boolean req_body_is_json_schema = true;
     /**
      * 返回参数是否为json_schema
      */
@@ -99,15 +102,7 @@ public class YApiSaveParam implements Serializable {
 
 
     private String id;
-    /**
-     * 项目id
-     */
-    private Integer projectId;
 
-    /**
-     * yapi 地址
-     */
-    private String yapiUrl;
     /**
      * 菜单名称
      */
@@ -261,6 +256,14 @@ public class YApiSaveParam implements Serializable {
         this.req_body_other = req_body_other;
     }
 
+    public boolean isReq_body_is_json_schema() {
+        return req_body_is_json_schema;
+    }
+
+    public void setReq_body_is_json_schema(boolean req_body_is_json_schema) {
+        this.req_body_is_json_schema = req_body_is_json_schema;
+    }
+
     public boolean isRes_body_is_json_schema() {
         return res_body_is_json_schema;
     }
@@ -275,22 +278,6 @@ public class YApiSaveParam implements Serializable {
 
     public void setEdit_uid(Integer edit_uid) {
         this.edit_uid = edit_uid;
-    }
-
-    public Integer getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getYApiUrl() {
-        return yapiUrl;
-    }
-
-    public void setYApiUrl(String yapiUrl) {
-        this.yapiUrl = yapiUrl;
     }
 
     public String getUsername() {

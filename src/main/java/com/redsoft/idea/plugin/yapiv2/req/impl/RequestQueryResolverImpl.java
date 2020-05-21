@@ -81,8 +81,7 @@ public class RequestQueryResolverImpl implements SimpleRequestBodyParamResolver 
                 YApiQuery query = new YApiQuery();
                 query.setRequired(ValidUtils.notNullOrBlank(field) ? "1" : "0");
                 query.setName(field.getName());
-                String remark = DesUtils.getLinkRemark(field, project);
-                query.setDesc(remark);
+                query.setDesc(DesUtils.getLinkRemark(field, project));
                 String typePkName = field.getType().getCanonicalText();
                 if (TypeConstants.isBaseType(typePkName)) {
                     query.setExample(
