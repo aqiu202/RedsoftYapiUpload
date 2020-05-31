@@ -25,7 +25,8 @@ public final class PsiParamUtils {
     }
 
     public static boolean noBody(String method) {
-        return HttpMethodConstants.GET.equals(method) || HttpMethodConstants.DELETE
-                .equals(method);
+        return HttpMethodConstants.GET.equals(method)
+//                || HttpMethodConstants.DELETE.equals(method) //YApi默认Delete方法有body
+                ;
     }
 }

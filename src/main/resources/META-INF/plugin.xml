@@ -133,9 +133,14 @@
         <li>摒弃@strategy和@path注释</li>
      </ol>
      <h4>版本2.0.1，修改bug</h4>
-      <ol>
+     <ol>
         <li>参数含@RequestBody注解（body是json格式）的接口解析异常BUG修复</li>
         <li>所有的注释支持html标签包裹</li>
+     </ol>
+     <h4>版本2.0.2，修改bug</h4>
+     <ol>
+        <li>@GetMapping和@DeleteMapping注解的接口解析参数错误BUG修复</li>
+        <li>YApi中默认Delete方法有request body，为了防止异常做了相应调整</li>
      </ol>
     ]]>
     </change-notes>

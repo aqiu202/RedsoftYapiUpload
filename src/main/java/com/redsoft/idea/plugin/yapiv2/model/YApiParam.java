@@ -50,7 +50,7 @@ public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
     /**
      * 原始类型 raw,form,json
      */
-    private String req_body_type = "form";
+    private String req_body_type = "json";
     /**
      * 响应类型 json,raw
      */
