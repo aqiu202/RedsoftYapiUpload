@@ -33,8 +33,6 @@ public interface PsiParamListFilter {
                 .collect(Collectors.toList());
     }
 
-    ;
-
     @NotNull
     default PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m, @NotNull YApiParam target) {
         return p -> false;
@@ -72,9 +70,11 @@ public interface PsiParamListFilter {
             valueWrapper.setName(psiParameter.getName());
         }
         if (Strings.isEmpty(valueWrapper.getExample())) {
-            valueWrapper.setExample(
-                    TypeConstants.normalTypesPackages.get(psiParameter.getType().getCanonicalText())
-                            .toString());
+            Object o;
+            if (Objects.nonNull(o = TypeConstants.normalTypesPackages
+                    .get(psiParameter.getType().getCanonicalText()))) {
+                valueWrapper.setExample(o.toString());
+            }
         }
         return valueWrapper;
     }

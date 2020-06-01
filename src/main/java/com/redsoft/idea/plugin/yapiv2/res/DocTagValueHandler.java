@@ -1,7 +1,6 @@
 package com.redsoft.idea.plugin.yapiv2.res;
 
 import com.jgoodies.common.base.Strings;
-import org.jsoup.Jsoup;
 
 public interface DocTagValueHandler {
 
@@ -13,6 +12,8 @@ public interface DocTagValueHandler {
         if (Strings.isBlank(value)) {
             return value;
         }
-        return Jsoup.parseBodyFragment(value).body().text();
+        //使用正则替换掉重量级的Jsoup
+        return value.replaceAll("<[/\\w]+>", "");
+//        return Jsoup.parseBodyFragment(value).body().text();
     }
 }
