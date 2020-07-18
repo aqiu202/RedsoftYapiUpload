@@ -14,6 +14,5 @@ public interface DocTagValueHandler {
         }
         //使用正则替换掉重量级的Jsoup
         return value.replaceAll("<[/\\w]+>", "");
-//        return Jsoup.parseBodyFragment(value).body().text();
     }
 }

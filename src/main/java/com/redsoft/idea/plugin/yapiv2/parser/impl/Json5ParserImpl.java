@@ -25,6 +25,10 @@ public class Json5ParserImpl extends AbstractObjectParser implements Json5Parser
         super(property, project);
     }
 
+    public Json5ParserImpl(Project project) {
+        super(project);
+    }
+
     @Override
     public Json<?> getJson(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();

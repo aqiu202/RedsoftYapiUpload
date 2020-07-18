@@ -35,7 +35,15 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
 
     public JsonSchemaParserImpl(YApiProjectProperty property, Project project) {
         super(property, project);
+        this.enableBasicScope = property.isEnableBasicScope();
     }
+
+    public JsonSchemaParserImpl(boolean enableBasicScope, Project project) {
+        super(null, project);
+        this.enableBasicScope = enableBasicScope;
+    }
+
+    private final boolean enableBasicScope;
 
     @Override
     public ItemJsonSchema getPojoSchema(String typePkName) {
@@ -195,9 +203,9 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
                 a.setMinItems(1);
             }
             IntegerRange integerRange = ValidUtils
-                    .rangeSize(psiField, this.property.isEnableBasicScope());
-            a.setMinItems(integerRange.getMin(), this.property.isEnableBasicScope());
-            a.setMaxItems(integerRange.getMax(), this.property.isEnableBasicScope());
+                    .rangeSize(psiField, this.enableBasicScope);
+            a.setMinItems(integerRange.getMin(), this.enableBasicScope);
+            a.setMaxItems(integerRange.getMax(), this.enableBasicScope);
         }
         String desc = DesUtils.getLinkRemark(psiField, this.project);
         desc = this.handleDocTagValue(desc);
@@ -236,12 +244,11 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
             case integer:
                 IntegerSchema integerSchema = new IntegerSchema();
                 if (TypeConstants.hasBaseRange(typePkName)) {
-                    if (this.property.isEnableBasicScope()) {
+                    if (this.enableBasicScope) {
                         integerSchema.setRange(TypeConstants.baseRangeMappings.get(typePkName));
                     }
                 }
-                LongRange longRange = ValidUtils
-                        .range(psiField, this.property.isEnableBasicScope());
+                LongRange longRange = ValidUtils.range(psiField, this.enableBasicScope);
                 if (Objects.nonNull(longRange)) {
                     integerSchema.setRange(longRange);
                 }
@@ -264,7 +271,7 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
             case string:
                 StringSchema stringSchema = new StringSchema();
                 IntegerRange integerRange = ValidUtils
-                        .rangeLength(psiField, this.property.isEnableBasicScope());
+                        .rangeLength(psiField, this.enableBasicScope);
                 stringSchema.setMinLength(integerRange.getMin());
                 stringSchema.setMaxLength(integerRange.getMax());
                 String pattern = ValidUtils.getPattern(psiField);

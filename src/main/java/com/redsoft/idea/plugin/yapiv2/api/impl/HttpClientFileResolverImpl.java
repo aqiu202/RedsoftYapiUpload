@@ -26,40 +26,23 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
-public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
+public class HttpClientFileResolverImpl implements ApiResolver, DocTagValueHandler {
 
     private final PathResolver pathResolver = new PathResolverImpl();
     private final HttpMethodResolver httpMethodResolver = new HttpMethodResolverImpl();
     private final MenuSetter menuSetter = new MenuSetterImpl();
     private final StatusResolver statusResolver = new StatusResolverImpl();
     private final ContentTypeResolver requestContentTypeResolver = new RequestContentTypeResolverImpl();
-    private final ContentTypeResolver responseContentTypeResolver = new ResponseContentTypeResolverImpl();
     private final BaseInfoSetter baseInfoSetter = new BaseInfoSetterImpl();
     private final RequestResolver requestResolver;
-    private final ResponseResolver responseResolver;
 
     private final Consumer<YApiParam> docTagValueResolver = (param) -> {
         param.setTitle(this.handleDocTagValue(param.getTitle()));
         param.setMenu(this.handleDocTagValue(param.getMenu()));
-        param.setMenuDesc(this.handleDocTagValue(param.getMenuDesc()));
-        param.setStatus(YApiStatus.getStatus(this.handleDocTagValue(param.getStatus())));
-        if (CollectionUtils.isNotEmpty(param.getParams())) {
-            param.getParams()
-                    .forEach(query -> query.setDesc(this.handleDocTagValue(query.getDesc())));
-        }
-        if (CollectionUtils.isNotEmpty(param.getReq_body_form())) {
-            param.getReq_body_form()
-                    .forEach(form -> form.setDesc(this.handleDocTagValue(form.getDesc())));
-        }
-        if (CollectionUtils.isNotEmpty(param.getReq_params())) {
-            param.getReq_params().forEach(pathVariable -> pathVariable
-                    .setDesc(this.handleDocTagValue(pathVariable.getDesc())));
-        }
     };
 
-    public ApiResolverImpl(YApiProjectProperty property, Project project) {
-        requestResolver = new RequestResolverImpl(property, project);
-        responseResolver = new ResponseResolverImpl(property, project);
+    public HttpClientFileResolverImpl(Project project) {
+        requestResolver = new RequestResolverImpl(project);
     }
 
     @Override
@@ -68,7 +51,6 @@ public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
         baseInfoSetter.set(c, m, target);
         httpMethodResolver.resolve(m, target);
         requestContentTypeResolver.resolve(c, m, target);
-        responseContentTypeResolver.resolve(c, m, target);
         PsiDocComment classDoc = c.getDocComment();
         PsiDocComment methodDoc = m.getDocComment();
         statusResolver.resolve(classDoc, methodDoc, target);
@@ -77,6 +59,5 @@ public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
         }
         requestResolver.resolve(m, target);
         docTagValueResolver.accept(target);
-        responseResolver.resolve(m.getReturnType(), target);
     }
 }

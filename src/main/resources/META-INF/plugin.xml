@@ -186,6 +186,13 @@
             <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift alt u"/>
         </action>
+        <action id="RedsoftHttp"
+                class="com.redsoft.idea.plugin.yapiv2.action.HttpClientAction"
+                text="创建http Client文件"
+                description="创建http client测试文件">
+            <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift alt h"/>
+        </action>
     </actions>
 
 </idea-plugin>

@@ -21,7 +21,11 @@ public class PsiClassParserImpl implements PsiClassParser {
     private final PsiMethodParser methodParser;
 
     public PsiClassParserImpl(YApiProjectProperty property, Project project) {
-        methodParser = new PsiMethodParserImpl(property, project);
+        this.methodParser = new PsiMethodParserImpl(property, project);
+    }
+
+    public PsiClassParserImpl(PsiMethodParser methodParser) {
+        this.methodParser = methodParser;
     }
 
     @Override

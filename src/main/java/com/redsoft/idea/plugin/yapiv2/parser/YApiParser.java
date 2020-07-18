@@ -12,9 +12,7 @@ import com.redsoft.idea.plugin.yapiv2.constant.NotificationConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiClassParserImpl;
-import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiMethodParserImpl;
 import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
-import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -29,12 +27,20 @@ public class YApiParser {
 
     private final DeprecatedAssert deprecatedAssert = new DeprecatedAssertImpl();
 
-    private final YApiProjectProperty property;
     private final Project project;
+    private final PsiMethodParser methodParser;
+    private final PsiClassParser classParser;
 
-    public YApiParser(YApiProjectProperty property, Project project) {
-        this.property = property;
+    public YApiParser(Project project, PsiMethodParser methodParser) {
         this.project = project;
+        this.methodParser = methodParser;
+        this.classParser = new PsiClassParserImpl(methodParser);
+    }
+
+    public YApiParser(Project project, PsiMethodParser methodParser, PsiClassParser classParser) {
+        this.project = project;
+        this.methodParser = methodParser;
+        this.classParser = classParser;
     }
 
     public Set<YApiParam> parse(AnActionEvent e) {
@@ -50,7 +56,7 @@ public class YApiParser {
         }
         Set<YApiParam> yApiParams = new HashSet<>();
         if (Strings.isBlank(selectedText) || selectedText.equals(selectedClass.getName())) {
-            List<YApiParam> params = new PsiClassParserImpl(property, project).parse(selectedClass);
+            List<YApiParam> params = this.classParser.parse(selectedClass);
             yApiParams.addAll(params);
         } else {//如果用户选中的是方法
             PsiMethod[] psiMethods = selectedClass.getMethods();
@@ -70,8 +76,7 @@ public class YApiParser {
                                     NotificationType.WARNING).notify(project);
                 }
                 try {
-                    YApiParam param = new PsiMethodParserImpl(property, project)
-                            .parse(selectedClass, psiMethodTarget);
+                    YApiParam param = this.methodParser.parse(selectedClass, psiMethodTarget);
                     yApiParams.add(param);
                 } catch (Exception ex) {
                     ex.printStackTrace();

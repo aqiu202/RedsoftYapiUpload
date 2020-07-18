@@ -19,15 +19,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractObjectParser implements ObjectParser {
 
     protected final YApiProjectProperty property;
     protected final Project project;
 
-    protected AbstractObjectParser(YApiProjectProperty property, Project project) {
+    protected AbstractObjectParser(@Nullable YApiProjectProperty property, Project project) {
         this.property = property;
         this.project = project;
+    }
+
+    protected AbstractObjectParser(Project project) {
+        this(null, project);
     }
 
     @Override
@@ -62,6 +67,10 @@ public abstract class AbstractObjectParser implements ObjectParser {
 
     @Override
     public String handleFieldName(String fieldName) {
+        //配置为空的时候，不处理字段名称，比如（请求的参数字段不能做处理）
+        if(this.property == null) {
+            return fieldName;
+        }
         return PropertyNamingUtils.convert(fieldName, PropertyNamingStrategy.of(String.
                 valueOf(this.property.getStrategy())));
     }

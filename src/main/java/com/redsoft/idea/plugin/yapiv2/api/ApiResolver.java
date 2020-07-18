@@ -2,6 +2,7 @@ package com.redsoft.idea.plugin.yapiv2.api;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import com.redsoft.idea.plugin.yapiv2.base.BaseResolver;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
  * @author aqiu
  * @date 2020/5/12 11:02 上午
  **/
-public interface ApiResolver {
-
-    void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target);
+public interface ApiResolver extends BaseResolver {
 
 }

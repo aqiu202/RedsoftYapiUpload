@@ -14,19 +14,12 @@ import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import org.jetbrains.annotations.NotNull;
 
-public class RequestBodyResolverImpl implements SimpleRequestBodyParamResolver {
+public class RequestBodyParamResolverImpl implements SimpleRequestBodyParamResolver {
 
     private final ObjectParser objectParser;
 
-    private final int dataMode;
-
-    public RequestBodyResolverImpl(YApiProjectProperty property, Project project) {
-        this.dataMode = property.getDataMode();
-        if (this.dataMode == 0) {
-            this.objectParser = new JsonSchemaParserImpl(property.isEnableBasicScope(), project);
-        } else {
-            this.objectParser = new Json5ParserImpl(project);
-        }
+    public RequestBodyParamResolverImpl(Project project) {
+        this.objectParser = new Json5ParserImpl(project);
     }
 
     @NotNull
@@ -42,7 +35,6 @@ public class RequestBodyResolverImpl implements SimpleRequestBodyParamResolver {
     public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
             @NotNull YApiParam target) {
         target.setRequestBody(this.objectParser.getJsonResponse(param.getType()));
-        target.setReq_body_is_json_schema(this.dataMode == 0);
     }
 
 }

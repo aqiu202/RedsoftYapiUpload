@@ -15,7 +15,11 @@ public class PsiMethodParserImpl implements PsiMethodParser {
     private final ApiResolver apiResolver;
 
     public PsiMethodParserImpl(YApiProjectProperty property, Project project) {
-        apiResolver = new ApiResolverImpl(property, project);
+        this.apiResolver = new ApiResolverImpl(property, project);
+    }
+
+    public PsiMethodParserImpl(ApiResolver apiResolver) {
+        this.apiResolver = apiResolver;
     }
 
     @Override
