@@ -143,6 +143,11 @@
         <li>多文件上传接口解析错误BUG修复</li>
         <li>YApi中默认Delete方法有request body，为了防止异常做了相应调整</li>
      </ol>
+     <h4>版本2.0.3，修改bug</h4>
+     <ol>
+        <li>@status注释无效BUG修复</li>
+        <li>添加Spring WebFlux的支持（Mono和Flux）</li>
+     </ol>
     ]]>
     </change-notes>
 
@@ -186,13 +191,13 @@
             <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift alt u"/>
         </action>
-        <action id="RedsoftHttp"
-                class="com.redsoft.idea.plugin.yapiv2.action.HttpClientAction"
-                text="创建http Client文件"
-                description="创建http client测试文件">
-            <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="shift alt h"/>
-        </action>
+<!--        <action id="RedsoftHttp"-->
+<!--                class="com.redsoft.idea.plugin.yapiv2.action.HttpClientAction"-->
+<!--                text="创建http Client文件"-->
+<!--                description="创建http client测试文件">-->
+<!--            <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>-->
+<!--            <keyboard-shortcut keymap="$default" first-keystroke="shift alt h"/>-->
+<!--        </action>-->
     </actions>
 
 </idea-plugin>

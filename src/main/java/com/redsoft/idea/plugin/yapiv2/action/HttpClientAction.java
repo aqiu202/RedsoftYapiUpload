@@ -1,25 +1,14 @@
 package com.redsoft.idea.plugin.yapiv2.action;
 
-import com.intellij.notification.NotificationListener.UrlOpeningListener;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
-import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.api.impl.HttpClientFileResolverImpl;
-import com.redsoft.idea.plugin.yapiv2.config.impl.ProjectConfigReader;
-import com.redsoft.idea.plugin.yapiv2.constant.NotificationConstants;
-import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
-import com.redsoft.idea.plugin.yapiv2.model.YApiResponse;
-import com.redsoft.idea.plugin.yapiv2.model.YApiSaveParam;
 import com.redsoft.idea.plugin.yapiv2.parser.PsiMethodParser;
 import com.redsoft.idea.plugin.yapiv2.parser.YApiParser;
 import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiMethodParserImpl;
-import com.redsoft.idea.plugin.yapiv2.upload.YApiUpload;
-import com.redsoft.idea.plugin.yapiv2.util.Builders;
-import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -42,7 +31,8 @@ public class HttpClientAction extends AnAction {
 //        } catch (IOException ioException) {
 //            logger.error("创建http client测试文件失败：", ioException);
 //        }
-        PsiMethodParser methodParser = new PsiMethodParserImpl(new HttpClientFileResolverImpl(project));
+        PsiMethodParser methodParser = new PsiMethodParserImpl(
+                new HttpClientFileResolverImpl(project));
         //获得api 需上传的接口列表 参数对象
         Set<YApiParam> yApiParams = new YApiParser(project, methodParser).parse(e);
         if (yApiParams != null) {

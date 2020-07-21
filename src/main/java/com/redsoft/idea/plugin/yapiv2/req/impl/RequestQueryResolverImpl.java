@@ -1,14 +1,12 @@
 package com.redsoft.idea.plugin.yapiv2.req.impl;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameter;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
@@ -18,6 +16,7 @@ import com.redsoft.idea.plugin.yapiv2.req.PsiParamFilter;
 import com.redsoft.idea.plugin.yapiv2.req.SimpleRequestBodyParamResolver;
 import com.redsoft.idea.plugin.yapiv2.util.DesUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
+import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
 import com.redsoft.idea.plugin.yapiv2.util.ValidUtils;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -53,7 +52,7 @@ public class RequestQueryResolverImpl implements SimpleRequestBodyParamResolver 
         String typeClassName = param.getType().getCanonicalText();
         String typeName = param.getType().getPresentableText();
         //如果是基本类型
-        if (TypeConstants.isNormalType(typeName)) {
+        if (TypeConstants.isBasicType(typeClassName)) {
             PsiAnnotation psiAnnotation = PsiAnnotationUtils
                     .findAnnotation(param, SpringMVCConstants.RequestParam);
             YApiQuery yapiQuery = new YApiQuery();
@@ -70,8 +69,7 @@ public class RequestQueryResolverImpl implements SimpleRequestBodyParamResolver 
                     + typeName + ")");
             results.add(yapiQuery);
         } else {
-            PsiClass psiClass = JavaPsiFacade.getInstance(project)
-                    .findClass(typeClassName, GlobalSearchScope.allScope(project));
+            PsiClass psiClass = PsiUtils.findPsiClass(this.project, typeClassName);
             for (PsiField field : Objects.requireNonNull(psiClass).getAllFields()) {
                 if (
                         Objects.requireNonNull(field.getModifierList())
@@ -83,7 +81,7 @@ public class RequestQueryResolverImpl implements SimpleRequestBodyParamResolver 
                 query.setName(field.getName());
                 query.setDesc(DesUtils.getLinkRemark(field, project));
                 String typePkName = field.getType().getCanonicalText();
-                if (TypeConstants.isBaseType(typePkName)) {
+                if (TypeConstants.isBasicType(typePkName)) {
                     query.setExample(
                             TypeConstants.normalTypesPackages.get(typePkName)
                                     .toString());

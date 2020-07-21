@@ -2,15 +2,16 @@ package com.redsoft.idea.plugin.yapiv2.parser.impl;
 
 import com.google.gson.GsonBuilder;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.redsoft.idea.plugin.yapiv2.constant.PropertyNamingStrategy;
+import com.redsoft.idea.plugin.yapiv2.constant.SpringWebFluxConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
 import com.redsoft.idea.plugin.yapiv2.parser.ObjectParser;
+import com.redsoft.idea.plugin.yapiv2.res.DocTagValueHandler;
+import com.redsoft.idea.plugin.yapiv2.res.ResponseFieldNameHandler;
 import com.redsoft.idea.plugin.yapiv2.util.PropertyNamingUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
@@ -21,7 +22,8 @@ import java.util.Map;
 import java.util.Objects;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractObjectParser implements ObjectParser {
+public abstract class AbstractObjectParser implements ObjectParser, ResponseFieldNameHandler,
+        DocTagValueHandler {
 
     protected final YApiProjectProperty property;
     protected final Project project;
@@ -39,17 +41,17 @@ public abstract class AbstractObjectParser implements ObjectParser {
     public String getRawResponse(PsiType psiType) {
         Object obj;
         String typePkName = psiType.getCanonicalText();
-        String[] types = typePkName.split("<");
-        String type = types[0];
+//        String[] types = typePkName.split("<");
+//        String type = types[0];
         //如果是基本类型
-        if (TypeConstants.isBaseType(typePkName)) {
+        if (TypeConstants.isBasicType(typePkName)) {
             return TypeConstants.normalTypesPackages.get(typePkName).toString();
         } else {
             //如果是Map类型
             if (PsiUtils.isMap(psiType)) {
                 obj = this.getMapRaw();
                 //如果是集合类型（List Set）
-            } else if (TypeConstants.arrayTypeMappings.containsKey(type)) {
+            } else if (PsiUtils.isCollection(psiType)) {
                 obj = this.getArrayRaw(typePkName);
             } else if (typePkName.endsWith("[]")) {
                 //数组形式的返回值（且不是集合类型前缀）
@@ -68,7 +70,7 @@ public abstract class AbstractObjectParser implements ObjectParser {
     @Override
     public String handleFieldName(String fieldName) {
         //配置为空的时候，不处理字段名称，比如（请求的参数字段不能做处理）
-        if(this.property == null) {
+        if (this.property == null) {
             return fieldName;
         }
         return PropertyNamingUtils.convert(fieldName, PropertyNamingStrategy.of(String.
@@ -96,7 +98,7 @@ public abstract class AbstractObjectParser implements ObjectParser {
             }
             //如果是基本类型
             List<Object> tmp = new ArrayList<>();
-            if (TypeConstants.isBaseType(childrenType)) {
+            if (TypeConstants.isBasicType(childrenType)) {
                 tmp.add(TypeConstants.normalTypesPackages.get(childrenType));
             } else {
                 //如果是其他类型
@@ -115,21 +117,26 @@ public abstract class AbstractObjectParser implements ObjectParser {
     }
 
     private Object getObjectRaw(String typePkName) {
+        //兼容WebFlux
+        if (typePkName.startsWith(SpringWebFluxConstants.Mono)) {
+            typePkName = typePkName.substring(SpringWebFluxConstants.Mono.length() + 1);
+            typePkName = typePkName.substring(0, typePkName.length() - 1);
+        }
         Map<String, Object> result = new HashMap<>();
-        PsiClass psiClass = JavaPsiFacade.getInstance(this.project)
-                .findClass(typePkName, GlobalSearchScope.allScope(this.project));
+        PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
         if (Objects.nonNull(psiClass)) {
             for (PsiField field : psiClass.getAllFields()) {
-                if (
-                        Objects.requireNonNull(field.getModifierList())
-                                .hasModifierProperty(PsiModifier.STATIC)) {
+                if (Objects.requireNonNull(field.getModifierList())
+                        .hasModifierProperty(PsiModifier.STATIC)) {
                     continue;
                 }
                 String fieldName = field.getName();
+                fieldName = this.handleFieldName(fieldName);
                 result.put(fieldName, this.getRawResponse(field.getType()));
 
             }
         }
         return result;
     }
+
 }

@@ -31,13 +31,13 @@ public class ResponseResolverImpl implements ResponseResolver {
         if (Objects.isNull(returnType)) {
             return;
         }
-        int dataMode = property.getDataMode();
+        int dataMode = this.property.getDataMode();
         boolean isJsonSchema = dataMode == 0;
         target.setRes_body_is_json_schema(isJsonSchema);
         if ("raw".equals(target.getRes_body_type())) {
-            target.setResponse(objectParser.getRawResponse(returnType));
+            target.setResponse(this.objectParser.getRawResponse(returnType));
         } else {
-            target.setResponse(objectParser.getJsonResponse(returnType));
+            target.setResponse(this.objectParser.getJsonResponse(returnType));
         }
     }
 }

@@ -44,11 +44,10 @@ public class YApiInitComponent implements ProjectComponent {
 //                    + "        <li>参数含@RequestBody注解（body是json格式）的接口解析异常BUG修复</li>"
 //                    + "        <li>所有的注释支持html标签包裹</li>"
 //                    + "     </ol>";
-            String changeLogTitle = "<h4>版本2.0.2，修改bug</h4>";
+            String changeLogTitle = "<h4>版本2.0.3，修改bug</h4>";
             String changeLogContent = "<ol>"
-                    + "        <li>@GetMapping和@DeleteMapping注解的接口解析错误BUG修复</li>"
-                    + "        <li>多文件上传接口解析错误BUG修复</li>"
-                    + "        <li>YApi中默认Delete方法有request body，为了防止异常做了相应调整</li>"
+                    + "        <li>@status注释无效BUG修复</li>"
+                    + "        <li>添加Spring WebFlux的支持（Mono和Flux）</li>"
                     + "     </ol>";
             NotificationConstants.NOTIFICATION_GROUP.createNotification(YApiConstants.name, "更新内容",
                     changeLogTitle + "\n" + changeLogContent

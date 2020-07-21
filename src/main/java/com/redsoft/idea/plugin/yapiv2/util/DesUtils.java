@@ -1,13 +1,11 @@
 package com.redsoft.idea.plugin.yapiv2.util;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.jgoodies.common.base.Strings;
 import java.util.Objects;
 
@@ -99,8 +97,7 @@ public final class DesUtils {
         if (linkString.length > 1) {
             //说明有link
             String linkAddress = linkString[1].split("}")[0].trim();
-            PsiClass psiClassLink = JavaPsiFacade.getInstance(project)
-                    .findClass(linkAddress, GlobalSearchScope.allScope(project));
+            PsiClass psiClassLink = PsiUtils.findPsiClass(project, linkAddress);
             if (Objects.isNull(psiClassLink)) {
                 //可能没有获得全路径，尝试获得全路径
                 String[] importPaths = Objects.requireNonNull(field.getParent().getContext())
@@ -110,9 +107,7 @@ public final class DesUtils {
                         if (importPath.contains(linkAddress.split("\\.")[0])) {
                             linkAddress =
                                     importPath.split(linkAddress.split("\\.")[0])[0] + linkAddress;
-                            psiClassLink = JavaPsiFacade.getInstance(project)
-                                    .findClass(linkAddress.trim(),
-                                            GlobalSearchScope.allScope(project));
+                            psiClassLink = PsiUtils.findPsiClass(project, linkAddress.trim());
                             break;
                         }
                     }

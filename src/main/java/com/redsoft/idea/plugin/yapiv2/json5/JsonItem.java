@@ -2,11 +2,8 @@ package com.redsoft.idea.plugin.yapiv2.json5;
 
 public class JsonItem<T> {
 
-    public JsonItem() {
-    }
-
     public JsonItem(String key) {
-        this.key = key;
+        this(key, null);
     }
 
     public JsonItem(String key, Json<T> value) {

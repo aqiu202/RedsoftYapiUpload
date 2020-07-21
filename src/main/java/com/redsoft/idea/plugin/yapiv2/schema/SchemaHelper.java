@@ -5,7 +5,7 @@ import com.redsoft.idea.plugin.yapiv2.schema.base.SchemaType;
 
 public final class SchemaHelper {
 
-    public static ItemJsonSchema parse(SchemaType type) {
+    public static ItemJsonSchema parseBasic(SchemaType type) {
         switch (type) {
             case integer:
                 return new NumberSchema();

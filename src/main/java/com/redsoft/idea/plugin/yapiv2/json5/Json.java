@@ -14,6 +14,7 @@ public class Json<T> {
     protected int level = 0;
 
     public Json() {
+        this(null);
     }
 
     public Json(T value) {

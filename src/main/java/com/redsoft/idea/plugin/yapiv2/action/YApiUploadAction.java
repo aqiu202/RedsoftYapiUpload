@@ -19,32 +19,15 @@ import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiMethodParserImpl;
 import com.redsoft.idea.plugin.yapiv2.upload.YApiUpload;
 import com.redsoft.idea.plugin.yapiv2.util.Builders;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
-import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class YApiUploadAction extends AnAction {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private PsiMethodParser methodParser;
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getData(CommonDataKeys.PROJECT);
-//        String basePath = project.getBasePath();
-//        String httpPath = basePath + "/src/test/resources/http";
-//        File path = new File(httpPath);
-//        path.mkdirs();
-//        File file = new File(httpPath + "/test.http");
-//        try {
-//            file.createNewFile();
-//        } catch (IOException ioException) {
-//            logger.error("创建http client测试文件失败：", ioException);
-//        }
+
         YApiProjectProperty property = ProjectConfigReader.read(project);
         // tokenPsiUtil
         String token = property.getToken();
@@ -59,9 +42,9 @@ public class YApiUploadAction extends AnAction {
                             NotificationType.ERROR).notify(project);
             return;
         }
-        this.methodParser = new PsiMethodParserImpl(property, project);
+        PsiMethodParser methodParser = new PsiMethodParserImpl(property, project);
         //获得api 需上传的接口列表 参数对象
-        Set<YApiParam> yApiParams = new YApiParser(project, this.methodParser).parse(e);
+        Set<YApiParam> yApiParams = new YApiParser(project, methodParser).parse(e);
         if (yApiParams != null) {
             for (YApiParam yApiParam : yApiParams) {
                 YApiSaveParam yapiSaveParam = Builders.of(yApiParam::convert)

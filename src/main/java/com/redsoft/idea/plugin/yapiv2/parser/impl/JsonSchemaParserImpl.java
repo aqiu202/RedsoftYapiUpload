@@ -1,17 +1,16 @@
 package com.redsoft.idea.plugin.yapiv2.parser.impl;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.jgoodies.common.base.Strings;
+import com.redsoft.idea.plugin.yapiv2.constant.SpringWebFluxConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
-import com.redsoft.idea.plugin.yapiv2.parser.JsonSchemaParser;
+import com.redsoft.idea.plugin.yapiv2.parser.JsonSchemaJsonParser;
 import com.redsoft.idea.plugin.yapiv2.range.DecimalRange;
 import com.redsoft.idea.plugin.yapiv2.range.IntegerRange;
 import com.redsoft.idea.plugin.yapiv2.range.LongRange;
@@ -31,7 +30,8 @@ import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSchemaParser {
+public class JsonSchemaParserImpl extends AbstractObjectParser implements
+        JsonSchemaJsonParser {
 
     public JsonSchemaParserImpl(YApiProjectProperty property, Project project) {
         super(property, project);
@@ -47,31 +47,35 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
 
     @Override
     public ItemJsonSchema getPojoSchema(String typePkName) {
+        //兼容WebFlux
+        if(typePkName.startsWith(SpringWebFluxConstants.Mono)) {
+            typePkName = typePkName.substring(SpringWebFluxConstants.Mono.length() + 1);
+            typePkName = typePkName.substring(0, typePkName.length() - 1);
+        }
         ObjectSchema objectSchema = new ObjectSchema();
         String[] types = typePkName.split("<");
         typePkName = types[0];
-        PsiClass psiClass = JavaPsiFacade.getInstance(this.project)
-                .findClass(typePkName,
-                        GlobalSearchScope.allScope(this.project));
+        PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
         if (Objects.nonNull(psiClass)) {
-            boolean hasChildren;
+            boolean hasChildren = types.length > 1;
+            String childrenType = null;
             PsiClassType classType = null;
-            if (hasChildren = types.length == 2) {
-                String childrenType = types[1].split(">")[0];
-                childrenType = childrenType.replace("? extends ", "")
-                        .replace("? super ", "");
-                classType = PsiType.getTypeByName(childrenType, this.project,
-                        GlobalSearchScope.allScope(this.project));
-            } else if (hasChildren = types.length == 3) {
-                String childrenType = types[1].split(">")[0] + "<" + types[2].split(">")[0] + ">";
-                childrenType = childrenType.replace("? extends ", "")
-                        .replace("? super ", "");
-                classType = PsiType.getTypeByName(childrenType, this.project,
-                        GlobalSearchScope.allScope(this.project));
+            if(hasChildren) {
+                if (types.length == 2) {
+                    childrenType = types[1].split(">")[0];
+                    childrenType = childrenType.replace("? extends ", "")
+                            .replace("? super ", "");
+                } else if (types.length == 3) {
+                    childrenType = types[1].split(">")[0] + "<" + types[2].split(">")[0] + ">";
+                    childrenType = childrenType.replace("? extends ", "")
+                            .replace("? super ", "");
+                }
+                if(Strings.isNotBlank(childrenType)) {
+                    classType = PsiUtils.findPsiClassType(this.project, childrenType);
+                }
             }
             for (PsiField field : psiClass.getAllFields()) {
-                if (
-                        Objects.requireNonNull(field.getModifierList())
+                if (Objects.requireNonNull(field.getModifierList())
                                 .hasModifierProperty(PsiModifier.STATIC)) {
                     continue;
                 }
@@ -81,14 +85,13 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
                     continue;
                 }
                 String fieldName = this.handleFieldName(field.getName());
-                if (hasChildren) {
+                if (hasChildren && classType != null) {
                     String desc = DesUtils.getLinkRemark(field, this.project);
                     desc = this.handleDocTagValue(desc);
                     String gType = field.getType().getCanonicalText();
                     String[] gTypes = gType.split("<");
                     if (gTypes.length > 1 && TypeConstants.genericList
-                            .contains(gTypes[1].split(">")[0]) && TypeConstants.arrayTypeMappings
-                            .containsKey(gTypes[0])) {
+                            .contains(gTypes[1].split(">")[0]) && PsiUtils.isCollection(this.project, gTypes[0])) {
                         objectSchema.addProperty(fieldName,
                                 new ArraySchema().setItems(this.getSchema(classType, false))
                                         .setDescription(desc));
@@ -116,12 +119,12 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
         String typePkName = psiType.getCanonicalText();
         ItemJsonSchema result;
         //如果是基本类型
-        if (TypeConstants.isBaseType(typePkName)) {
-            result = SchemaHelper.parse(TypeConstants.normalTypeMappings.get(typePkName));
+        if (TypeConstants.isBasicType(typePkName)) {
+            result = SchemaHelper.parseBasic(TypeConstants.basicTypeMappings.get(typePkName));
             result.setDefault(TypeConstants.normalTypesPackages.get(typePkName).toString());
             result.setMock(TypeConstants.formatMockType(psiType.getPresentableText()));
         } else {
-            result = this.getOtherTypeSchema(psiType);
+            result = this.getOtherTypeSchema(typePkName);
         }
         if (needSchema) {
             result.set$schema(YApiConstants.$schema);
@@ -130,8 +133,7 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
     }
 
     @Override
-    public ItemJsonSchema getOtherTypeSchema(PsiType psiType) {
-        String typePkName = psiType.getCanonicalText();
+    public ItemJsonSchema getOtherTypeSchema(String typePkName) {
         boolean wrapArray = false;
         if (typePkName.endsWith("[]")) {
             typePkName = typePkName.replace("[]", "");
@@ -140,10 +142,10 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
         String type = typePkName.split("<")[0];
         ItemJsonSchema result;
         //对Map和Map类型的封装类进行过滤
-        if (PsiUtils.isMap(psiType)) {
+        if (PsiUtils.isMap(this.project, typePkName)) {
             ObjectSchema mapResult = new ObjectSchema();
             result = wrapArray ? new ArraySchema().setItems(mapResult) : mapResult;
-        } else if (TypeConstants.arrayTypeMappings.containsKey(type)) {
+        } else if (TypeConstants.collectionTypeMappings.containsKey(type)) {
             //如果是集合类型（List Set）
             ArraySchema tmp = this.getArraySchema(typePkName);
             result = wrapArray ? new ArraySchema().setItems(tmp) : tmp;
@@ -174,9 +176,9 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
             }
             //如果泛型是基本类型
             ItemJsonSchema item;
-            if (TypeConstants.isBaseType(childrenType)) {
+            if (TypeConstants.isBasicType(childrenType)) {
                 item = SchemaHelper
-                        .parse(TypeConstants.normalTypeMappings.get(childrenType));
+                        .parseBasic(TypeConstants.basicTypeMappings.get(childrenType));
             } else {
                 item = this.getPojoSchema(childrenType);
             }
@@ -193,7 +195,7 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
         PsiType psiType = psiField.getType();
         String typeName = psiType.getPresentableText();
         boolean wrapArray = typeName.endsWith("[]");
-        ItemJsonSchema result = this.getOtherTypeSchema(psiType);
+        ItemJsonSchema result = this.getOtherTypeSchema(psiType.getCanonicalText());
         if (result instanceof ArraySchema) {
             ArraySchema a = (ArraySchema) result;
             if (typeName.contains("Set") && !wrapArray) {
@@ -298,8 +300,8 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements JsonSc
         PsiType type = psiField.getType();
         String typePkName = type.getCanonicalText();
         ItemJsonSchema itemJsonSchema;
-        if (TypeConstants.isBaseType(typePkName)) {
-            SchemaType schemaType = TypeConstants.normalTypeMappings.get(typePkName);
+        if (TypeConstants.isBasicType(typePkName)) {
+            SchemaType schemaType = TypeConstants.basicTypeMappings.get(typePkName);
             itemJsonSchema = getBaseFieldSchema(schemaType, psiField);
             itemJsonSchema.setMock(TypeConstants.formatMockType(type.getPresentableText()));
         } else {

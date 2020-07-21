@@ -29,8 +29,8 @@ public class TypeConstants {
     @NonNls
     public static final Map<String, Object> normalTypes = new HashMap<>();
     @NonNls
-    public static final Map<String, SchemaType> normalTypeMappings = new HashMap<>();
-    public static final Map<String, SchemaType> arrayTypeMappings = new HashMap<>();
+    public static final Map<String, SchemaType> basicTypeMappings = new HashMap<>();
+    public static final Map<String, SchemaType> collectionTypeMappings = new HashMap<>();
     public static final Map<String, SchemaType> mapTypeMappings = new HashMap<>();
 
     public static final Map<String, Object> normalTypesPackages = new HashMap<>();
@@ -110,48 +110,46 @@ public class TypeConstants {
         normalTypesPackages.put("java.lang.String", "String");
         normalTypesPackages.put("java.math.BigDecimal", 1);
 
-        normalTypeMappings.put("int", SchemaType.integer);
-        normalTypeMappings.put("boolean", SchemaType.bool);
-        normalTypeMappings.put("byte", SchemaType.integer);
-        normalTypeMappings.put("short", SchemaType.integer);
-        normalTypeMappings.put("long", SchemaType.integer);
-        normalTypeMappings.put("float", SchemaType.number);
-        normalTypeMappings.put("double", SchemaType.number);
-        normalTypeMappings.put("char", SchemaType.string);
-        normalTypeMappings.put("java.lang.Boolean", SchemaType.bool);
-        normalTypeMappings.put("java.lang.Byte", SchemaType.integer);
-        normalTypeMappings.put("java.lang.Short", SchemaType.integer);
-        normalTypeMappings.put("java.lang.Integer", SchemaType.integer);
-        normalTypeMappings.put("java.lang.Long", SchemaType.integer);
-        normalTypeMappings.put("java.lang.Float", SchemaType.number);
-        normalTypeMappings.put("java.lang.Double", SchemaType.number);
-        normalTypeMappings.put("java.sql.Timestamp", SchemaType.string);
-        normalTypeMappings.put("java.util.Date", SchemaType.string);
-        normalTypeMappings.put("java.sql.Date", SchemaType.string);
-        normalTypeMappings.put("java.sql.Time", SchemaType.string);
-        normalTypeMappings.put("java.time.LocalDateTime", SchemaType.string);
-        normalTypeMappings.put("java.time.LocalDate", SchemaType.string);
-        normalTypeMappings.put("java.time.LocalTime", SchemaType.string);
-        normalTypeMappings.put("java.lang.String", SchemaType.string);
-        normalTypeMappings.put("java.math.BigDecimal", SchemaType.number);
+        basicTypeMappings.put("int", SchemaType.integer);
+        basicTypeMappings.put("boolean", SchemaType.bool);
+        basicTypeMappings.put("byte", SchemaType.integer);
+        basicTypeMappings.put("short", SchemaType.integer);
+        basicTypeMappings.put("long", SchemaType.integer);
+        basicTypeMappings.put("float", SchemaType.number);
+        basicTypeMappings.put("double", SchemaType.number);
+        basicTypeMappings.put("char", SchemaType.string);
+        basicTypeMappings.put("java.lang.Boolean", SchemaType.bool);
+        basicTypeMappings.put("java.lang.Byte", SchemaType.integer);
+        basicTypeMappings.put("java.lang.Short", SchemaType.integer);
+        basicTypeMappings.put("java.lang.Integer", SchemaType.integer);
+        basicTypeMappings.put("java.lang.Long", SchemaType.integer);
+        basicTypeMappings.put("java.lang.Float", SchemaType.number);
+        basicTypeMappings.put("java.lang.Double", SchemaType.number);
+        basicTypeMappings.put("java.sql.Timestamp", SchemaType.string);
+        basicTypeMappings.put("java.util.Date", SchemaType.string);
+        basicTypeMappings.put("java.sql.Date", SchemaType.string);
+        basicTypeMappings.put("java.sql.Time", SchemaType.string);
+        basicTypeMappings.put("java.time.LocalDateTime", SchemaType.string);
+        basicTypeMappings.put("java.time.LocalDate", SchemaType.string);
+        basicTypeMappings.put("java.time.LocalTime", SchemaType.string);
+        basicTypeMappings.put("java.lang.String", SchemaType.string);
+        basicTypeMappings.put("java.math.BigDecimal", SchemaType.number);
 
-        arrayTypeMappings.put("java.lang.Iterable", SchemaType.array);
-        arrayTypeMappings.put("java.util.List", SchemaType.array);
-        arrayTypeMappings.put("java.util.Collection", SchemaType.array);
-        arrayTypeMappings.put("java.util.ArrayList", SchemaType.array);
-        arrayTypeMappings.put("java.util.LinkedList", SchemaType.array);
-        arrayTypeMappings.put("java.util.Set", SchemaType.array);
-        arrayTypeMappings.put("java.util.HashSet", SchemaType.array);
-        arrayTypeMappings.put("java.util.LinkedHashSet", SchemaType.array);
+        collectionTypeMappings.put("java.lang.Iterable", SchemaType.array);
+        collectionTypeMappings.put("java.util.List", SchemaType.array);
+        collectionTypeMappings.put("java.util.Collection", SchemaType.array);
+        collectionTypeMappings.put("java.util.ArrayList", SchemaType.array);
+        collectionTypeMappings.put("java.util.LinkedList", SchemaType.array);
+        collectionTypeMappings.put("java.util.Set", SchemaType.array);
+        collectionTypeMappings.put("java.util.HashSet", SchemaType.array);
+        collectionTypeMappings.put("java.util.LinkedHashSet", SchemaType.array);
+        collectionTypeMappings.put(SpringWebFluxConstants.Flux, SchemaType.array);
 
         mapTypeMappings.put("java.util.Map", SchemaType.object);
         mapTypeMappings.put("java.util.HashMap", SchemaType.object);
         mapTypeMappings.put("java.util.LinkedHashMap", SchemaType.object);
         mapTypeMappings.put("java.util.TreeMap", SchemaType.object);
 
-    }
-
-    static {
         baseRangeMappings.put("byte", new LongRange(-128L, 127L));
         baseRangeMappings.put("short", new LongRange(-32768L, 32767L));
         baseRangeMappings
@@ -165,13 +163,8 @@ public class TypeConstants {
 
     }
 
-
-    public static boolean isNormalType(String typeName) {
-        return normalTypes.containsKey(typeName);
-    }
-
-    public static boolean isBaseType(String typePkName) {
-        return normalTypeMappings.containsKey(typePkName);
+    public static boolean isBasicType(String typePkName) {
+        return basicTypeMappings.containsKey(typePkName);
     }
 
     public static boolean hasBaseRange(String typePkName) {

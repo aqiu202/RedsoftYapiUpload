@@ -5,21 +5,19 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
-import com.redsoft.idea.plugin.yapiv2.parser.ObjectParser;
+import com.redsoft.idea.plugin.yapiv2.parser.ObjectJsonParser;
 import com.redsoft.idea.plugin.yapiv2.parser.impl.Json5ParserImpl;
-import com.redsoft.idea.plugin.yapiv2.parser.impl.JsonSchemaParserImpl;
 import com.redsoft.idea.plugin.yapiv2.req.PsiParamFilter;
 import com.redsoft.idea.plugin.yapiv2.req.SimpleRequestBodyParamResolver;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
-import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import org.jetbrains.annotations.NotNull;
 
 public class RequestBodyParamResolverImpl implements SimpleRequestBodyParamResolver {
 
-    private final ObjectParser objectParser;
+    private final ObjectJsonParser objectJsonParser;
 
     public RequestBodyParamResolverImpl(Project project) {
-        this.objectParser = new Json5ParserImpl(project);
+        this.objectJsonParser = new Json5ParserImpl(project);
     }
 
     @NotNull
@@ -34,7 +32,7 @@ public class RequestBodyParamResolverImpl implements SimpleRequestBodyParamResol
     @Override
     public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
             @NotNull YApiParam target) {
-        target.setRequestBody(this.objectParser.getJsonResponse(param.getType()));
+        target.setRequestBody(this.objectJsonParser.getJsonResponse(param.getType()));
     }
 
 }
