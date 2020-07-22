@@ -1,8 +1,9 @@
 package com.redsoft.idea.plugin.yapiv2.json5;
 
 import com.jgoodies.common.base.Strings;
+import com.redsoft.idea.plugin.yapiv2.parser.Jsonable;
 
-public class Json<T> {
+public class Json<T> implements Jsonable {
 
     public final static String INTENT = "  ";
     protected final static int COMMENT_MODE_SINGLE = 1;
@@ -66,4 +67,8 @@ public class Json<T> {
         return builder.toString();
     }
 
+    @Override
+    public String toJson() {
+        return this.toString();
+    }
 }

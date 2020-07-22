@@ -15,7 +15,7 @@ public class ResponseContentTypeResolverImpl implements ContentTypeResolver {
         if (this.isResponseJson(c, m)) {
             target.setRes_body_type(JSON_VALUE);
         } else {
-            target.setRes_body_type(ROW_VALUE);
+            target.setRes_body_type(RAW_VALUE);
         }
 //        String consumes = target.getConsumes();
 //        if (Strings.isNotBlank(consumes)) {

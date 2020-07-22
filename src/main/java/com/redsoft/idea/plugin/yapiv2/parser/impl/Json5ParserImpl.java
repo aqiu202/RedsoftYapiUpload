@@ -2,105 +2,83 @@ package com.redsoft.idea.plugin.yapiv2.parser.impl;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiType;
 import com.jgoodies.common.base.Strings;
-import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
+import com.redsoft.idea.plugin.yapiv2.parser.Json5JsonParser;
+import com.redsoft.idea.plugin.yapiv2.parser.Jsonable;
+import com.redsoft.idea.plugin.yapiv2.parser.ObjectRawParser;
+import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.json5.Json;
 import com.redsoft.idea.plugin.yapiv2.json5.JsonArray;
 import com.redsoft.idea.plugin.yapiv2.json5.JsonItem;
 import com.redsoft.idea.plugin.yapiv2.json5.JsonObject;
-import com.redsoft.idea.plugin.yapiv2.parser.Json5JsonParser;
 import com.redsoft.idea.plugin.yapiv2.util.DesUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.util.Objects;
 
-public class Json5ParserImpl extends AbstractObjectParser implements Json5JsonParser {
+public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonParser,
+        ObjectRawParser {
+
+    private final boolean needDesc;
 
     public Json5ParserImpl(YApiProjectProperty property, Project project) {
+        this(property, project, true);
+    }
+
+    public Json5ParserImpl(YApiProjectProperty property, Project project, boolean needDesc) {
         super(property, project);
+        this.needDesc = needDesc;
     }
 
     public Json5ParserImpl(Project project) {
+        this(project, true);
+    }
+
+    public Json5ParserImpl(Project project, boolean needDesc) {
         super(project);
+        this.needDesc = needDesc;
     }
 
     @Override
-    public Json<?> getJson(PsiType psiType) {
-        String typePkName = psiType.getCanonicalText();
-        Json<?> result;
-        //如果是基本类型
-        if (TypeConstants.isBasicType(typePkName)) {
-            result = new Json<>(TypeConstants.normalTypesPackages.get(typePkName));
-        } else {
-            result = this.getOtherJson(typePkName);
+    public Json<?> parseJson5(String typePkName) {
+        return ((Json<?>) super.parse(typePkName));
+    }
+
+    @Override
+    public Jsonable parseBasic(String typePkName) {
+        return new Json<>(TypeUtils.getDefaultValueByPackageName(typePkName));
+    }
+
+    @Override
+    public JsonObject parseMap(String typePkName) {
+        return new JsonObject(new JsonItem<>("key", new Json<>("value"), "map"));
+    }
+
+    @Override
+    public JsonArray<?> parseCollection(String typePkName) {
+        if (Strings.isBlank(typePkName)) {
+            return new JsonArray<>();
         }
-        return result;
+        return new JsonArray<>(this.parseJson5(typePkName));
     }
 
     @Override
-    public String getJsonResponse(PsiType psiType) {
-        return this.getJson(psiType).toString();
+    public Json<?> parsePojo(String typePkName) {
+        return this.parsePojo(typePkName, null);
     }
 
     @Override
-    public JsonArray<?> getJsonArray(String typePkName) {
-        String[] types = typePkName.split("<");
-        JsonArray<?> array;
-        //如果有泛型
-        if (types.length > 1) {
-            String childrenType = types[1].split(">")[0];
-            childrenType = childrenType.replace("? extends ", "")
-                    .replace("? super ", "");
-            boolean isWrapArray = childrenType.endsWith("[]");
-            //是否是数组类型
-            if (isWrapArray) {
-                childrenType = childrenType.replace("[]", "");
-            }
-            //如果泛型是基本类型
-            if (TypeConstants.isBasicType(childrenType)) {
-                array = new JsonArray<>(
-                        new Json<>(TypeConstants.normalTypesPackages.get(childrenType)));
-            } else {
-                array = new JsonArray<>(this.getJsonObject(childrenType));
-            }
-        } else {
-            //没有泛型 默认
-            array = new JsonArray<>();
-        }
-        return array;
-    }
-
-    @Override
-    public JsonObject getJsonObject(String typePkName) {
+    public Json<?> parsePojo(String typePkName, String subType) {
         JsonObject jsonObject = new JsonObject();
-        String[] types = typePkName.split("<");
-        typePkName = types[0];
         PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
+        boolean hasSubType = Strings.isNotBlank(subType);
         if (Objects.nonNull(psiClass)) {
-            boolean hasChildren = types.length > 1;
-            PsiClassType classType = null;
-            String childrenType = null;
-            if(hasChildren) {
-                if (types.length == 2) {
-                    childrenType = types[1].split(">")[0];
-                    childrenType = childrenType.replace("? extends ", "")
-                            .replace("? super ", "");
-                } else if (types.length == 3) {
-                    childrenType = types[1].split(">")[0] + "<" + types[2].split(">")[0] + ">";
-                    childrenType = childrenType.replace("? extends ", "")
-                            .replace("? super ", "");
-                }
-                if(Strings.isNotBlank(childrenType)) {
-                    classType = PsiUtils.findPsiClassType(this.project, childrenType);
-                }
-            }
             for (PsiField field : psiClass.getAllFields()) {
                 if (Objects.requireNonNull(field.getModifierList())
-                                .hasModifierProperty(PsiModifier.STATIC)) {
+                        .hasModifierProperty(PsiModifier.STATIC)) {
                     continue;
                 }
                 //防止对象内部嵌套自身导致死循环
@@ -109,71 +87,33 @@ public class Json5ParserImpl extends AbstractObjectParser implements Json5JsonPa
                     continue;
                 }
                 String fieldName = this.handleFieldName(field.getName());
-                String desc = DesUtils.getLinkRemark(field, this.project);
-                desc = this.handleDocTagValue(desc);
-                if (hasChildren && classType != null) {
-                    String gType = field.getType().getCanonicalText();
-                    String[] gTypes = gType.split("<");
-                    if (gTypes.length > 1 && TypeConstants.genericList
-                            .contains(gTypes[1].split(">")[0]) && PsiUtils.isCollection(this.project, gTypes[0])) {
-                        jsonObject.addItem(new JsonItem<>(fieldName,
-                                new JsonArray<>(this.getJson(classType)), desc));
-                    } else if (TypeConstants.genericList
-                            .contains(gType)) {
+                String desc = null;
+                if(this.needDesc) {
+                    desc = DesUtils.getLinkRemark(field, this.project);
+                    desc = this.handleDocTagValue(desc);
+                }
+                String fieldTypeName = field.getType().getCanonicalText();
+                //如果含有泛型，处理泛型
+                if (hasSubType) {
+                    if (TypeUtils.hasGenericType(fieldTypeName)) {
+                        subType = TypeUtils.parseGenericType(fieldTypeName, subType);
                         jsonObject
-                                .addItem(new JsonItem<>(fieldName, this.getJson(classType), desc));
+                                .addItem(new JsonItem<>(fieldName, this.parseJson5(subType), desc));
                     } else {
                         jsonObject.addItem(
-                                new JsonItem<>(fieldName, this.getJsonByField(field), desc));
+                                new JsonItem<>(fieldName, this.parseJson5(fieldTypeName), desc));
                     }
                 } else {
-                    jsonObject.addItem(new JsonItem<>(fieldName, this.getJsonByField(field), desc));
+                    jsonObject.addItem(
+                            new JsonItem<>(fieldName, this.parseJson5(fieldTypeName), desc));
                 }
             }
-            return jsonObject;
         }
-        return new JsonObject();
+        return jsonObject;
     }
 
     @Override
-    public Json<?> getJsonByField(PsiField psiField) {
-        PsiType type = psiField.getType();
-        String typePkName = type.getCanonicalText();
-        Json<?> json;
-        if (TypeConstants.isBasicType(typePkName)) {
-            json = new Json<>(TypeConstants.normalTypesPackages.get(typePkName));
-        } else {
-            json = this.getOtherJson(typePkName);
-        }
-        return json;
-    }
-
-    @Override
-    public Json<?> getOtherJson(String typePkName) {
-        Json<?> result;
-        boolean wrapArray = false;
-        if (typePkName.endsWith("[]")) {
-            typePkName = typePkName.replace("[]", "");
-            wrapArray = true;
-        }
-        String type = typePkName.split("<")[0];
-        //对Map和Map类型的封装类进行过滤
-        if (PsiUtils.isMap(this.project, typePkName)) {
-            result = wrapArray ? new JsonArray<>(
-                    new JsonObject(new JsonItem<>("key", new Json<>("value"), "map")))
-                    : new JsonObject(new JsonItem<>("key", new Json<>("value"), "map"));
-        } else if (PsiUtils.isCollection(this.project, type)) {
-            //如果是集合类型（List Set）
-            JsonArray<?> array = this.getJsonArray(typePkName);
-            result = wrapArray ? new JsonArray<>(array) : array;
-        } else if (typePkName.endsWith("[]")) {
-            //数组形式的返回值（且不是集合类型前缀）
-            typePkName = typePkName.replace("[]", "");
-            result = new JsonArray<>(this.getJsonObject(typePkName));
-        } else {
-            //其他情况 object
-            result = this.getJsonObject(typePkName);
-        }
-        return result;
+    public String getRawResponse(PsiType psiType) {
+        return this.parse(psiType.getCanonicalText()).toJson();
     }
 }

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameter;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
-import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
+import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.model.YApiQuery;
@@ -52,7 +52,7 @@ public class RequestQueryResolverImpl implements SimpleRequestBodyParamResolver 
         String typeClassName = param.getType().getCanonicalText();
         String typeName = param.getType().getPresentableText();
         //如果是基本类型
-        if (TypeConstants.isBasicType(typeClassName)) {
+        if (TypeUtils.isBasicType(typeClassName)) {
             PsiAnnotation psiAnnotation = PsiAnnotationUtils
                     .findAnnotation(param, SpringMVCConstants.RequestParam);
             YApiQuery yapiQuery = new YApiQuery();
@@ -62,7 +62,7 @@ public class RequestQueryResolverImpl implements SimpleRequestBodyParamResolver 
             } else {//没有注解
                 yapiQuery.setRequired(ValidUtils.notNullOrBlank(param) ? "1" : "0");
                 yapiQuery.setName(param.getName());
-                yapiQuery.setExample(TypeConstants.normalTypes.get(typeName)
+                yapiQuery.setExample(TypeUtils.getDefaultValue(typeName)
                         .toString());
             }
             yapiQuery.setDesc(DesUtils.getParamDesc(m, param.getName()) + "("
@@ -81,9 +81,9 @@ public class RequestQueryResolverImpl implements SimpleRequestBodyParamResolver 
                 query.setName(field.getName());
                 query.setDesc(DesUtils.getLinkRemark(field, project));
                 String typePkName = field.getType().getCanonicalText();
-                if (TypeConstants.isBasicType(typePkName)) {
+                if (TypeUtils.isBasicType(typePkName)) {
                     query.setExample(
-                            TypeConstants.normalTypesPackages.get(typePkName)
+                            TypeUtils.getDefaultValueByPackageName(typePkName)
                                     .toString());
                 }
                 results.add(query);

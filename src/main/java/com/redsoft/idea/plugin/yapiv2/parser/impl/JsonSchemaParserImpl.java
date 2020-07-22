@@ -2,15 +2,12 @@ package com.redsoft.idea.plugin.yapiv2.parser.impl;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiType;
 import com.jgoodies.common.base.Strings;
-import com.redsoft.idea.plugin.yapiv2.constant.SpringWebFluxConstants;
-import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
-import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapiv2.parser.JsonSchemaJsonParser;
+import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.range.DecimalRange;
 import com.redsoft.idea.plugin.yapiv2.range.IntegerRange;
 import com.redsoft.idea.plugin.yapiv2.range.LongRange;
@@ -30,8 +27,7 @@ import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class JsonSchemaParserImpl extends AbstractObjectParser implements
-        JsonSchemaJsonParser {
+public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSchemaJsonParser {
 
     public JsonSchemaParserImpl(YApiProjectProperty property, Project project) {
         super(property, project);
@@ -45,38 +41,50 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements
 
     private final boolean enableBasicScope;
 
+
     @Override
-    public ItemJsonSchema getPojoSchema(String typePkName) {
-        //兼容WebFlux
-        if(typePkName.startsWith(SpringWebFluxConstants.Mono)) {
-            typePkName = typePkName.substring(SpringWebFluxConstants.Mono.length() + 1);
-            typePkName = typePkName.substring(0, typePkName.length() - 1);
+    public ItemJsonSchema parseJsonSchema(String typePkName) {
+        return ((ItemJsonSchema) super.parse(typePkName));
+    }
+
+    @Override
+    public ItemJsonSchema parseBasic(String typePkName) {
+        ItemJsonSchema result = SchemaHelper
+                .parseBasic(TypeUtils.getBasicSchema(typePkName));
+        result.setDefault(TypeUtils.getDefaultValueByPackageName(typePkName).toString());
+        result.setMock(TypeUtils
+                .formatMockType(typePkName.substring(typePkName.lastIndexOf(".") + 1)));
+        return result;
+    }
+
+    @Override
+    public ObjectSchema parseMap(String typePkName) {
+        return new ObjectSchema();
+    }
+
+    @Override
+    public ArraySchema parseCollection(String typePkName) {
+        ArraySchema result = new ArraySchema();
+        if (Strings.isBlank(typePkName)) {
+            return result.setItems(new ObjectSchema());
         }
-        ObjectSchema objectSchema = new ObjectSchema();
-        String[] types = typePkName.split("<");
-        typePkName = types[0];
+        return result.setItems(this.parseJsonSchema(typePkName));
+    }
+
+    @Override
+    public ItemJsonSchema parsePojo(String typePkName) {
+        return this.parsePojo(typePkName, null);
+    }
+
+    @Override
+    public ItemJsonSchema parsePojo(String typePkName, String subType) {
         PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
+        ObjectSchema objectSchema = new ObjectSchema();
+        boolean hasSubType = Strings.isNotBlank(subType);
         if (Objects.nonNull(psiClass)) {
-            boolean hasChildren = types.length > 1;
-            String childrenType = null;
-            PsiClassType classType = null;
-            if(hasChildren) {
-                if (types.length == 2) {
-                    childrenType = types[1].split(">")[0];
-                    childrenType = childrenType.replace("? extends ", "")
-                            .replace("? super ", "");
-                } else if (types.length == 3) {
-                    childrenType = types[1].split(">")[0] + "<" + types[2].split(">")[0] + ">";
-                    childrenType = childrenType.replace("? extends ", "")
-                            .replace("? super ", "");
-                }
-                if(Strings.isNotBlank(childrenType)) {
-                    classType = PsiUtils.findPsiClassType(this.project, childrenType);
-                }
-            }
             for (PsiField field : psiClass.getAllFields()) {
                 if (Objects.requireNonNull(field.getModifierList())
-                                .hasModifierProperty(PsiModifier.STATIC)) {
+                        .hasModifierProperty(PsiModifier.STATIC)) {
                     continue;
                 }
                 //防止对象内部嵌套自身导致死循环
@@ -85,141 +93,50 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements
                     continue;
                 }
                 String fieldName = this.handleFieldName(field.getName());
-                if (hasChildren && classType != null) {
-                    String desc = DesUtils.getLinkRemark(field, this.project);
-                    desc = this.handleDocTagValue(desc);
-                    String gType = field.getType().getCanonicalText();
-                    String[] gTypes = gType.split("<");
-                    if (gTypes.length > 1 && TypeConstants.genericList
-                            .contains(gTypes[1].split(">")[0]) && PsiUtils.isCollection(this.project, gTypes[0])) {
-                        objectSchema.addProperty(fieldName,
-                                new ArraySchema().setItems(this.getSchema(classType, false))
-                                        .setDescription(desc));
-                    } else if (TypeConstants.genericList
-                            .contains(gType)) {
-                        objectSchema.addProperty(fieldName, this.getSchema(classType, false)
+                String desc = DesUtils.getLinkRemark(field, this.project);
+                desc = this.handleDocTagValue(desc);
+                String fieldTypeName = field.getType().getCanonicalText();
+                //如果含有泛型，处理泛型
+                if (hasSubType) {
+                    if (TypeUtils.hasGenericType(fieldTypeName)) {
+                        subType = TypeUtils.parseGenericType(fieldTypeName, subType);
+                        //TODO 没有解析是否必填
+                        objectSchema.addProperty(fieldName, this.parseJsonSchema(subType)
                                 .setDescription(desc));
                     } else {
-                        objectSchema.addProperty(fieldName, this.getFieldSchema(field)
+                        objectSchema.addProperty(fieldName, this.parseField(field)
                                 .setDescription(desc));
                     }
                 } else {
-                    objectSchema.addProperty(fieldName, this.getFieldSchema(field));
+                    objectSchema.addProperty(fieldName, this.parseField(field)
+                            .setDescription(desc));
                 }
                 if (ValidUtils.notNullOrBlank(field)) {
                     objectSchema.addRequired(fieldName);
                 }
             }
-            return objectSchema;
         }
-        return new ObjectSchema();
+        return objectSchema;
     }
 
-    public ItemJsonSchema getSchema(PsiType psiType, boolean needSchema) {
-        String typePkName = psiType.getCanonicalText();
-        ItemJsonSchema result;
-        //如果是基本类型
-        if (TypeConstants.isBasicType(typePkName)) {
-            result = SchemaHelper.parseBasic(TypeConstants.basicTypeMappings.get(typePkName));
-            result.setDefault(TypeConstants.normalTypesPackages.get(typePkName).toString());
-            result.setMock(TypeConstants.formatMockType(psiType.getPresentableText()));
+    public ItemJsonSchema parseField(PsiField psiField) {
+        PsiType type = psiField.getType();
+        String typePkName = type.getCanonicalText();
+        ItemJsonSchema itemJsonSchema;
+        if (TypeUtils.isBasicType(typePkName)) {
+            itemJsonSchema = this.parseBasicField(psiField);
+            itemJsonSchema.setMock(TypeUtils.formatMockType(type.getPresentableText()));
         } else {
-            result = this.getOtherTypeSchema(typePkName);
+            itemJsonSchema = this.parseCompoundField(psiField);
         }
-        if (needSchema) {
-            result.set$schema(YApiConstants.$schema);
-        }
-        return result;
+        return itemJsonSchema;
     }
 
-    @Override
-    public ItemJsonSchema getOtherTypeSchema(String typePkName) {
-        boolean wrapArray = false;
-        if (typePkName.endsWith("[]")) {
-            typePkName = typePkName.replace("[]", "");
-            wrapArray = true;
-        }
-        String type = typePkName.split("<")[0];
-        ItemJsonSchema result;
-        //对Map和Map类型的封装类进行过滤
-        if (PsiUtils.isMap(this.project, typePkName)) {
-            ObjectSchema mapResult = new ObjectSchema();
-            result = wrapArray ? new ArraySchema().setItems(mapResult) : mapResult;
-        } else if (TypeConstants.collectionTypeMappings.containsKey(type)) {
-            //如果是集合类型（List Set）
-            ArraySchema tmp = this.getArraySchema(typePkName);
-            result = wrapArray ? new ArraySchema().setItems(tmp) : tmp;
-        } else if (typePkName.endsWith("[]")) {
-            //数组形式的返回值（且不是集合类型前缀）
-            typePkName = typePkName.replace("[]", "");
-            result = new ArraySchema().setItems(this.getPojoSchema(typePkName));
-        } else {
-            //其他情况 object
-            result = this.getPojoSchema(typePkName);
-        }
-        return result;
-    }
-
-    @Override
-    public ArraySchema getArraySchema(String typePkName) {
-        String[] types = typePkName.split("<");
-        ArraySchema arraySchema = new ArraySchema();
-        //如果有泛型
-        if (types.length > 1) {
-            String childrenType = types[1].split(">")[0];
-            childrenType = childrenType.replace("? extends ", "")
-                    .replace("? super ", "");
-            boolean isWrapArray = childrenType.endsWith("[]");
-            //是否是数组类型
-            if (isWrapArray) {
-                childrenType = childrenType.replace("[]", "");
-            }
-            //如果泛型是基本类型
-            ItemJsonSchema item;
-            if (TypeConstants.isBasicType(childrenType)) {
-                item = SchemaHelper
-                        .parseBasic(TypeConstants.basicTypeMappings.get(childrenType));
-            } else {
-                item = this.getPojoSchema(childrenType);
-            }
-            arraySchema.setItems(isWrapArray ? new ArraySchema().setItems(item) : item);
-        } else {
-            //没有泛型 默认
-            arraySchema.setItems(new ObjectSchema());
-        }
-        return arraySchema;
-    }
-
-    @Override
-    public ItemJsonSchema getOtherFieldSchema(PsiField psiField) {
-        PsiType psiType = psiField.getType();
-        String typeName = psiType.getPresentableText();
-        boolean wrapArray = typeName.endsWith("[]");
-        ItemJsonSchema result = this.getOtherTypeSchema(psiType.getCanonicalText());
-        if (result instanceof ArraySchema) {
-            ArraySchema a = (ArraySchema) result;
-            if (typeName.contains("Set") && !wrapArray) {
-                a.setUniqueItems(true);
-            }
-            if (ValidUtils.notEmpty(psiField)) {
-                a.setMinItems(1);
-            }
-            IntegerRange integerRange = ValidUtils
-                    .rangeSize(psiField, this.enableBasicScope);
-            a.setMinItems(integerRange.getMin(), this.enableBasicScope);
-            a.setMaxItems(integerRange.getMax(), this.enableBasicScope);
-        }
-        String desc = DesUtils.getLinkRemark(psiField, this.project);
-        desc = this.handleDocTagValue(desc);
-        result.setDescription(desc);
-        return result;
-    }
-
-    @Override
-    public ItemJsonSchema getBaseFieldSchema(SchemaType schemaType, PsiField psiField) {
+    public ItemJsonSchema parseBasicField(PsiField psiField) {
         PsiType psiType = psiField.getType();
         String typePkName = psiType.getCanonicalText();
         ItemJsonSchema result;
+        SchemaType schemaType = TypeUtils.getBasicSchema(typePkName);
         switch (schemaType) {
             case number:
                 NumberSchema numberSchema = new NumberSchema();
@@ -245,9 +162,9 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements
                 break;
             case integer:
                 IntegerSchema integerSchema = new IntegerSchema();
-                if (TypeConstants.hasBaseRange(typePkName)) {
+                if (TypeUtils.hasBaseRange(typePkName)) {
                     if (this.enableBasicScope) {
-                        integerSchema.setRange(TypeConstants.baseRangeMappings.get(typePkName));
+                        integerSchema.setRange(TypeUtils.getBaseRange(typePkName));
                     }
                 }
                 LongRange longRange = ValidUtils.range(psiField, this.enableBasicScope);
@@ -291,28 +208,32 @@ public class JsonSchemaParserImpl extends AbstractObjectParser implements
         String desc = DesUtils.getLinkRemark(psiField, this.project);
         desc = this.handleDocTagValue(desc);
         result.setDescription(desc);
-        result.setDefault(TypeConstants.normalTypesPackages.get(typePkName).toString());
+        result.setDefault(TypeUtils.getDefaultValueByPackageName(typePkName).toString());
         return result;
     }
 
-    @Override
-    public ItemJsonSchema getFieldSchema(PsiField psiField) {
-        PsiType type = psiField.getType();
-        String typePkName = type.getCanonicalText();
-        ItemJsonSchema itemJsonSchema;
-        if (TypeConstants.isBasicType(typePkName)) {
-            SchemaType schemaType = TypeConstants.basicTypeMappings.get(typePkName);
-            itemJsonSchema = getBaseFieldSchema(schemaType, psiField);
-            itemJsonSchema.setMock(TypeConstants.formatMockType(type.getPresentableText()));
-        } else {
-            itemJsonSchema = getOtherFieldSchema(psiField);
+    public ItemJsonSchema parseCompoundField(PsiField psiField) {
+        PsiType psiType = psiField.getType();
+        String typeName = psiType.getPresentableText();
+        boolean wrapArray = typeName.endsWith("[]");
+        ItemJsonSchema result = this.parseJsonSchema(psiType.getCanonicalText());
+        if (result instanceof ArraySchema) {
+            ArraySchema a = (ArraySchema) result;
+            if (typeName.contains("Set") && !wrapArray) {
+                a.setUniqueItems(true);
+            }
+            if (ValidUtils.notEmpty(psiField)) {
+                a.setMinItems(1);
+            }
+            IntegerRange integerRange = ValidUtils
+                    .rangeSize(psiField, this.enableBasicScope);
+            a.setMinItems(integerRange.getMin(), this.enableBasicScope);
+            a.setMaxItems(integerRange.getMax(), this.enableBasicScope);
         }
-        return itemJsonSchema;
-    }
-
-    @Override
-    public String getJsonResponse(PsiType psiType) {
-        return this.getSchema(psiType, true).toPrettyJson();
+        String desc = DesUtils.getLinkRemark(psiField, this.project);
+        desc = this.handleDocTagValue(desc);
+        result.setDescription(desc);
+        return result;
     }
 
 }

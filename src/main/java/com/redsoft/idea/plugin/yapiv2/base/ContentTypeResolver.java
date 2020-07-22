@@ -4,9 +4,9 @@ public interface ContentTypeResolver extends BaseResolver {
 
     String JSON = "application/json";
     String FORM = "application/x-www-form-urlencoded";
-    String ROW = "text/plain";
+    String RAW = "text/plain";
     String JSON_VALUE = "json";
     String FORM_VALUE = "form";
-    String ROW_VALUE = "row";
+    String RAW_VALUE = "raw";
 
 }

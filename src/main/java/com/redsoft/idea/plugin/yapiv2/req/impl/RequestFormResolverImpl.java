@@ -9,7 +9,7 @@ import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiType;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
-import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
+import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
 import com.redsoft.idea.plugin.yapiv2.model.YApiForm;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
@@ -61,7 +61,7 @@ public class RequestFormResolverImpl implements SimpleRequestBodyParamResolver {
         String remark =
                 DesUtils.getParamDesc(m, paramName) + "(" + psiType.getPresentableText()
                         + ")";
-        if (TypeConstants.isBasicType(typeClassName) || SpringMVCConstants.MultipartFile
+        if (TypeUtils.isBasicType(typeClassName) || SpringMVCConstants.MultipartFile
                 .equals(typeClassName)) {
             PsiAnnotation psiAnnotation = PsiAnnotationUtils
                     .findAnnotation(param, SpringMVCConstants.RequestParam);
@@ -75,7 +75,7 @@ public class RequestFormResolverImpl implements SimpleRequestBodyParamResolver {
                 form.setName(paramName);
                 form.setRequired(required);
                 form.setExample(
-                        TypeConstants.normalTypes.get(typeName).toString());
+                        TypeUtils.getDefaultValue(typeName).toString());
             } else {//处理@RequestParam注解
                 ValueWrapper valueWrapper = handleParamAnnotation(param, psiAnnotation);
                 form.full(valueWrapper);
@@ -89,17 +89,17 @@ public class RequestFormResolverImpl implements SimpleRequestBodyParamResolver {
                                 .hasModifierProperty(PsiModifier.STATIC)) {
                     continue;
                 }
-                String fieldType = field.getType().getCanonicalText();
+                PsiType fType = field.getType();
+                String fieldType = fType.getCanonicalText();
                 YApiForm form = new YApiForm();
                 form.setRequired(ValidUtils.notNullOrBlank(field) ? "1" : "0");
                 form.setType(SpringMVCConstants.MultipartFile.equals(fieldType) ? "file" : "text");
                 form.setName(field.getName());
                 form.setDesc(DesUtils.getLinkRemark(field, project));
-                Object obj = TypeConstants.normalTypes
-                        .get(field.getType().getPresentableText());
+                Object obj = TypeUtils.getDefaultValue(fType.getPresentableText());
                 if (Objects.nonNull(obj)) {
                     form.setExample(
-                            TypeConstants.normalTypes.get(field.getType().getPresentableText())
+                            TypeUtils.getDefaultValue(fType.getPresentableText())
                                     .toString());
                 }
                 YApiSupportHolder.supports.handleField(field, form);

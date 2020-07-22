@@ -3,9 +3,10 @@ package com.redsoft.idea.plugin.yapiv2.schema.base;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import com.redsoft.idea.plugin.yapiv2.model.Mock;
+import com.redsoft.idea.plugin.yapiv2.parser.Jsonable;
 
 @SuppressWarnings("unused")
-public class ItemJsonSchema {
+public class ItemJsonSchema implements Jsonable {
 
     private String $schema;
 
@@ -61,7 +62,8 @@ public class ItemJsonSchema {
         this.$schema = $schema;
     }
 
-    public String toPrettyJson() {
+    @Override
+    public String toJson() {
         return new GsonBuilder().setPrettyPrinting().create().toJson(this);
     }
 }

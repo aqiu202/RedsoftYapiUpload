@@ -6,7 +6,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.constant.ServletConstants;
-import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
+import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
@@ -71,8 +71,8 @@ public interface PsiParamListFilter {
         }
         if (Strings.isEmpty(valueWrapper.getExample())) {
             Object o;
-            if (Objects.nonNull(o = TypeConstants.normalTypesPackages
-                    .get(psiParameter.getType().getCanonicalText()))) {
+            if (Objects.nonNull(o = TypeUtils
+                    .getDefaultValueByPackageName((psiParameter.getType().getCanonicalText())))) {
                 valueWrapper.setExample(o.toString());
             }
         }

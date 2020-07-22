@@ -54,4 +54,5 @@ public class HttpClientFileResolverImpl implements ApiResolver, DocTagValueHandl
         requestResolver.resolve(m, target);
         docTagValueResolver.accept(target);
     }
+
 }

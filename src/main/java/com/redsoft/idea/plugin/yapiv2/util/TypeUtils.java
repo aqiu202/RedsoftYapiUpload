@@ -1,5 +1,6 @@
-package com.redsoft.idea.plugin.yapiv2.constant;
+package com.redsoft.idea.plugin.yapiv2.util;
 
+import com.redsoft.idea.plugin.yapiv2.constant.SpringWebFluxConstants;
 import com.redsoft.idea.plugin.yapiv2.model.Mock;
 import com.redsoft.idea.plugin.yapiv2.range.LongRange;
 import com.redsoft.idea.plugin.yapiv2.schema.base.SchemaType;
@@ -14,32 +15,33 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * 基本类
- *
+ * java类型基础工具类
+ * @author aqiu
  * @date 2019/1/30 9:58 AM
  */
-public class TypeConstants {
+public class TypeUtils {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter
             .ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
     @NonNls
-    public static final Map<String, Object> normalTypes = new HashMap<>();
+    private static final Map<String, Object> normalTypes = new HashMap<>();
     @NonNls
-    public static final Map<String, SchemaType> basicTypeMappings = new HashMap<>();
-    public static final Map<String, SchemaType> collectionTypeMappings = new HashMap<>();
-    public static final Map<String, SchemaType> mapTypeMappings = new HashMap<>();
+    private static final Map<String, SchemaType> basicTypeMappings = new HashMap<>();
+    private static final Map<String, SchemaType> collectionTypeMappings = new HashMap<>();
+    private static final Map<String, SchemaType> mapTypeMappings = new HashMap<>();
 
-    public static final Map<String, Object> normalTypesPackages = new HashMap<>();
+    private static final Map<String, Object> normalTypesPackages = new HashMap<>();
 
-    public static final Map<String, LongRange> baseRangeMappings = new HashMap<>();
+    private static final Map<String, LongRange> baseRangeMappings = new HashMap<>();
     /**
      * 泛型列表
      */
-    public static final List<String> genericList = Arrays
+    private static final List<String> genericList = Arrays
             .asList("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""));
 
 
@@ -167,8 +169,54 @@ public class TypeConstants {
         return basicTypeMappings.containsKey(typePkName);
     }
 
+    public static SchemaType getBasicSchema(String typePkName) {
+        return basicTypeMappings.get(typePkName);
+    }
+
+    public static boolean isCollectionType(String typePkName) {
+        return collectionTypeMappings.containsKey(typePkName);
+    }
+
+    public static boolean isMapType(String typePkName) {
+        return mapTypeMappings.containsKey(typePkName);
+    }
+
+    public static boolean isGenericType(String typePkName) {
+        return genericList.contains(typePkName);
+    }
+
+    public static Object getDefaultValue(String typeName) {
+        return normalTypes.get(typeName).toString();
+    }
+
+    public static Object getDefaultValueByPackageName(String typePkName) {
+        return normalTypesPackages.get(typePkName);
+    }
+
+
+    public static boolean hasGenericType(String typePkName) {
+        String[] split = typePkName.replace(">", "").split("<");
+        for (String s : split) {
+            if(isGenericType(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String parseGenericType(@NotNull String typePkName, String subType) {
+        if(isGenericType(typePkName)) {
+            return subType;
+        }
+        return typePkName.replaceFirst("<[A-Z]>", "<" + subType + ">");
+    }
+
     public static boolean hasBaseRange(String typePkName) {
         return baseRangeMappings.containsKey(typePkName);
+    }
+
+    public static LongRange getBaseRange(String typePkName) {
+        return baseRangeMappings.get(typePkName);
     }
 
     public static Mock formatMockType(String type) {
@@ -186,9 +234,9 @@ public class TypeConstants {
         }
         switch (type) {
             case "int":
-            case "java.lang.Long":
-            case "java.lang.Integer":
-            case "java.lang.Short":
+//            case "java.lang.Long":
+//            case "java.lang.Integer":
+//            case "java.lang.Short":
             case "Short":
             case "Integer":
             case "Long":
@@ -196,17 +244,17 @@ public class TypeConstants {
             case "long":
                 return new Mock("@integer");
             case "boolean":
-            case "java.lang.Boolean":
+//            case "java.lang.Boolean":
             case "Boolean":
                 return new Mock("@boolean");
             case "byte":
-            case "java.lang.Byte":
+//            case "java.lang.Byte":
             case "Byte":
                 return new Mock("@byte");
             case "float":
-            case "java.math.BigDecimal":
-            case "java.lang.Double":
-            case "java.lang.Float":
+//            case "java.math.BigDecimal":
+//            case "java.lang.Double":
+//            case "java.lang.Float":
             case "BigDecimal":
             case "Double":
             case "Float":
@@ -214,12 +262,12 @@ public class TypeConstants {
                 return new Mock("@float");
             case "char":
                 return new Mock("@char");
+//            case "java.time.LocalDateTime":
+//            case "java.time.LocalTime":
+//            case "java.time.LocalDate":
+//            case "java.util.Date":
+//            case "java.sql.Timestamp":
             case "Date":
-            case "java.time.LocalDateTime":
-            case "java.time.LocalTime":
-            case "java.time.LocalDate":
-            case "java.util.Date":
-            case "java.sql.Timestamp":
             case "Timestamp":
             case "LocalDateTime":
             case "LocalTime":

@@ -12,7 +12,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.redsoft.idea.plugin.yapiv2.constant.TypeConstants;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,14 +67,14 @@ public final class PsiUtils {
      **/
     public static boolean isMap(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();
-        if (TypeConstants.mapTypeMappings.containsKey(typePkName)) {
+        if (TypeUtils.isMapType(typePkName)) {
             return true;
         }
         PsiType[] parentTypes = psiType.getSuperTypes();
         if (parentTypes.length > 0) {
             for (PsiType parentType : parentTypes) {
                 String parentTypeName = parentType.getCanonicalText().split("<")[0];
-                if (TypeConstants.mapTypeMappings.containsKey(parentTypeName)) {
+                if (TypeUtils.isMapType(parentTypeName)) {
                     return true;
                 }
             }
@@ -92,7 +91,7 @@ public final class PsiUtils {
      * @description 是否是Map类型或者是Map的封装类型
      **/
     public static boolean isMap(Project project, String typePkName) {
-        if (TypeConstants.mapTypeMappings.containsKey(typePkName)) {
+        if (TypeUtils.isMapType(typePkName)) {
             return true;
         }
         PsiClassType psiType = findPsiClassType(project, typePkName);
@@ -100,7 +99,7 @@ public final class PsiUtils {
         if (parentTypes.length > 0) {
             for (PsiType parentType : parentTypes) {
                 String parentTypeName = parentType.getCanonicalText().split("<")[0];
-                if (TypeConstants.mapTypeMappings.containsKey(parentTypeName)) {
+                if (TypeUtils.isMapType(parentTypeName)) {
                     return true;
                 }
             }
@@ -117,14 +116,14 @@ public final class PsiUtils {
      **/
     public static boolean isCollection(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();
-        if (TypeConstants.collectionTypeMappings.containsKey(typePkName)) {
+        if (TypeUtils.isCollectionType(typePkName)) {
             return true;
         }
         PsiType[] parentTypes = psiType.getSuperTypes();
         if (parentTypes.length > 0) {
             for (PsiType parentType : parentTypes) {
                 String parentTypeName = parentType.getCanonicalText().split("<")[0];
-                if (TypeConstants.collectionTypeMappings.containsKey(parentTypeName)) {
+                if (TypeUtils.isCollectionType(parentTypeName)) {
                     return true;
                 }
             }
@@ -141,7 +140,7 @@ public final class PsiUtils {
      * @description 是否是集合类型或者是集合的封装类型
      **/
     public static boolean isCollection(Project project, String typePkName) {
-        if (TypeConstants.collectionTypeMappings.containsKey(typePkName)) {
+        if (TypeUtils.isCollectionType(typePkName)) {
             return true;
         }
         PsiClassType psiType = findPsiClassType(project, typePkName);
@@ -149,7 +148,7 @@ public final class PsiUtils {
         if (parentTypes.length > 0) {
             for (PsiType parentType : parentTypes) {
                 String parentTypeName = parentType.getCanonicalText().split("<")[0];
-                if (TypeConstants.collectionTypeMappings.containsKey(parentTypeName)) {
+                if (TypeUtils.isCollectionType(parentTypeName)) {
                     return true;
                 }
             }
