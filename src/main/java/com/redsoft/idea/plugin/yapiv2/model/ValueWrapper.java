@@ -1,5 +1,6 @@
 package com.redsoft.idea.plugin.yapiv2.model;
 
+import com.intellij.psi.PsiVariable;
 import java.util.Objects;
 
 public class ValueWrapper {
@@ -21,6 +22,16 @@ public class ValueWrapper {
      * 参数名字
      */
     protected String name;
+
+    private PsiVariable origin;
+
+    public PsiVariable getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(PsiVariable origin) {
+        this.origin = origin;
+    }
 
     public String getName() {
         return name;

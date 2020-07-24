@@ -7,14 +7,15 @@ import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiHeader;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.req.PsiParamFilter;
-import com.redsoft.idea.plugin.yapiv2.req.SimpleRequestParamResolver;
+import com.redsoft.idea.plugin.yapiv2.req.abs.AbstractRequestParamResolver;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
-public class RequestHeaderResolverImpl implements SimpleRequestParamResolver {
+public class RequestHeaderResolverImpl extends AbstractRequestParamResolver {
 
     private final PsiParamFilter psiParamFilter = (param) ->
             PsiAnnotationUtils.isAnnotatedWith(param, SpringMVCConstants.RequestHeader);
@@ -36,7 +37,7 @@ public class RequestHeaderResolverImpl implements SimpleRequestParamResolver {
             header.full(this.handleParamAnnotation(param, annotation));
             Set<YApiHeader> headers = target.getHeaders();
             if (Objects.isNull(headers)) {
-                headers = new HashSet<>();
+                headers = new LinkedHashSet<>();
                 target.setHeaders(headers);
             }
             headers.add(header);

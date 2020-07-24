@@ -5,12 +5,12 @@ import static com.redsoft.idea.plugin.yapiv2.constant.DocCommentConstants.TAG_ME
 
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.jgoodies.common.base.Strings;
-import com.redsoft.idea.plugin.yapiv2.api.MenuSetter;
+import com.redsoft.idea.plugin.yapiv2.api.MenuResolver;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.util.PsiDocUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class MenuSetterImpl implements MenuSetter {
+public class MenuResolverImpl implements MenuResolver {
 
     @Override
     public void set(@NotNull PsiDocComment docComment, @NotNull YApiParam target) {

@@ -6,17 +6,17 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.jgoodies.common.base.Strings;
-import com.redsoft.idea.plugin.yapiv2.api.BaseInfoSetter;
+import com.redsoft.idea.plugin.yapiv2.api.BaseInfoResolver;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.support.YApiSupportHolder;
 import com.redsoft.idea.plugin.yapiv2.util.PsiDocUtils;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
-public class BaseInfoSetterImpl implements BaseInfoSetter {
+public class BaseInfoResolverImpl implements BaseInfoResolver {
 
     @Override
-    public void set(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
+    public void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
         String classDesc = m.getText().replace(
                 Objects.nonNull(m.getBody()) ? m.getBody().getText()
                         : "", "");

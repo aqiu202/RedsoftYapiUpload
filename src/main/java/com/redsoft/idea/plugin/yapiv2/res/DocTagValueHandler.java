@@ -2,6 +2,11 @@ package com.redsoft.idea.plugin.yapiv2.res;
 
 import com.jgoodies.common.base.Strings;
 
+/**
+ * <b>注释值的处理</b>
+ * @author aqiu
+ * @date 2020/7/23 3:57 下午
+**/
 public interface DocTagValueHandler {
 
     /**

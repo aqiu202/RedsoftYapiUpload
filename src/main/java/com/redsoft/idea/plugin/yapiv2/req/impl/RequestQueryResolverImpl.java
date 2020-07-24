@@ -1,99 +1,61 @@
 package com.redsoft.idea.plugin.yapiv2.req.impl;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameter;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
-import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.model.YApiQuery;
 import com.redsoft.idea.plugin.yapiv2.req.PsiParamFilter;
-import com.redsoft.idea.plugin.yapiv2.req.SimpleRequestBodyParamResolver;
-import com.redsoft.idea.plugin.yapiv2.util.DesUtils;
+import com.redsoft.idea.plugin.yapiv2.req.abs.AbstractCompoundRequestParamResolver;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
-import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
-import com.redsoft.idea.plugin.yapiv2.util.ValidUtils;
-import java.util.HashSet;
+import com.redsoft.idea.plugin.yapiv2.util.PsiParamUtils;
+import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
-public class RequestQueryResolverImpl implements SimpleRequestBodyParamResolver {
-
-    private final Project project;
+public class RequestQueryResolverImpl extends AbstractCompoundRequestParamResolver {
 
     public RequestQueryResolverImpl(Project project) {
-        this.project = project;
+        super(project);
     }
 
     @NotNull
     @Override
     public PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m,
             @NotNull YApiParam target) {
-        if (this.noBody(target)) {
-            return p -> true;
+        //没有body的方法，除去文件类型的参数和被@PathVariable注解标注的参数
+        if (PsiParamUtils.noBody(target.getMethod())) {
+            return p -> !TypeUtils.isFile(p.getType().getCanonicalText()) && PsiAnnotationUtils
+                    .isNotAnnotatedWith(p, SpringMVCConstants.PathVariable);
         }
+        //有body的方法，含有@RequestBody注解的参数以外的其他参数，也除去文件类型的参数和被@PathVariable注解标注的参数
         PsiParameter[] parameters = m.getParameterList().getParameters();
-        return this.hasRequestBody(parameters) ? (psiParameter -> PsiAnnotationUtils
-                .isNotAnnotatedWith(psiParameter, SpringMVCConstants.RequestBody))
+        return PsiParamUtils.hasRequestBody(parameters) ? (p -> PsiAnnotationUtils
+                .isNotAnnotatedWith(p, SpringMVCConstants.RequestBody) && !TypeUtils
+                .isFile(p.getType().getCanonicalText()) && PsiAnnotationUtils
+                .isNotAnnotatedWith(p, SpringMVCConstants.PathVariable))
+                //有body的方法且参数中没有@RequestBody注解，当做Form而不是Query参数
                 : (p -> false);
     }
 
     @Override
-    public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
-            @NotNull YApiParam target) {
-        Set<YApiQuery> results = new LinkedHashSet<>();
-        String typeClassName = param.getType().getCanonicalText();
-        String typeName = param.getType().getPresentableText();
-        //如果是基本类型
-        if (TypeUtils.isBasicType(typeClassName)) {
-            PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                    .findAnnotation(param, SpringMVCConstants.RequestParam);
-            YApiQuery yapiQuery = new YApiQuery();
-            if (psiAnnotation != null) {
-                ValueWrapper valueWrapper = this.handleParamAnnotation(param, psiAnnotation);
-                yapiQuery.full(valueWrapper);
-            } else {//没有注解
-                yapiQuery.setRequired(ValidUtils.notNullOrBlank(param) ? "1" : "0");
-                yapiQuery.setName(param.getName());
-                yapiQuery.setExample(TypeUtils.getDefaultValue(typeName)
-                        .toString());
-            }
-            yapiQuery.setDesc(DesUtils.getParamDesc(m, param.getName()) + "("
-                    + typeName + ")");
-            results.add(yapiQuery);
-        } else {
-            PsiClass psiClass = PsiUtils.findPsiClass(this.project, typeClassName);
-            for (PsiField field : Objects.requireNonNull(psiClass).getAllFields()) {
-                if (
-                        Objects.requireNonNull(field.getModifierList())
-                                .hasModifierProperty(PsiModifier.STATIC)) {
-                    continue;
-                }
-                YApiQuery query = new YApiQuery();
-                query.setRequired(ValidUtils.notNullOrBlank(field) ? "1" : "0");
-                query.setName(field.getName());
-                query.setDesc(DesUtils.getLinkRemark(field, project));
-                String typePkName = field.getType().getCanonicalText();
-                if (TypeUtils.isBasicType(typePkName)) {
-                    query.setExample(
-                            TypeUtils.getDefaultValueByPackageName(typePkName)
-                                    .toString());
-                }
-                results.add(query);
-            }
-        }
+    protected void doSet(@NotNull YApiParam target, Collection<ValueWrapper> wrappers) {
+        Set<YApiQuery> queries = wrappers.stream().map(wrapper -> {
+            YApiQuery query = new YApiQuery();
+            query.full(wrapper);
+            return query;
+        }).collect(Collectors.toSet());
         Set<YApiQuery> apiQueries = target.getParams();
         if (Objects.isNull(apiQueries)) {
-            apiQueries = new HashSet<>();
+            apiQueries = new LinkedHashSet<>();
             target.setParams(apiQueries);
         }
-        apiQueries.addAll(results);
+        apiQueries.addAll(queries);
     }
 }

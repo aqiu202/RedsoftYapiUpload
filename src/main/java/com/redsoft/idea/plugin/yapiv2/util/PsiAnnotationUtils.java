@@ -96,6 +96,7 @@ public final class PsiAnnotationUtils {
      * @param psiParameter psiParameter
      * @param annotationName annotationName
      */
+    @Nullable
     public static String getPsiParameterAnnotationParam(PsiModifierListOwner psiParameter,
             String annotationName, String paramName) {
         PsiAnnotation annotation = PsiAnnotationUtils
@@ -109,7 +110,7 @@ public final class PsiAnnotationUtils {
     @Nullable
     public static String getPsiAnnotationAttributeValue(PsiAnnotation annotation,
             String attributeName) {
-        PsiAnnotationMemberValue consumes = annotation.findAttributeValue("consumes");
+        PsiAnnotationMemberValue consumes = annotation.findAttributeValue(attributeName);
         return Objects.isNull(consumes) ? null : consumes.getText();
 
     }

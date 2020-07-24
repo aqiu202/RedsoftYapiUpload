@@ -1,14 +1,16 @@
 package com.redsoft.idea.plugin.yapiv2.range;
 
+import org.jetbrains.annotations.NotNull;
+
 public class LongRange implements Range {
 
     public LongRange() {
 
     }
 
-    public LongRange(Long min, Long max) {
-        this.min = min;
-        this.max = max;
+    public LongRange(@NotNull Number min, @NotNull Number max) {
+        this.min = min.longValue();
+        this.max = max.longValue();
     }
 
     public LongRange(Long min, Long max, boolean enableBasicScope) {

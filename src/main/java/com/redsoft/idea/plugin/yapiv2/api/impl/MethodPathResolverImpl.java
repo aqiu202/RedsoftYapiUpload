@@ -20,9 +20,10 @@ public class MethodPathResolverImpl extends AbstractPathResolver {
                         SpringMVCConstants.PostMapping, SpringMVCConstants.PutMapping,
                         SpringMVCConstants.DeleteMapping, SpringMVCConstants.PatchMapping);
         if (psiAnnotation != null) {
-            String consumes = PsiAnnotationUtils
-                    .getPsiAnnotationAttributeValue(psiAnnotation, "consumes");
-            target.setConsumes(consumes);
+            //暂不处理consumes字段
+//            String consumes = PsiAnnotationUtils
+//                    .getPsiAnnotationAttributeValue(psiAnnotation, "consumes");
+//            target.setConsumes(consumes);
             String path = target.getPath();
             if (Strings.isNotBlank(path)) {
                 path = path + PathUtils.pathFormat(this.getPathByAnnotation(psiAnnotation), false);

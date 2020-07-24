@@ -1,116 +1,70 @@
 package com.redsoft.idea.plugin.yapiv2.req.impl;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiType;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
-import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
 import com.redsoft.idea.plugin.yapiv2.model.YApiForm;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.req.PsiParamFilter;
-import com.redsoft.idea.plugin.yapiv2.req.SimpleRequestBodyParamResolver;
-import com.redsoft.idea.plugin.yapiv2.support.YApiSupportHolder;
-import com.redsoft.idea.plugin.yapiv2.util.DesUtils;
+import com.redsoft.idea.plugin.yapiv2.req.abs.AbstractCompoundRequestParamResolver;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
-import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
-import com.redsoft.idea.plugin.yapiv2.util.ValidUtils;
+import com.redsoft.idea.plugin.yapiv2.util.PsiParamUtils;
+import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
-public class RequestFormResolverImpl implements SimpleRequestBodyParamResolver {
+public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolver {
 
-    private final Project project;
 
     public RequestFormResolverImpl(Project project) {
-        this.project = project;
+        super(project);
     }
 
     @NotNull
     @Override
     public PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m,
             @NotNull YApiParam target) {
-        PsiParameter[] parameters = m.getParameterList().getParameters();
-        if (this.noBody(target) || this.hasRequestBody(parameters)) {
+        if(PsiParamUtils.noBody(target.getMethod()) || PsiParamUtils
+                .hasRequestBody(m.getParameterList().getParameters())) {
             return p -> false;
         }
-        return p -> true;
+        //过滤掉@PathVariable注解标注的参数
+        return p -> PsiAnnotationUtils.isNotAnnotatedWith(p, SpringMVCConstants.PathVariable);
     }
 
     @Override
-    public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
-            @NotNull YApiParam target) {
-        Set<YApiForm> requestForm = new LinkedHashSet<>();
-        String paramName = param.getName();
-        PsiType psiType = param.getType();
-        String typeName = psiType.getPresentableText();
-        String required = ValidUtils.notNullOrBlank(param) ? "1" : "0";
-        String typeClassName = psiType.getCanonicalText();
-        if (typeClassName.endsWith("[]")) {
-            typeClassName = typeClassName.replace("[]", "");
-        }
-        //如果是基本类型或者文件
-        String remark =
-                DesUtils.getParamDesc(m, paramName) + "(" + psiType.getPresentableText()
-                        + ")";
-        if (TypeUtils.isBasicType(typeClassName) || SpringMVCConstants.MultipartFile
-                .equals(typeClassName)) {
-            PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                    .findAnnotation(param, SpringMVCConstants.RequestParam);
+    protected void doSet(@NotNull YApiParam target, Collection<ValueWrapper> wrappers) {
+        Set<YApiForm> forms = wrappers.stream().map(wrapper -> {
             YApiForm form = new YApiForm();
-            //如果参数是文件类型
-            if (SpringMVCConstants.MultipartFile.equals(typeClassName)) {
+            form.full(wrapper);
+            String type = wrapper.getOrigin().getType().getCanonicalText();
+            if (this.isFile(type)) {
                 form.setType("file");
             }
-            form.setDesc(remark);
-            if (psiAnnotation == null) {//没有@RequestParam注解
-                form.setName(paramName);
-                form.setRequired(required);
-                form.setExample(
-                        TypeUtils.getDefaultValue(typeName).toString());
-            } else {//处理@RequestParam注解
-                ValueWrapper valueWrapper = handleParamAnnotation(param, psiAnnotation);
-                form.full(valueWrapper);
-            }
-            YApiSupportHolder.supports.handleParam(param, form);
-            requestForm.add(form);
-        } else {//非基本类型
-            PsiClass psiClass = PsiUtils.findPsiClass(this.project, typeClassName);
-            for (PsiField field : Objects.requireNonNull(psiClass).getAllFields()) {
-                if (Objects.requireNonNull(field.getModifierList())
-                                .hasModifierProperty(PsiModifier.STATIC)) {
-                    continue;
-                }
-                PsiType fType = field.getType();
-                String fieldType = fType.getCanonicalText();
-                YApiForm form = new YApiForm();
-                form.setRequired(ValidUtils.notNullOrBlank(field) ? "1" : "0");
-                form.setType(SpringMVCConstants.MultipartFile.equals(fieldType) ? "file" : "text");
-                form.setName(field.getName());
-                form.setDesc(DesUtils.getLinkRemark(field, project));
-                Object obj = TypeUtils.getDefaultValue(fType.getPresentableText());
-                if (Objects.nonNull(obj)) {
-                    form.setExample(
-                            TypeUtils.getDefaultValue(fType.getPresentableText())
-                                    .toString());
-                }
-                YApiSupportHolder.supports.handleField(field, form);
-                requestForm.add(form);
-            }
-        }
+            return form;
+        }).collect(Collectors.toSet());
         Set<YApiForm> apiForms = target.getReq_body_form();
         if (Objects.isNull(apiForms)) {
-            apiForms = new HashSet<>();
+            apiForms = new LinkedHashSet<>();
             target.setReq_body_form(apiForms);
         }
-        apiForms.addAll(requestForm);
+        apiForms.addAll(forms);
     }
+
+    @Override
+    protected boolean isBasicType(String typePkName) {
+        return super.isBasicType(typePkName) || this.isFile(typePkName);
+    }
+
+    private boolean isFile(String typePkName) {
+        return TypeUtils.isFile(typePkName);
+    }
+
 }

@@ -2,7 +2,7 @@ package com.redsoft.idea.plugin.yapiv2.util;
 
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.constant.PropertyNamingStrategy;
-import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public final class PropertyNamingUtils {
 
@@ -68,7 +68,7 @@ public final class PropertyNamingUtils {
         }
     }
 
-    public static String convert(String propName, @NonNls PropertyNamingStrategy strategy) {
+    public static String convert(String propName, @NotNull PropertyNamingStrategy strategy) {
         switch (strategy) {
             case KebabCase:
                 return middleLine(propName);

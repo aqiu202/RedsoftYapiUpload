@@ -17,9 +17,10 @@ public class ClassPathResolverImpl extends AbstractPathResolver {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
                 .findAnnotation(m, SpringMVCConstants.RequestMapping);
         if (psiAnnotation != null) {
-            String consumes = PsiAnnotationUtils
-                    .getPsiAnnotationAttributeValue(psiAnnotation, "consumes");
-            target.setConsumes(consumes);
+            //暂不处理consumes字段
+//            String consumes = PsiAnnotationUtils
+//                    .getPsiAnnotationAttributeValue(psiAnnotation, "consumes");
+//            target.setConsumes(consumes);
             target.setPath(PathUtils.pathFormat(this.getPathByAnnotation(psiAnnotation), false));
         }
     }

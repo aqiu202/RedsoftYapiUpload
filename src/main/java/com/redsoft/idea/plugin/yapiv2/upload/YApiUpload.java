@@ -15,6 +15,7 @@ import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,7 +56,7 @@ public class YApiUpload {
             yapiHeader.setValue(ContentTypeResolver.JSON);
         }
         if (Objects.isNull(yapiSaveParam.getReq_headers())) {
-            Set<YApiHeader> list = new HashSet<>();
+            Set<YApiHeader> list = new LinkedHashSet<>();
             list.add(yapiHeader);
             yapiSaveParam.setReq_headers(list);
         } else {

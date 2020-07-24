@@ -16,13 +16,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * <b>方法过滤请求参数</b>
+ * @author aqiu
+ * @date 2020/7/23 4:25 下午
+**/
 public interface PsiParamListFilter {
 
     default List<PsiParameter> filter(@NotNull PsiMethod m, @NotNull YApiParam target) {
         return Stream.of(m.getParameterList().getParameters())
                 .filter(p ->
                         this.getPsiParamFilter(m, target).test(p) &&
-                                !PsiUtils.isMap(p.getType()) &&
+                                !TypeUtils.isMap(p.getType()) &&
                                 !(ServletConstants.HttpServletRequest
                                         .equals(p.getType().getCanonicalText())
                                         || ServletConstants.HttpServletResponse
@@ -34,9 +39,7 @@ public interface PsiParamListFilter {
     }
 
     @NotNull
-    default PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m, @NotNull YApiParam target) {
-        return p -> false;
-    }
+    PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m, @NotNull YApiParam target);
 
     default ValueWrapper handleParamAnnotation(@NotNull PsiParameter psiParameter,
             @NotNull PsiAnnotation psiAnnotation) {

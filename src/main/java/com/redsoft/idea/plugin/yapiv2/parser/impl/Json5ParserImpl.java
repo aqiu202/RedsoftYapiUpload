@@ -1,24 +1,26 @@
 package com.redsoft.idea.plugin.yapiv2.parser.impl;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiType;
 import com.jgoodies.common.base.Strings;
-import com.redsoft.idea.plugin.yapiv2.parser.Json5JsonParser;
-import com.redsoft.idea.plugin.yapiv2.parser.Jsonable;
-import com.redsoft.idea.plugin.yapiv2.parser.ObjectRawParser;
-import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.json5.Json;
 import com.redsoft.idea.plugin.yapiv2.json5.JsonArray;
 import com.redsoft.idea.plugin.yapiv2.json5.JsonItem;
 import com.redsoft.idea.plugin.yapiv2.json5.JsonObject;
-import com.redsoft.idea.plugin.yapiv2.util.DesUtils;
-import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
+import com.redsoft.idea.plugin.yapiv2.model.FieldValueWrapper;
+import com.redsoft.idea.plugin.yapiv2.parser.Json5JsonParser;
+import com.redsoft.idea.plugin.yapiv2.parser.Jsonable;
+import com.redsoft.idea.plugin.yapiv2.parser.ObjectRawParser;
+import com.redsoft.idea.plugin.yapiv2.parser.abs.AbstractJsonParser;
+import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
-import java.util.Objects;
+import java.util.Collection;
 
+/**
+ * <b>json5解析器默认实现</b>
+ * @author aqiu
+ * @date 2020/7/24 9:56 上午
+**/
 public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonParser,
         ObjectRawParser {
 
@@ -44,7 +46,7 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
 
     @Override
     public Json<?> parseJson5(String typePkName) {
-        return ((Json<?>) super.parse(typePkName));
+        return (Json<?>) super.parse(typePkName);
     }
 
     @Override
@@ -66,54 +68,22 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
     }
 
     @Override
-    public Json<?> parsePojo(String typePkName) {
-        return this.parsePojo(typePkName, null);
-    }
-
-    @Override
-    public Json<?> parsePojo(String typePkName, String subType) {
-        JsonObject jsonObject = new JsonObject();
-        PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
-        boolean hasSubType = Strings.isNotBlank(subType);
-        if (Objects.nonNull(psiClass)) {
-            for (PsiField field : psiClass.getAllFields()) {
-                if (Objects.requireNonNull(field.getModifierList())
-                        .hasModifierProperty(PsiModifier.STATIC)) {
-                    continue;
-                }
-                //防止对象内部嵌套自身导致死循环
-                if (field.getType().getCanonicalText().contains(
-                        Objects.requireNonNull(psiClass.getQualifiedName()))) {
-                    continue;
-                }
-                String fieldName = this.handleFieldName(field.getName());
-                String desc = null;
-                if(this.needDesc) {
-                    desc = DesUtils.getLinkRemark(field, this.project);
-                    desc = this.handleDocTagValue(desc);
-                }
-                String fieldTypeName = field.getType().getCanonicalText();
-                //如果含有泛型，处理泛型
-                if (hasSubType) {
-                    if (TypeUtils.hasGenericType(fieldTypeName)) {
-                        subType = TypeUtils.parseGenericType(fieldTypeName, subType);
-                        jsonObject
-                                .addItem(new JsonItem<>(fieldName, this.parseJson5(subType), desc));
-                    } else {
-                        jsonObject.addItem(
-                                new JsonItem<>(fieldName, this.parseJson5(fieldTypeName), desc));
-                    }
-                } else {
-                    jsonObject.addItem(
-                            new JsonItem<>(fieldName, this.parseJson5(fieldTypeName), desc));
-                }
-            }
-        }
-        return jsonObject;
-    }
-
-    @Override
     public String getRawResponse(PsiType psiType) {
         return this.parse(psiType.getCanonicalText()).toJson();
+    }
+
+    @Override
+    protected boolean needDescription() {
+        return this.needDesc;
+    }
+
+    @Override
+    public Jsonable buildPojo(Collection<FieldValueWrapper> wrappers) {
+        JsonObject jsonObject = new JsonObject();
+        for (FieldValueWrapper wrapper : wrappers) {
+            jsonObject.addItem(new JsonItem<>(wrapper.getFieldName(), (Json<?>) wrapper.getValue(),
+                    wrapper.getDescription()));
+        }
+        return jsonObject;
     }
 }

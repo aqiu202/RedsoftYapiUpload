@@ -46,7 +46,7 @@ public final class HttpClientUtils {
     private static volatile CloseableHttpClient httpclient;
     private static CloseableHttpClient tlsClient;//TLSv1.2协议对应client
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(HttpClientUtils.class);
 
 
     private HttpClientUtils() {
@@ -97,7 +97,7 @@ public final class HttpClientUtils {
             httpclient.close();
             tlsClient.close();
         } catch (Exception e) {
-            logger.error("httpclient pool destroy error :", e);
+            logger.error("http client 池销毁异常:", e);
         }
     }
 
@@ -108,7 +108,7 @@ public final class HttpClientUtils {
                     try {
                         init();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.error("初始化 http client异常", e);
                     }
                 }
             }

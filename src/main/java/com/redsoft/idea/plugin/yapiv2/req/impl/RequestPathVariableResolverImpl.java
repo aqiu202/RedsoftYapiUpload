@@ -7,22 +7,23 @@ import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.model.YApiPathVariable;
 import com.redsoft.idea.plugin.yapiv2.req.PsiParamFilter;
-import com.redsoft.idea.plugin.yapiv2.req.SimpleRequestParamResolver;
+import com.redsoft.idea.plugin.yapiv2.req.abs.AbstractRequestParamResolver;
 import com.redsoft.idea.plugin.yapiv2.util.DesUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
-public class RequestPathVariableResolverImpl implements SimpleRequestParamResolver {
+public class RequestPathVariableResolverImpl extends AbstractRequestParamResolver {
 
     @NotNull
     @Override
     public PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m,
             @NotNull YApiParam target) {
-        return (psiParameter -> PsiAnnotationUtils
-                .isAnnotatedWith(psiParameter, SpringMVCConstants.PathVariable));
+        return p -> PsiAnnotationUtils
+                .isAnnotatedWith(p, SpringMVCConstants.PathVariable);
     }
 
     @Override
@@ -36,7 +37,7 @@ public class RequestPathVariableResolverImpl implements SimpleRequestParamResolv
             pathVariable.setDesc(DesUtils.getParamDesc(m, param.getName()));
             Set<YApiPathVariable> pathVariables = target.getReq_params();
             if (Objects.isNull(pathVariables)) {
-                pathVariables = new HashSet<>();
+                pathVariables = new LinkedHashSet<>();
                 target.setReq_params(pathVariables);
             }
             pathVariables.add(pathVariable);

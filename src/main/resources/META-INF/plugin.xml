@@ -148,6 +148,12 @@
         <li>@status注释无效BUG修复</li>
         <li>添加Spring WebFlux的支持（Mono和Flux）</li>
      </ol>
+     <h4>版本2.0.4，架构优化，泛型解析方式优化，部分bug修改</h4>
+     <ol>
+        <li>架构优化，泛型解析方式优化</li>
+        <li>raw类型的数据解析失败的bug修改</li>
+        <li>@PathVariable注解的参数会在body中重复出现的bug修复</li>
+     </ol>
     ]]>
     </change-notes>
 

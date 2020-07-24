@@ -35,6 +35,11 @@ public final class ValidUtils {
                 notEmpty(psiModifierListOwner);
     }
 
+    public static String getRequired(PsiModifierListOwner psiModifierListOwner) {
+        return (notNull(psiModifierListOwner) || notBlank(psiModifierListOwner) ||
+                notEmpty(psiModifierListOwner)) ? "1" : "0";
+    }
+
     public static boolean notEmpty(PsiModifierListOwner psiModifierListOwner) {
         return hasAnnotation(psiModifierListOwner, ValidConstants.NotEmpty);
     }

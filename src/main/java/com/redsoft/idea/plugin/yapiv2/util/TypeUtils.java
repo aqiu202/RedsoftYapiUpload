@@ -1,5 +1,9 @@
 package com.redsoft.idea.plugin.yapiv2.util;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiType;
+import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringWebFluxConstants;
 import com.redsoft.idea.plugin.yapiv2.model.Mock;
 import com.redsoft.idea.plugin.yapiv2.range.LongRange;
@@ -38,6 +42,7 @@ public class TypeUtils {
     private static final Map<String, Object> normalTypesPackages = new HashMap<>();
 
     private static final Map<String, LongRange> baseRangeMappings = new HashMap<>();
+    private static final Map<String, String> fileTypes = new HashMap<>();
     /**
      * 泛型列表
      */
@@ -70,11 +75,7 @@ public class TypeUtils {
         normalTypes.put("BigDecimal", 0.111111);
         normalTypes.put("Timestamp", new Timestamp(System.currentTimeMillis()));
         normalTypes.put("MultipartFile", "file");
-        normalTypes.put("MultipartFile[]", "file[]");
 
-    }
-
-    static {
         normalTypesPackages.put("int", 1);
         normalTypesPackages.put("boolean", true);
         normalTypesPackages.put("byte", 1);
@@ -83,8 +84,8 @@ public class TypeUtils {
         normalTypesPackages.put("float", 1.0F);
         normalTypesPackages.put("double", 1.0D);
         normalTypesPackages.put("char", 'a');
-        normalTypesPackages.put("MultipartFile", "file");
-        normalTypesPackages.put("MultipartFile[]", "files");
+//        normalTypesPackages.put("MultipartFile", "file");
+//        normalTypesPackages.put("MultipartFile[]", "files");
         normalTypesPackages.put("java.lang.Boolean", false);
         normalTypesPackages.put("java.lang.Byte", 1);
         normalTypesPackages.put("java.lang.Short", (short) 0);
@@ -93,8 +94,7 @@ public class TypeUtils {
         normalTypesPackages.put("java.lang.Float", 1L);
         normalTypesPackages.put("java.lang.Double", 1.0D);
         normalTypesPackages.put("java.sql.Timestamp", new Timestamp(System.currentTimeMillis()));
-        normalTypesPackages.put("org.springframework.web.multipart.MultipartFile", "file");
-        normalTypesPackages.put("org.springframework.web.multipart.MultipartFile[]", "files");
+        normalTypesPackages.put(SpringMVCConstants.MultipartFile, "file");
         normalTypesPackages
                 .put("java.util.Date",
                         LocalDateTime.now().format(dateTimeFormat));
@@ -110,7 +110,7 @@ public class TypeUtils {
         normalTypesPackages
                 .put("java.time.LocalTime", LocalTime.now().format(timeFormat));
         normalTypesPackages.put("java.lang.String", "String");
-        normalTypesPackages.put("java.math.BigDecimal", 1);
+        normalTypesPackages.put("java.math.BigDecimal", 0.111111);
 
         basicTypeMappings.put("int", SchemaType.integer);
         basicTypeMappings.put("boolean", SchemaType.bool);
@@ -125,6 +125,7 @@ public class TypeUtils {
         basicTypeMappings.put("java.lang.Short", SchemaType.integer);
         basicTypeMappings.put("java.lang.Integer", SchemaType.integer);
         basicTypeMappings.put("java.lang.Long", SchemaType.integer);
+        basicTypeMappings.put("java.math.BigInteger", SchemaType.integer);
         basicTypeMappings.put("java.lang.Float", SchemaType.number);
         basicTypeMappings.put("java.lang.Double", SchemaType.number);
         basicTypeMappings.put("java.sql.Timestamp", SchemaType.string);
@@ -152,16 +153,20 @@ public class TypeUtils {
         mapTypeMappings.put("java.util.LinkedHashMap", SchemaType.object);
         mapTypeMappings.put("java.util.TreeMap", SchemaType.object);
 
-        baseRangeMappings.put("byte", new LongRange(-128L, 127L));
-        baseRangeMappings.put("short", new LongRange(-32768L, 32767L));
-        baseRangeMappings
-                .put("int", new LongRange((long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE));
+//        baseRangeMappings.put("boolean", new LongRange(0, 1));
+//        baseRangeMappings.put("java.lang.Boolean", new LongRange(0, 1));
+        baseRangeMappings.put("byte", new LongRange(Byte.MIN_VALUE, Byte.MAX_VALUE));
+        baseRangeMappings.put("short", new LongRange(Short.MIN_VALUE, Short.MAX_VALUE));
+        baseRangeMappings.put("int", new LongRange(Integer.MIN_VALUE, Integer.MAX_VALUE));
         baseRangeMappings.put("long", new LongRange(Long.MIN_VALUE, Long.MAX_VALUE));
-        baseRangeMappings.put("java.lang.Byte", new LongRange(-128L, 127L));
-        baseRangeMappings.put("java.lang.Short", new LongRange(-32768L, 32767L));
+        baseRangeMappings.put("java.lang.Byte", new LongRange(Byte.MIN_VALUE, Byte.MAX_VALUE));
+        baseRangeMappings.put("java.lang.Short", new LongRange(Short.MIN_VALUE, Short.MAX_VALUE));
         baseRangeMappings.put("java.lang.Integer",
                 new LongRange((long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE));
         baseRangeMappings.put("java.lang.Long", new LongRange(Long.MIN_VALUE, Long.MAX_VALUE));
+
+        fileTypes.put(SpringMVCConstants.MultipartFile, "file");
+        fileTypes.put(SpringMVCConstants.MultipartFile + "[]", "file[]");
 
     }
 
@@ -185,12 +190,123 @@ public class TypeUtils {
         return genericList.contains(typePkName);
     }
 
+    public static boolean isFile(String typePkName) {
+        return fileTypes.containsKey(typePkName);
+    }
+
     public static Object getDefaultValue(String typeName) {
-        return normalTypes.get(typeName).toString();
+        return getListableValue(typeName, normalTypes);
     }
 
     public static Object getDefaultValueByPackageName(String typePkName) {
-        return normalTypesPackages.get(typePkName);
+        return getListableValue(typePkName, normalTypesPackages);
+    }
+
+    private static Object getListableValue(String typePkName, Map<String, Object> source) {
+        boolean isArray = typePkName.endsWith("[]");
+        if(isArray) {
+            typePkName = typePkName.substring(0, typePkName.length() - 2);
+        }
+        Object result = source.get(typePkName);
+        return isArray ? result + "[]" : result;
+    }
+
+    /**
+     * @param psiType: 类型
+     * @return {@link boolean}
+     * @author aqiu
+     * @date 2019-07-03 09:43
+     * @description 是否是Map类型或者是Map的封装类型
+     **/
+    public static boolean isMap(PsiType psiType) {
+        String typePkName = psiType.getCanonicalText();
+        if (isMapType(typePkName)) {
+            return true;
+        }
+        PsiType[] parentTypes = psiType.getSuperTypes();
+        if (parentTypes.length > 0) {
+            for (PsiType parentType : parentTypes) {
+                String parentTypeName = parentType.getCanonicalText().split("<")[0];
+                if (isMapType(parentTypeName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param project: 项目
+     * @param typePkName: 类完整包名
+     * @return {@link boolean}
+     * @author aqiu
+     * @date 2019-07-03 09:43
+     * @description 是否是Map类型或者是Map的封装类型
+     **/
+    public static boolean isMap(Project project, String typePkName) {
+        if (isMapType(typePkName)) {
+            return true;
+        }
+        PsiClassType psiType = PsiUtils.findPsiClassType(project, typePkName);
+        PsiType[] parentTypes = psiType.getSuperTypes();
+        if (parentTypes.length > 0) {
+            for (PsiType parentType : parentTypes) {
+                String parentTypeName = parentType.getCanonicalText().split("<")[0];
+                if (isMapType(parentTypeName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param psiType: 类型
+     * @return {@link boolean}
+     * @author aqiu
+     * @date 2019-07-03 09:43
+     * @description 是否是集合类型或者是集合的封装类型
+     **/
+    public static boolean isCollection(PsiType psiType) {
+        String typePkName = psiType.getCanonicalText();
+        if (isCollectionType(typePkName)) {
+            return true;
+        }
+        PsiType[] parentTypes = psiType.getSuperTypes();
+        if (parentTypes.length > 0) {
+            for (PsiType parentType : parentTypes) {
+                String parentTypeName = parentType.getCanonicalText().split("<")[0];
+                if (isCollectionType(parentTypeName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param project: 项目
+     * @param typePkName: 类完整包名
+     * @return {@link boolean}
+     * @author aqiu
+     * @date 2019-07-03 09:43
+     * @description 是否是集合类型或者是集合的封装类型
+     **/
+    public static boolean isCollection(Project project, String typePkName) {
+        if (isCollectionType(typePkName)) {
+            return true;
+        }
+        PsiClassType psiType = PsiUtils.findPsiClassType(project, typePkName);
+        PsiType[] parentTypes = psiType.getSuperTypes();
+        if (parentTypes.length > 0) {
+            for (PsiType parentType : parentTypes) {
+                String parentTypeName = parentType.getCanonicalText().split("<")[0];
+                if (isCollectionType(parentTypeName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 
@@ -204,11 +320,11 @@ public class TypeUtils {
         return false;
     }
 
-    public static String parseGenericType(@NotNull String typePkName, String subType) {
+    public static String parseGenericType(@NotNull String typePkName, String genericType) {
         if(isGenericType(typePkName)) {
-            return subType;
+            return genericType;
         }
-        return typePkName.replaceFirst("<[A-Z]>", "<" + subType + ">");
+        return typePkName.replaceFirst("<[A-Z]>", "<" + genericType + ">");
     }
 
     public static boolean hasBaseRange(String typePkName) {
@@ -239,6 +355,7 @@ public class TypeUtils {
 //            case "java.lang.Short":
             case "Short":
             case "Integer":
+            case "BigInteger":
             case "Long":
             case "short":
             case "long":

@@ -9,12 +9,13 @@ import com.redsoft.idea.plugin.yapiv2.parser.ObjectJsonParser;
 import com.redsoft.idea.plugin.yapiv2.parser.impl.Json5ParserImpl;
 import com.redsoft.idea.plugin.yapiv2.parser.impl.JsonSchemaParserImpl;
 import com.redsoft.idea.plugin.yapiv2.req.PsiParamFilter;
-import com.redsoft.idea.plugin.yapiv2.req.SimpleRequestBodyParamResolver;
+import com.redsoft.idea.plugin.yapiv2.req.abs.AbstractRequestParamResolver;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
+import com.redsoft.idea.plugin.yapiv2.util.PsiParamUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import org.jetbrains.annotations.NotNull;
 
-public class RequestBodyResolverImpl implements SimpleRequestBodyParamResolver {
+public class RequestBodyResolverImpl extends AbstractRequestParamResolver {
 
     private final ObjectJsonParser objectJsonParser;
 
@@ -33,9 +34,7 @@ public class RequestBodyResolverImpl implements SimpleRequestBodyParamResolver {
     @Override
     public PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m,
             @NotNull YApiParam target) {
-        return this.hasRequestBody(m.getParameterList().getParameters()) ? p -> PsiAnnotationUtils
-                .isAnnotatedWith(p, SpringMVCConstants.RequestBody)
-                : p -> false;
+        return p -> PsiAnnotationUtils.isAnnotatedWith(p, SpringMVCConstants.RequestBody);
     }
 
     @Override
