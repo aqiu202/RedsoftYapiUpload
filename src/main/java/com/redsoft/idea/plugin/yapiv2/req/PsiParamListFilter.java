@@ -46,11 +46,11 @@ public interface PsiParamListFilter {
         ValueWrapper valueWrapper = new ValueWrapper();
         PsiAnnotationMemberValue element = psiAnnotation.findAttributeValue("name");
         if (Objects.nonNull(element)) {
-            String name = element.getText();
-            if (Strings.isEmpty(name)) {
-                name = Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText();
+            String name = element.getText().replace("\"", "");
+            if (Strings.isBlank(name)) {
+                name = Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText().replace("\"", "");
             }
-            valueWrapper.setName(name.replace("\"", ""));
+            valueWrapper.setName(name);
         }
         PsiAnnotationMemberValue required = psiAnnotation.findAttributeValue("required");
         if (Objects.nonNull(required)) {
@@ -66,13 +66,13 @@ public interface PsiParamListFilter {
             valueWrapper.setExample(defaultValue.getText().replace("\"", ""));
             valueWrapper.setRequired("0");
         }
-        if (Strings.isEmpty(valueWrapper.getRequired())) {
+        if (Strings.isBlank(valueWrapper.getRequired())) {
             valueWrapper.setRequired("1");
         }
-        if (Strings.isEmpty(valueWrapper.getName())) {
+        if (Strings.isBlank(valueWrapper.getName())) {
             valueWrapper.setName(psiParameter.getName());
         }
-        if (Strings.isEmpty(valueWrapper.getExample())) {
+        if (Strings.isBlank(valueWrapper.getExample())) {
             Object o;
             if (Objects.nonNull(o = TypeUtils
                     .getDefaultValueByPackageName((psiParameter.getType().getCanonicalText())))) {

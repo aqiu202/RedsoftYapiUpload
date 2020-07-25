@@ -1,6 +1,7 @@
 package com.redsoft.idea.plugin.yapiv2.model;
 
 import com.intellij.psi.PsiVariable;
+import com.jgoodies.common.base.Strings;
 import java.util.Objects;
 
 public class ValueWrapper {
@@ -66,16 +67,16 @@ public class ValueWrapper {
     }
 
     public void full(ValueWrapper valueWrapper) {
-        if (Objects.nonNull(valueWrapper.getName())) {
+        if (Strings.isNotBlank(valueWrapper.getName())) {
             this.setName(valueWrapper.getName());
         }
-        if (Objects.nonNull(valueWrapper.getDesc())) {
+        if (Strings.isNotBlank(valueWrapper.getDesc())) {
             this.setDesc(valueWrapper.getDesc());
         }
-        if (Objects.nonNull(valueWrapper.getRequired())) {
+        if (Strings.isNotBlank(valueWrapper.getRequired())) {
             this.setRequired(valueWrapper.getRequired());
         }
-        if (Objects.nonNull(valueWrapper.getExample())) {
+        if (Strings.isNotBlank(valueWrapper.getExample())) {
             this.setExample(valueWrapper.getExample());
         }
     }
