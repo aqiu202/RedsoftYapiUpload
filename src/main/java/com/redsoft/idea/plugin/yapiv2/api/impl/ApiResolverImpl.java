@@ -67,8 +67,6 @@ public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
         pathResolver.resolve(c, m, target);
         baseInfoResolver.resolve(c, m, target);
         httpMethodResolver.resolve(m, target);
-        requestContentTypeResolver.resolve(c, m, target);
-        responseContentTypeResolver.resolve(c, m, target);
         PsiDocComment classDoc = c.getDocComment();
         PsiDocComment methodDoc = m.getDocComment();
         statusResolver.resolve(classDoc, methodDoc, target);
@@ -76,6 +74,8 @@ public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
             menuResolver.set(classDoc, target);
         }
         requestResolver.resolve(m, target);
+        requestContentTypeResolver.resolve(c, m, target);
+        responseContentTypeResolver.resolve(c, m, target);
         docTagValueResolver.accept(target);
         responseResolver.resolve(m.getReturnType(), target);
     }

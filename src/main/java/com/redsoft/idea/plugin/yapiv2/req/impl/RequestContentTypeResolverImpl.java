@@ -5,6 +5,7 @@ import com.intellij.psi.PsiMethod;
 import com.redsoft.idea.plugin.yapiv2.base.ContentTypeResolver;
 import com.redsoft.idea.plugin.yapiv2.constant.HttpMethodConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
+import com.redsoft.idea.plugin.yapiv2.util.CollectionUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiParamUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,8 +18,9 @@ public class RequestContentTypeResolverImpl implements ContentTypeResolver {
         if (PsiParamUtils.noBody(method) || HttpMethodConstants.DELETE.equals(method)) {
             return;
         }
-        //有body但是没有@RequestBody注解，设置为form
-        if (!PsiParamUtils.hasRequestBody(m.getParameterList().getParameters())) {
+        //有body但是没有@RequestBody注解并且form参数为空，设置为form
+        if (!PsiParamUtils.hasRequestBody(m.getParameterList().getParameters()) && CollectionUtils
+                .isNotEmpty(target.getReq_body_form())) {
             target.setReq_body_type(FORM_VALUE);
         }
     }
