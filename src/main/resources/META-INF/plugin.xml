@@ -154,6 +154,7 @@
         <li>raw类型的数据解析失败的bug修改</li>
         <li>@PathVariable注解的参数会在body中重复出现的bug修复</li>
         <li>@RequestParam和@PathVariable注解参数名称解析错误bug修复</li>
+        <li>@PathVariable注解解析bug修改</li>
      </ol>
     ]]>
     </change-notes>

@@ -55,6 +55,7 @@ public class YApiInitComponent implements ProjectComponent {
                     + "        <li>raw类型的数据解析失败的bug修改</li>\n"
                     + "        <li>@PathVariable注解的参数会在body中重复出现的bug修复</li>\n"
                     + "        <li>@RequestParam和@PathVariable注解参数名称解析错误bug修复</li>\n"
+                    + "        <li>@PathVariable注解解析bug修改</li>\n"
                     + "     </ol>";
             NotificationConstants.NOTIFICATION_GROUP.createNotification(YApiConstants.name, "更新内容",
                     changeLogTitle + "\n" + changeLogContent
