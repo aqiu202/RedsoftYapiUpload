@@ -11,7 +11,6 @@ import com.redsoft.idea.plugin.yapiv2.parser.impl.JsonSchemaParserImpl;
 import com.redsoft.idea.plugin.yapiv2.req.PsiParamFilter;
 import com.redsoft.idea.plugin.yapiv2.req.abs.AbstractRequestParamResolver;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
-import com.redsoft.idea.plugin.yapiv2.util.PsiParamUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,9 +23,9 @@ public class RequestBodyResolverImpl extends AbstractRequestParamResolver {
     public RequestBodyResolverImpl(YApiProjectProperty property, Project project) {
         this.dataMode = property.getDataMode();
         if (this.dataMode == 0) {
-            this.objectJsonParser = new JsonSchemaParserImpl(property.isEnableBasicScope(), project);
+            this.objectJsonParser = new JsonSchemaParserImpl(property, project);
         } else {
-            this.objectJsonParser = new Json5ParserImpl(project);
+            this.objectJsonParser = new Json5ParserImpl(property, project);
         }
     }
 

@@ -23,15 +23,6 @@ public class RequestResolverImpl implements RequestResolver {
         paramResolvers = Arrays.asList(pathVariableResolver, formResolver, queryResolver,
                 bodyResolver, headerResolver);
     }
-    public RequestResolverImpl(Project project) {
-        RequestParamResolver queryResolver = new RequestQueryResolverImpl(project);
-        RequestParamResolver bodyResolver = new RequestBodyParamResolverImpl(project);
-        RequestParamResolver headerResolver = new RequestHeaderResolverImpl();
-        RequestParamResolver pathVariableResolver = new RequestPathVariableResolverImpl();
-        RequestParamResolver formResolver = new RequestFormResolverImpl(project);
-        paramResolvers = Arrays.asList(pathVariableResolver, formResolver, queryResolver,
-                bodyResolver, headerResolver);
-    }
 
     @Override
     public void resolve(@NotNull PsiMethod m, @NotNull YApiParam target) {

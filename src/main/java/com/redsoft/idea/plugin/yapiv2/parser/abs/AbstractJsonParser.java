@@ -93,7 +93,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     @Override
     public String handleFieldName(String fieldName) {
-        //配置为空的时候，不处理字段名称，比如（请求的参数字段不能做处理）
+        //配置为空的时候，不处理字段名称（暂时没有用到）
         if (this.property == null) {
             return fieldName;
         }

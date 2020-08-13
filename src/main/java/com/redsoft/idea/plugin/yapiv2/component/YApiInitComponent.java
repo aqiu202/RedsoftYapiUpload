@@ -25,30 +25,6 @@ public class YApiInitComponent implements ProjectComponent {
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
-//            String changeLogTitle = "<h4>版本1.3.7，添加Swagger参数解析支持，内置注释模板等</h4>";
-//            String changeLogContent = "<ol>"
-//                    + "        <li>添加Swagger参数解析支持</li>"
-//                    + "        <li>内置注释模板，无需再单独配置注释模板</li>"
-//                    + "        <li>优化1-兼容之前的配置方式</li>"
-//                    + "        <li>优化2-响应参数自动设置mock</li>"
-//                    + "      </ol>";
-//            String changeLogTitle = "<h4>版本2.0.1，架构重构，支持json5解析，bug修复</h4>";
-//            String changeLogContent = "<ol>"
-//                    + "        <li>返回数据支持json5格式解析</li>"
-//                    + "        <li>javadoc解析方式优化，添加值的HTML格式解析</li>"
-//                    + "        <li>内置注释模板优化，减少侵入</li>"
-//                    + "        <li>摒弃@strategy和@path注释</li>"
-//                    + "      </ol>"
-//                    + "<h4>版本2.0.1，修改bug</h4>"
-//                    + "      <ol>"
-//                    + "        <li>参数含@RequestBody注解（body是json格式）的接口解析异常BUG修复</li>"
-//                    + "        <li>所有的注释支持html标签包裹</li>"
-//                    + "     </ol>";
-//            String changeLogTitle = "<h4>版本2.0.3，修改bug</h4>";
-//            String changeLogContent = "<ol>"
-//                    + "        <li>@status注释无效BUG修复</li>"
-//                    + "        <li>添加Spring WebFlux的支持（Mono和Flux）</li>"
-//                    + "     </ol>";
             String changeLogTitle = "<h4>版本2.0.4（Bug fix版本），架构优化，泛型解析方式优化，部分bug修改</h4>";
             String changeLogContent = "<ol>\n"
                     + "        <li>架构优化，泛型解析方式优化</li>\n"
@@ -56,6 +32,7 @@ public class YApiInitComponent implements ProjectComponent {
                     + "        <li>@PathVariable注解的参数会在body中重复出现的bug修复</li>\n"
                     + "        <li>@RequestParam和@PathVariable注解参数名称解析错误bug修复</li>\n"
                     + "        <li>@PathVariable注解解析bug修改</li>\n"
+                    + "        <li>字段命名策略的设置对@RequestBody的入参无效，BUG修改</li>\n"
                     + "     </ol>";
             NotificationConstants.NOTIFICATION_GROUP.createNotification(YApiConstants.name, "更新内容",
                     changeLogTitle + "\n" + changeLogContent
