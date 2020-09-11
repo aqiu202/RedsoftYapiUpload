@@ -17,7 +17,6 @@ import com.redsoft.idea.plugin.yapiv2.parser.PsiMethodParser;
 import com.redsoft.idea.plugin.yapiv2.parser.YApiParser;
 import com.redsoft.idea.plugin.yapiv2.parser.impl.PsiMethodParserImpl;
 import com.redsoft.idea.plugin.yapiv2.upload.YApiUpload;
-import com.redsoft.idea.plugin.yapiv2.util.Builders;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * <b>事件类，所有的解析动作的起点 {@link #actionPerformed}</b>
  * @author aqiu
  * @date 2020/7/24 9:24 上午
-**/
+ **/
 public class YApiUploadAction extends AnAction {
 
     @Override
@@ -52,38 +51,40 @@ public class YApiUploadAction extends AnAction {
         Set<YApiParam> yApiParams = new YApiParser(project, methodParser).parse(e);
         if (yApiParams != null) {
             for (YApiParam yApiParam : yApiParams) {
-                YApiSaveParam yapiSaveParam = Builders.of(yApiParam::convert)
-                        .with(YApiSaveParam::setToken, token)
-                        .build();
-                if (Strings.isEmpty(yApiParam.getMenu())) {
-                    yapiSaveParam.setMenu(YApiConstants.menu);
-                }
-                try {
-                    // 上传
-                    YApiResponse yapiResponse = new YApiUpload()
-                            .uploadSave(property, yapiSaveParam, project.getBasePath());
-                    if (yapiResponse.getErrcode() != 0) {
+                Set<YApiSaveParam> saveParams = yApiParam.convert();
+                for (YApiSaveParam yapiSaveParam : saveParams) {
+                    yapiSaveParam.setToken(token);
+                    if (Strings.isEmpty(yApiParam.getMenu())) {
+                        yapiSaveParam.setMenu(YApiConstants.menu);
+                    }
+                    try {
+                        // 上传
+                        YApiResponse yapiResponse = new YApiUpload()
+                                .uploadSave(property, yapiSaveParam, project.getBasePath());
+                        if (yapiResponse.getErrcode() != 0) {
+                            NotificationConstants.NOTIFICATION_GROUP
+                                    .createNotification(YApiConstants.name, "上传失败",
+                                            "api上传失败原因:" + yapiResponse.getErrmsg(),
+                                            NotificationType.ERROR).notify(project);
+                        } else {
+                            String url = yapiUrl + "/project/" + projectId + "/interface/api/cat_"
+                                    + YApiUpload.catMap
+                                    .get(Integer.toString(projectId))
+                                    .get(yapiSaveParam.getMenu());
+                            NotificationConstants.NOTIFICATION_GROUP
+                                    .createNotification(YApiConstants.name, "上传成功",
+                                            "<p>接口文档地址:  <a href=\"" + url + "\">" + url
+                                                    + "</a></p>",
+                                            NotificationType.INFORMATION,
+                                            new UrlOpeningListener(false))
+                                    .notify(project);
+                        }
+                    } catch (Exception e1) {
                         NotificationConstants.NOTIFICATION_GROUP
-                                .createNotification(YApiConstants.name, "上传失败",
-                                        "api上传失败原因:" + yapiResponse.getErrmsg(),
-                                        NotificationType.ERROR).notify(project);
-                    } else {
-                        String url = yapiUrl + "/project/" + projectId + "/interface/api/cat_"
-                                + YApiUpload.catMap
-                                .get(Integer.toString(projectId))
-                                .get(yapiSaveParam.getMenu());
-                        NotificationConstants.NOTIFICATION_GROUP
-                                .createNotification(YApiConstants.name, "上传成功",
-                                        "<p>接口文档地址:  <a href=\"" + url + "\">" + url + "</a></p>",
-                                        NotificationType.INFORMATION,
-                                        new UrlOpeningListener(false))
+                                .createNotification(YApiConstants.name, "上传失败", "api上传失败原因:" + e1,
+                                        NotificationType.ERROR)
                                 .notify(project);
                     }
-                } catch (Exception e1) {
-                    NotificationConstants.NOTIFICATION_GROUP
-                            .createNotification(YApiConstants.name, "上传失败", "api上传失败原因:" + e1,
-                                    NotificationType.ERROR)
-                            .notify(project);
                 }
             }
             YApiUpload.catMap.clear();

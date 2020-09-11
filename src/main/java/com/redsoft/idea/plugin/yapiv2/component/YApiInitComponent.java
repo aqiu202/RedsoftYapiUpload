@@ -25,14 +25,10 @@ public class YApiInitComponent implements ProjectComponent {
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
-            String changeLogTitle = "<h4>版本2.0.4（Bug fix版本），架构优化，泛型解析方式优化，部分bug修改</h4>";
+            String changeLogTitle = "<h4>2.0.5版本，@RequestMapping的路由和方法支持设置多个</h4>";
             String changeLogContent = "<ol>\n"
-                    + "        <li>架构优化，泛型解析方式优化</li>\n"
-                    + "        <li>raw类型的数据解析失败的bug修改</li>\n"
-                    + "        <li>@PathVariable注解的参数会在body中重复出现的bug修复</li>\n"
-                    + "        <li>@RequestParam和@PathVariable注解参数名称解析错误bug修复</li>\n"
-                    + "        <li>@PathVariable注解解析bug修改</li>\n"
-                    + "        <li>字段命名策略的设置对@RequestBody的入参无效，BUG修改</li>\n"
+                    + "        <li>@RequestMapping注解的路由（path/value）和方法（method）支持设置多个\n</li>"
+                    + "        <li>修复已知bug#7</li>\n"
                     + "     </ol>";
             NotificationConstants.NOTIFICATION_GROUP.createNotification(YApiConstants.name, "更新内容",
                     changeLogTitle + "\n" + changeLogContent

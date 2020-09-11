@@ -3,6 +3,8 @@ package com.redsoft.idea.plugin.yapiv2.model;
 import com.redsoft.idea.plugin.yapiv2.base.ResultConvert;
 import com.redsoft.idea.plugin.yapiv2.util.Builders;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -10,13 +12,12 @@ import java.util.Set;
  *
  * @date 2019/2/11 3:16 PM
  */
-@SuppressWarnings("unused")
-public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
+public class YApiParam implements Serializable, ResultConvert<Collection<YApiSaveParam>> {
 
     /**
      * 路径
      */
-    private String path = "";
+    private Set<String> paths;
     /**
      * 头信息
      */
@@ -45,7 +46,7 @@ public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
     /**
      * 请求方法
      */
-    private String method = "POST";
+    private Set<String> methods;
 
     /**
      * 原始类型 raw,form,json
@@ -92,14 +93,6 @@ public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
 
     private String consumes;
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
     public Set<YApiQuery> getParams() {
         return params;
     }
@@ -130,14 +123,6 @@ public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
 
     public void setRequestBody(String requestBody) {
         this.requestBody = requestBody;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
     }
 
     public String getRes_body_type() {
@@ -245,27 +230,51 @@ public class YApiParam implements Serializable, ResultConvert<YApiSaveParam> {
         this.consumes = consumes;
     }
 
+    public Set<String> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(Set<String> paths) {
+        this.paths = paths;
+    }
+
+    public Set<String> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(Set<String> methods) {
+        this.methods = methods;
+    }
+
     @Override
-    public YApiSaveParam convert() {
-        return Builders.of(YApiSaveParam::new)
-                .with(YApiSaveParam::setMenu, this.menu)
-                .with(YApiSaveParam::setMenuDesc, this.menuDesc)
-                .with(YApiSaveParam::setPath, this.path)
-                .with(YApiSaveParam::setTitle, this.title)
-                .with(YApiSaveParam::setDesc, this.desc)
-                .with(YApiSaveParam::setMethod, this.method)
-                .with(YApiSaveParam::setStatus, this.status)
-                .with(YApiSaveParam::setReq_query, this.params)
-                .with(YApiSaveParam::setReq_params, this.req_params)
-                .with(YApiSaveParam::setRes_body, this.response)
-                .with(YApiSaveParam::setReq_headers, this.headers)
-                .with(YApiSaveParam::setRes_body_type, this.res_body_type)
-                .with(YApiSaveParam::setReq_body_type, this.req_body_type)
-                .with(YApiSaveParam::setReq_body_form, this.req_body_form)
-                .with(YApiSaveParam::setReq_body_other, this.requestBody)
-                .with(YApiSaveParam::setReq_body_is_json_schema, this.req_body_is_json_schema)
-                .with(YApiSaveParam::setRes_body_is_json_schema, this.res_body_is_json_schema)
-                .with(YApiSaveParam::setReq_headers, this.headers)
-                .build();
+    public Set<YApiSaveParam> convert() {
+        Set<YApiSaveParam> result = new LinkedHashSet<>();
+        for (String method : this.methods) {
+            for (String path : this.paths) {
+                result.add(Builders.of(YApiSaveParam::new)
+                        .with(YApiSaveParam::setPath, path)
+                        .with(YApiSaveParam::setMethod, method)
+                        .with(YApiSaveParam::setMenu, this.menu)
+                        .with(YApiSaveParam::setMenuDesc, this.menuDesc)
+                        .with(YApiSaveParam::setTitle, this.title)
+                        .with(YApiSaveParam::setDesc, this.desc)
+                        .with(YApiSaveParam::setStatus, this.status)
+                        .with(YApiSaveParam::setReq_query, this.params)
+                        .with(YApiSaveParam::setReq_params, this.req_params)
+                        .with(YApiSaveParam::setRes_body, this.response)
+                        .with(YApiSaveParam::setReq_headers, this.headers)
+                        .with(YApiSaveParam::setRes_body_type, this.res_body_type)
+                        .with(YApiSaveParam::setReq_body_type, this.req_body_type)
+                        .with(YApiSaveParam::setReq_body_form, this.req_body_form)
+                        .with(YApiSaveParam::setReq_body_other, this.requestBody)
+                        .with(YApiSaveParam::setReq_body_is_json_schema,
+                                this.req_body_is_json_schema)
+                        .with(YApiSaveParam::setRes_body_is_json_schema,
+                                this.res_body_is_json_schema)
+                        .with(YApiSaveParam::setReq_headers, this.headers)
+                        .build());
+            }
+        }
+        return result;
     }
 }

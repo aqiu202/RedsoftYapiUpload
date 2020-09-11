@@ -8,6 +8,8 @@ import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.util.PathUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 public class MethodPathResolverImpl extends AbstractPathResolver {
@@ -24,13 +26,17 @@ public class MethodPathResolverImpl extends AbstractPathResolver {
 //            String consumes = PsiAnnotationUtils
 //                    .getPsiAnnotationAttributeValue(psiAnnotation, "consumes");
 //            target.setConsumes(consumes);
-            String path = target.getPath();
-            if (Strings.isNotBlank(path)) {
-                path = path + PathUtils.pathFormat(this.getPathByAnnotation(psiAnnotation), false);
-            } else {
-                path = PathUtils.pathFormat(this.getPathByAnnotation(psiAnnotation));
+            //获取到类上解析到的path集合
+            Set<String> classPaths = target.getPaths();
+            Set<String> paths = this.getPathByAnnotation(psiAnnotation);
+            Set<String> pathSet = new LinkedHashSet<>();
+            for (String classPath : classPaths) {
+                for (String path : paths) {
+                    String p = classPath + PathUtils.pathFormat(path, Strings.isBlank(classPath));
+                    pathSet.add(p);
+                }
             }
-            target.setPath(path);
+            target.setPaths(pathSet);
         }
     }
 

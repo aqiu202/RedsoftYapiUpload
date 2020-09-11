@@ -14,7 +14,6 @@ import com.redsoft.idea.plugin.yapiv2.util.HttpClientUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;

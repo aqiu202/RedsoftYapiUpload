@@ -3,6 +3,7 @@ package com.redsoft.idea.plugin.yapiv2.util;
 import com.intellij.psi.PsiParameter;
 import com.redsoft.idea.plugin.yapiv2.constant.HttpMethodConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
+import java.util.Collection;
 
 public final class PsiParamUtils {
 
@@ -29,4 +30,12 @@ public final class PsiParamUtils {
 //                || HttpMethodConstants.DELETE.equals(method) //YApi默认Delete方法有body
                 ;
     }
+
+    public static boolean noBody(Collection<String> methods) {
+        return methods.stream().anyMatch(PsiParamUtils::noBody)
+//        return HttpMethodConstants.GET.equals(method)
+//                || HttpMethodConstants.DELETE.equals(method) //YApi默认Delete方法有body
+                ;
+    }
+
 }

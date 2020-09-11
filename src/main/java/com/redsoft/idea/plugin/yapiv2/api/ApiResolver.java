@@ -8,5 +8,5 @@ import com.redsoft.idea.plugin.yapiv2.base.BaseResolver;
  * @date 2020/5/12 11:02 上午
  **/
 public interface ApiResolver extends BaseResolver {
-    
+
 }

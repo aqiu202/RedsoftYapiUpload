@@ -204,7 +204,7 @@ public class TypeUtils {
 
     private static Object getListableValue(String typePkName, Map<String, Object> source) {
         boolean isArray = typePkName.endsWith("[]");
-        if(isArray) {
+        if (isArray) {
             typePkName = typePkName.substring(0, typePkName.length() - 2);
         }
         Object result = source.get(typePkName);
@@ -313,7 +313,7 @@ public class TypeUtils {
     public static boolean hasGenericType(String typePkName) {
         String[] split = typePkName.replace(">", "").split("<");
         for (String s : split) {
-            if(isGenericType(s)) {
+            if (isGenericType(s)) {
                 return true;
             }
         }
@@ -321,7 +321,7 @@ public class TypeUtils {
     }
 
     public static String parseGenericType(@NotNull String typePkName, String genericType) {
-        if(isGenericType(typePkName)) {
+        if (isGenericType(typePkName)) {
             return genericType;
         }
         return typePkName.replaceFirst("<[A-Z]>", "<" + genericType + ">");

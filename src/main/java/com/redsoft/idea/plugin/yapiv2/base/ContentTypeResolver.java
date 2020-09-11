@@ -6,7 +6,7 @@ package com.redsoft.idea.plugin.yapiv2.base;
  * response实现{@link com.redsoft.idea.plugin.yapiv2.res.impl.ResponseContentTypeResolverImpl}</p>
  * @author aqiu
  * @date 2020/7/23 3:53 下午
-**/
+ **/
 public interface ContentTypeResolver extends BaseResolver {
 
     String JSON = "application/json";

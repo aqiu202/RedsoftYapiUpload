@@ -157,6 +157,11 @@
         <li>@PathVariable注解解析bug修改</li>
         <li>字段命名策略的设置对@RequestBody的入参无效，BUG修改</li>
      </ol>
+     <h4>2.0.5版本，@RequestMapping的路由和方法支持设置多个</h4>
+     <ol>
+        <li>@RequestMapping注解的路由（path/value）和方法（method）支持设置多个</li>
+        <li>修复已知bug#7</li>
+     </ol>
     ]]>
     </change-notes>
 

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * <b>参数逐个解析</b>
  * @author aqiu
  * @date 2020/7/23 4:14 下午
-**/
+ **/
 public interface EachRequestParamResolver extends RequestParamResolver {
 
     default void doResolve(@NotNull PsiMethod m,

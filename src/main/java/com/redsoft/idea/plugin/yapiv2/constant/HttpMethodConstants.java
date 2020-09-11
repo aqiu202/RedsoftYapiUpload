@@ -1,5 +1,9 @@
 package com.redsoft.idea.plugin.yapiv2.constant;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * http 请求方式参量
  *
@@ -17,4 +21,6 @@ public interface HttpMethodConstants {
     String DELETE = "DELETE";
 
     String PATCH = "PATCH";
+
+    Set<String> ALL = new LinkedHashSet<>(Arrays.asList(GET, POST, PUT, DELETE, PATCH));
 }

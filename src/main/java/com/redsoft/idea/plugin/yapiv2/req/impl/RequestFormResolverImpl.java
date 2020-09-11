@@ -12,9 +12,7 @@ import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiParamUtils;
 import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,7 +29,7 @@ public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolve
     @Override
     public PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m,
             @NotNull YApiParam target) {
-        if(PsiParamUtils.noBody(target.getMethod()) || PsiParamUtils
+        if (PsiParamUtils.noBody(target.getMethods()) || PsiParamUtils
                 .hasRequestBody(m.getParameterList().getParameters())) {
             return p -> false;
         }

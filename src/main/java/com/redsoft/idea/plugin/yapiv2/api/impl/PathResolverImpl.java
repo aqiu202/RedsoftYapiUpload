@@ -3,12 +3,14 @@ package com.redsoft.idea.plugin.yapiv2.api.impl;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.javadoc.PsiDocComment;
-import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.api.BasePathResolver;
 import com.redsoft.idea.plugin.yapiv2.api.PathPrefixResolver;
 import com.redsoft.idea.plugin.yapiv2.api.PathResolver;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 public class PathResolverImpl implements PathResolver {
@@ -25,13 +27,10 @@ public class PathResolverImpl implements PathResolver {
         methodPathResolver.resolve(m, target);
         String prefix = pathPrefixResolver.resolve(classDoc, methodDoc);
         if (Objects.nonNull(prefix)) {
-            String path = target.getPath();
-            if (Strings.isNotBlank(path)) {
-                path = prefix + path;
-            } else {
-                path = prefix;
-            }
-            target.setPath(path);
+            Set<String> paths = target.getPaths();
+            LinkedHashSet<String> pathSet = paths.stream()
+                    .map(p -> prefix + p).collect(Collectors.toCollection(LinkedHashSet::new));
+            target.setPaths(pathSet);
         }
     }
 

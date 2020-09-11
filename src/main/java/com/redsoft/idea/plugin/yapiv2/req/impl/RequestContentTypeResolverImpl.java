@@ -7,15 +7,16 @@ import com.redsoft.idea.plugin.yapiv2.constant.HttpMethodConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.util.CollectionUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiParamUtils;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 public class RequestContentTypeResolverImpl implements ContentTypeResolver {
 
     @Override
     public void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
-        String method = target.getMethod();
+        Set<String> methods = target.getMethods();
         //YApi默认Delete方法有body，但是设置contentType为form会报错，这里为Delete方法保持默认的json的contentType
-        if (PsiParamUtils.noBody(method) || HttpMethodConstants.DELETE.equals(method)) {
+        if (PsiParamUtils.noBody(methods) || methods.contains(HttpMethodConstants.DELETE)) {
             return;
         }
         //有body但是没有@RequestBody注解并且form参数为空，设置为form

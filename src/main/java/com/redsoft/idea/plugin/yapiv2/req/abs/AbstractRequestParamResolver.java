@@ -1,7 +1,6 @@
 package com.redsoft.idea.plugin.yapiv2.req.abs;
 
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.req.EachRequestParamResolver;
 import com.redsoft.idea.plugin.yapiv2.req.PsiParamListFilter;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * 和{@link #doResolverItem}方法依次处理各个参数即可</p>
  * @author aqiu
  * @date 2020/7/23 4:38 下午
-**/
+ **/
 public abstract class AbstractRequestParamResolver implements PsiParamListFilter,
         RequestParamResolver,
         EachRequestParamResolver {

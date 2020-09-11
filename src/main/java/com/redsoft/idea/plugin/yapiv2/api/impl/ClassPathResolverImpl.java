@@ -7,6 +7,9 @@ import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.util.PathUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 public class ClassPathResolverImpl extends AbstractPathResolver {
@@ -21,7 +24,13 @@ public class ClassPathResolverImpl extends AbstractPathResolver {
 //            String consumes = PsiAnnotationUtils
 //                    .getPsiAnnotationAttributeValue(psiAnnotation, "consumes");
 //            target.setConsumes(consumes);
-            target.setPath(PathUtils.pathFormat(this.getPathByAnnotation(psiAnnotation), false));
+            //解析原始的path数据
+            Set<String> paths = this.getPathByAnnotation(psiAnnotation);
+            //处理原始数据
+            Set<String> pathSet = paths.stream().filter(Objects::nonNull)
+                    .map(path -> PathUtils.pathFormat(path, false))
+                    .collect(Collectors.toSet());
+            target.setPaths(pathSet);
         }
     }
 

@@ -30,7 +30,7 @@ import java.util.Objects;
  * <b>json-schema解析器默认实现</b>
  * @author aqiu
  * @date 2020/7/24 9:56 上午
-**/
+ **/
 public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSchemaJsonParser {
 
     public JsonSchemaParserImpl(YApiProjectProperty property, Project project) {

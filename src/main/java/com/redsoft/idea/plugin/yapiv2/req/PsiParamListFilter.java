@@ -6,10 +6,9 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.constant.ServletConstants;
-import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
-import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
+import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -20,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  * <b>方法过滤请求参数</b>
  * @author aqiu
  * @date 2020/7/23 4:25 下午
-**/
+ **/
 public interface PsiParamListFilter {
 
     default List<PsiParameter> filter(@NotNull PsiMethod m, @NotNull YApiParam target) {
@@ -48,7 +47,8 @@ public interface PsiParamListFilter {
         if (Objects.nonNull(element)) {
             String name = element.getText().replace("\"", "");
             if (Strings.isBlank(name)) {
-                name = Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText().replace("\"", "");
+                name = Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText()
+                        .replace("\"", "");
             }
             valueWrapper.setName(name);
         }
