@@ -23,7 +23,8 @@ dependencies {
 intellij {
     plugins = ["java"]
     type = 'IU'
-    version '2019.3'
+//    version '2020.1'
+    version '2019.2'
     updateSinceUntilBuild = false
 }
 patchPluginXml {
