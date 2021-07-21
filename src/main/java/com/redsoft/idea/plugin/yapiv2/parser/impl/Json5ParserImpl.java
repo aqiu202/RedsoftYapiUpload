@@ -18,6 +18,7 @@ import java.util.Collection;
 
 /**
  * <b>json5解析器默认实现</b>
+ *
  * @author aqiu
  * @date 2020/7/24 9:56 上午
  **/

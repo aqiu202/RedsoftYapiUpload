@@ -30,3 +30,9 @@ intellij {
 patchPluginXml {
 
 }
+
+tasks.withType(JavaCompile) {
+
+    options.encoding = "UTF-8"
+
+}

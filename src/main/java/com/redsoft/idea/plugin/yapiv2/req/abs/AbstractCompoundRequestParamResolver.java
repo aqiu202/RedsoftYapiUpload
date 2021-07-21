@@ -90,8 +90,8 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
                 String desc = DesUtils.getParamDesc(m, param.getName()) + "(" + typeName + ")";
                 valueWrapper.setDesc(desc);
             }
-            valueWrapper.setOrigin(param);
-            YApiSupportHolder.supports.handleParam(param, valueWrapper);
+            valueWrapper.setSource(param);
+            YApiSupportHolder.supports.handleParam(valueWrapper);
             valueWrappers.add(valueWrapper);
         } else {
             PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
@@ -101,8 +101,8 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
                     continue;
                 }
                 ValueWrapper valueWrapper = this.resolveField(field);
-                valueWrapper.setOrigin(field);
-                YApiSupportHolder.supports.handleField(field, valueWrapper);
+                valueWrapper.setSource(field);
+                YApiSupportHolder.supports.handleField(valueWrapper);
                 valueWrappers.add(valueWrapper);
             }
         }

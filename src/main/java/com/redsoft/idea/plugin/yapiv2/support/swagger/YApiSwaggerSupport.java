@@ -1,8 +1,6 @@
 package com.redsoft.idea.plugin.yapiv2.support.swagger;
 
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.constant.SwaggerConstants;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
@@ -35,18 +33,19 @@ public class YApiSwaggerSupport implements YApiSupport {
     }
 
     @Override
-    public void handleParam(PsiParameter psiParameter, @NonNls ValueWrapper wrapper) {
+    public void handleParam(@NonNls ValueWrapper wrapper) {
         String desc = PsiAnnotationUtils
-                .getPsiParameterAnnotationValue(psiParameter, SwaggerConstants.API_PARAM);
+                .getPsiParameterAnnotationValue(wrapper.getSource(), SwaggerConstants.API_PARAM);
         if (Strings.isNotBlank(desc)) {
             wrapper.setDesc(desc);
         }
     }
 
     @Override
-    public void handleField(PsiField psiField, @NonNls ValueWrapper wrapper) {
+    public void handleField(@NonNls ValueWrapper wrapper) {
         String desc = PsiAnnotationUtils
-                .getPsiParameterAnnotationValue(psiField, SwaggerConstants.API_MODEL_PROPERTY);
+                .getPsiParameterAnnotationValue(wrapper.getSource(),
+                        SwaggerConstants.API_MODEL_PROPERTY);
         if (Strings.isNotBlank(desc)) {
             wrapper.setDesc(desc);
         }

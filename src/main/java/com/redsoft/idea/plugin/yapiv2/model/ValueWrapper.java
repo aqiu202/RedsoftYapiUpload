@@ -24,14 +24,14 @@ public class ValueWrapper {
      */
     protected String name;
 
-    private PsiVariable origin;
+    private PsiVariable source;
 
-    public PsiVariable getOrigin() {
-        return origin;
+    public PsiVariable getSource() {
+        return source;
     }
 
-    public void setOrigin(PsiVariable origin) {
-        this.origin = origin;
+    public void setSource(PsiVariable source) {
+        this.source = source;
     }
 
     public String getName() {

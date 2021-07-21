@@ -18,7 +18,7 @@ public interface YApiSupport {
 
     void handleMethod(PsiMethod psiMethod, YApiParam apiDTO);
 
-    void handleParam(PsiParameter psiParameter, ValueWrapper wrapper);
+    void handleParam(ValueWrapper wrapper);
 
-    void handleField(PsiField psiField, ValueWrapper wrapper);
+    void handleField(ValueWrapper wrapper);
 }

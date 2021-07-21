@@ -42,7 +42,7 @@ public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolve
         Set<YApiForm> forms = wrappers.stream().map(wrapper -> {
             YApiForm form = new YApiForm();
             form.full(wrapper);
-            String type = wrapper.getOrigin().getType().getCanonicalText();
+            String type = wrapper.getSource().getType().getCanonicalText();
             if (this.isFile(type)) {
                 form.setType("file");
             }

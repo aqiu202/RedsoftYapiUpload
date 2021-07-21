@@ -7,23 +7,29 @@ import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
 public class YApiSupports implements YApiSupport {
 
-    private final List<YApiSupport> supportList;
+    private final List<YApiSupport> supportList = new ArrayList<>();
 
-    public YApiSupports(List<YApiSupport> supports) {
-        this.supportList = supports;
+    public YApiSupports(Collection<YApiSupport> supports) {
+        this.supportList.addAll(supports);
+        this.sort();
     }
 
     public YApiSupports(YApiSupport... supports) {
-        this.supportList = new ArrayList<>(Arrays.asList(supports));
+        this(Arrays.asList(supports));
     }
 
     public void addSupport(YApiSupport support) {
         this.supportList.add(support);
+        this.sort();
+    }
+
+    private void sort() {
         this.supportList.sort(Comparator.comparingInt(YApiSupport::getOrder));
     }
 
@@ -33,13 +39,13 @@ public class YApiSupports implements YApiSupport {
     }
 
     @Override
-    public void handleParam(PsiParameter psiParameter, ValueWrapper wrapper) {
-        this.supportList.forEach((i) -> i.handleParam(psiParameter, wrapper));
+    public void handleParam(ValueWrapper wrapper) {
+        this.supportList.forEach((i) -> i.handleParam(wrapper));
     }
 
     @Override
-    public void handleField(PsiField psiField, ValueWrapper wrapper) {
-        this.supportList.forEach((i) -> i.handleField(psiField, wrapper));
+    public void handleField(ValueWrapper wrapper) {
+        this.supportList.forEach((i) -> i.handleField(wrapper));
     }
 
 }

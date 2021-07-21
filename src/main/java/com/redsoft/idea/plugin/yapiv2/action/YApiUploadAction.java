@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * <b>事件类，所有的解析动作的起点 {@link #actionPerformed}</b>
+ *
  * @author aqiu
  * @date 2020/7/24 9:24 上午
  **/
