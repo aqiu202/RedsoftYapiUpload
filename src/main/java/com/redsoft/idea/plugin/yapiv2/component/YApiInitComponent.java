@@ -25,10 +25,10 @@ public class YApiInitComponent implements ProjectComponent {
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
-            String changeLogTitle = "<h4>2.0.5版本，@RequestMapping的路由和方法支持设置多个</h4>";
+            String changeLogTitle = "<h4>2.0.6版本，兼容IDEA 2021.2版本</h4>";
             String changeLogContent = "<ol>\n"
-                    + "        <li>@RequestMapping注解的路由（path/value）和方法（method）支持设置多个\n</li>"
-                    + "        <li>修复已知bug#7</li>\n"
+                    + "        <li>兼容IDEA 2021.2版本</li>\n"
+                    + "        <li>代码和注释模板优化</li>\n"
                     + "     </ol>";
             NotificationConstants.NOTIFICATION_GROUP.createNotification(YApiConstants.name, "更新内容",
                     changeLogTitle + "\n" + changeLogContent
