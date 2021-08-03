@@ -5,6 +5,7 @@ import com.redsoft.idea.plugin.yapiv2.util.Builders;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -276,5 +277,38 @@ public class YApiParam implements Serializable, ResultConvert<Collection<YApiSav
             }
         }
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        YApiParam yApiParam = (YApiParam) o;
+        return req_body_is_json_schema == yApiParam.req_body_is_json_schema
+                && res_body_is_json_schema == yApiParam.res_body_is_json_schema
+                && hasFile == yApiParam.hasFile && Objects.equals(paths, yApiParam.paths)
+                && Objects.equals(headers, yApiParam.headers) && Objects.equals(
+                params, yApiParam.params) && Objects.equals(req_body_form,
+                yApiParam.req_body_form) && Objects.equals(title, yApiParam.title)
+                && Objects.equals(response, yApiParam.response) && Objects.equals(
+                requestBody, yApiParam.requestBody) && Objects.equals(methods,
+                yApiParam.methods) && Objects.equals(req_body_type, yApiParam.req_body_type)
+                && Objects.equals(res_body_type, yApiParam.res_body_type)
+                && Objects.equals(desc, yApiParam.desc) && Objects.equals(menu,
+                yApiParam.menu) && Objects.equals(menuDesc, yApiParam.menuDesc)
+                && Objects.equals(req_params, yApiParam.req_params)
+                && Objects.equals(status, yApiParam.status) && Objects.equals(
+                consumes, yApiParam.consumes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(paths, headers, params, req_body_form, title, response, requestBody,
+                methods, req_body_type, res_body_type, desc, menu, menuDesc, req_params, status,
+                req_body_is_json_schema, res_body_is_json_schema, hasFile, consumes);
     }
 }

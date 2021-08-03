@@ -109,5 +109,10 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         return valueWrappers;
     }
 
+    /**
+     *
+     * @param target 参数
+     * @param wrappers 参数值
+     */
     protected abstract void doSet(@NotNull YApiParam target, Collection<ValueWrapper> wrappers);
 }

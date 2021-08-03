@@ -1,12 +1,13 @@
 package com.redsoft.idea.plugin.yapiv2.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * yapi 保存请求参数
  *
- * @date 2019/1/31 11:43 AM
+ * @author aqiu 2019/1/31 11:43 AM
  */
 @SuppressWarnings("unused")
 public class YApiSaveParam implements Serializable {
@@ -308,4 +309,40 @@ public class YApiSaveParam implements Serializable {
     public YApiSaveParam() {
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        YApiSaveParam that = (YApiSaveParam) o;
+        return req_body_is_json_schema == that.req_body_is_json_schema
+                && res_body_is_json_schema == that.res_body_is_json_schema
+                && switch_notice == that.switch_notice && Objects.equals(token, that.token)
+                && Objects.equals(req_query, that.req_query) && Objects.equals(
+                req_headers, that.req_headers) && Objects.equals(req_body_form,
+                that.req_body_form) && Objects.equals(title, that.title)
+                && Objects.equals(catid, that.catid) && Objects.equals(
+                req_body_type, that.req_body_type) && Objects.equals(req_body_other,
+                that.req_body_other) && Objects.equals(path, that.path)
+                && Objects.equals(status, that.status) && Objects.equals(
+                res_body_type, that.res_body_type) && Objects.equals(res_body, that.res_body)
+                && Objects.equals(edit_uid, that.edit_uid) && Objects.equals(
+                username, that.username) && Objects.equals(message, that.message)
+                && Objects.equals(desc, that.desc) && Objects.equals(method,
+                that.method) && Objects.equals(req_params, that.req_params)
+                && Objects.equals(id, that.id) && Objects.equals(menu, that.menu)
+                && Objects.equals(menuDesc, that.menuDesc);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(token, req_query, req_headers, req_body_form, title, catid,
+                req_body_type,
+                req_body_other, path, status, res_body_type, res_body, req_body_is_json_schema,
+                res_body_is_json_schema, edit_uid, username, switch_notice, message, desc, method,
+                req_params, id, menu, menuDesc);
+    }
 }

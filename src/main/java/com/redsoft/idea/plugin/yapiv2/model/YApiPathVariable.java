@@ -10,6 +10,7 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class YApiPathVariable extends ValueWrapper {
 
+    @Override
     public void full(ValueWrapper valueWrapper) {
         if (Objects.nonNull(valueWrapper.getName())) {
             this.setName(valueWrapper.getName());
@@ -22,20 +23,4 @@ public class YApiPathVariable extends ValueWrapper {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        YApiPathVariable that = (YApiPathVariable) o;
-        return Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
 }

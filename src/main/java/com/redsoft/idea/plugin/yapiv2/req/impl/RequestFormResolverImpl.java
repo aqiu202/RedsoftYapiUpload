@@ -18,6 +18,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * form参数处理器
+ * @author aqiu
+ */
 public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolver {
 
 

@@ -3,9 +3,9 @@ package com.redsoft.idea.plugin.yapiv2.model;
 import java.io.Serializable;
 
 /**
- * query
+ * query 参数
  *
- * @date 2019/2/11 5:05 PM
+ * @author aqiu 2019/2/11 5:05 PM
  */
 @SuppressWarnings("unused")
 public class YApiQuery extends ValueWrapper implements Serializable {

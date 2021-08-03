@@ -30,11 +30,13 @@ public class YApiInitComponent implements ProjectComponent {
                     + "        <li>兼容IDEA 2021.2版本</li>\n"
                     + "        <li>代码和注释模板优化</li>\n"
                     + "     </ol>";
-            NotificationConstants.NOTIFICATION_GROUP.createNotification(YApiConstants.name, "更新内容",
-                    changeLogTitle + "\n" + changeLogContent
-                            + "<p>更多信息请查看<a href=\"https://github.com/aqiu202/RedsoftYApiUpload/wiki/使用指南\">使用文档</a>||"
-                            + "<a href=\"https://github.com/aqiu202/RedsoftYapiUpload/issues\">问题反馈</a></p>",
-                    NotificationType.INFORMATION, new UrlOpeningListener(false))
+            NotificationConstants.NOTIFICATION_GROUP_WINDOW.createNotification(YApiConstants.name,
+                            "更新内容",
+                            changeLogTitle + "\n" + changeLogContent
+                                    + "<p>更多信息请查看<a href=\"https://github.com/aqiu202/RedsoftYApiUpload/wiki/使用指南\">使用文档</a>||"
+                                    + "<a href=\"https://github.com/aqiu202/RedsoftYapiUpload/issues\">问题反馈</a></p>",
+                            NotificationType.INFORMATION, new UrlOpeningListener(false))
+                    .setImportant(true)
                     .notify(this.project);
             property = new YApiApplicationProperty();
             property.setVersion(PluginConstants.currentVersion);
