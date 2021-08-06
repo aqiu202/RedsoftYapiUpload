@@ -11,9 +11,8 @@ public final class PsiParamUtils {
     }
 
     /**
-     * @author aqiu
-     * @date 2019-07-03 10:02
-     * @description 参数是否含有@RequestBody注解
+     * 参数是否含有@RequestBody注解
+     * @author aqiu 2019-07-03 10:02
      * @return {@link boolean}
      **/
     public static boolean hasRequestBody(PsiParameter... psiParameters) {

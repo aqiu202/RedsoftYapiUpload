@@ -26,8 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * <b>解析复杂类型的参数的解析抽象类</b>
- * @author aqiu
- * @date 2020/7/24 1:40 下午
+ * @author aqiu 2020/7/24 1:40 下午
  **/
 public abstract class AbstractCompoundRequestParamResolver extends AbstractRequestParamResolver {
 

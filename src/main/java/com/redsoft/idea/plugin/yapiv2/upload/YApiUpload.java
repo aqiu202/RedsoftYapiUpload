@@ -27,7 +27,7 @@ import org.apache.http.entity.StringEntity;
 /**
  * 上传到yapi
  *
- * @date 2019/1/31 11:41 AM
+ * @author aqiu 2019/1/31 11:41 AM
  */
 public class YApiUpload {
 
@@ -37,8 +37,8 @@ public class YApiUpload {
     public static Map<String, Map<String, Integer>> catMap = new HashMap<>();
 
     /**
-     * @description 调用保存接口
-     * @date 2019/5/15
+     * <p>调用保存接口</p>
+     * @author aqiu 2019/5/15
      */
     public YApiResponse uploadSave(YApiProjectProperty property, YApiSaveParam yapiSaveParam,
             @SuppressWarnings("unused") String path)
@@ -93,8 +93,8 @@ public class YApiUpload {
 
 
     /**
-     * @description 获得分类或者创建分类
-     * @date 2019/5/15
+     * <p>获得分类或者创建分类</p>
+     * @author aqiu 2019/5/15
      */
     public YApiResponse getCatIdOrCreate(YApiProjectProperty property,
             YApiSaveParam yapiSaveParam) {

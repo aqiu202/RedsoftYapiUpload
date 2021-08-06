@@ -7,8 +7,7 @@ import java.util.Set;
 /**
  * http 请求方式参量
  *
- * @author aqiu
- * @date 2020/3/27 5:22 PM
+ * @author aqiu 2020/3/27 5:22 PM
  */
 public interface HttpMethodConstants {
 

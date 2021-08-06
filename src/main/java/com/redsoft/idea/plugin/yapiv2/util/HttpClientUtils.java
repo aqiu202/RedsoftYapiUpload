@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * http client 请求工具类
  *
- * @date 2018/1/26.
+ * @author aqiu 2018/1/26.
  */
 public final class HttpClientUtils {
 

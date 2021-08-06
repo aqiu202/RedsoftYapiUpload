@@ -6,8 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * <b>接口响应数据解析的抽象提取</b>
- * @author aqiu
- * @date 2020/7/24 8:23 上午
+ * @author aqiu 2020/7/24 8:23 上午
  **/
 public interface BaseObjectParser {
 

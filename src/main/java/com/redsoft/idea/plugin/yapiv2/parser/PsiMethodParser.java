@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * <b>方法解析</b>
- * @author aqiu
- * @date 2020/5/12 11:02 上午
+ * @author aqiu 2020/5/12 11:02 上午
  **/
 public interface PsiMethodParser {
 

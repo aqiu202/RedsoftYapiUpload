@@ -20,8 +20,7 @@ import java.util.Set;
 
 /**
  * <b>接口信息解析入口</b>
- * @author aqiu
- * @date 2019-06-15 11:46
+ * @author aqiu 2019-06-15 11:46
  **/
 public class YApiParser {
 

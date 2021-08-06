@@ -2,8 +2,7 @@ package com.redsoft.idea.plugin.yapiv2.constant;
 
 /**
  * <b>swagger相关注解路径</b>
- * @author aqiu
- * @date 2020/3/27 10:10 下午
+ * @author aqiu 2020/3/27 10:10 下午
  **/
 public interface SwaggerConstants {
 

@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * <b>方法过滤请求参数</b>
- * @author aqiu
- * @date 2020/7/23 4:25 下午
+ * @author aqiu 2020/7/23 4:25 下午
  **/
 public interface PsiParamListFilter {
 

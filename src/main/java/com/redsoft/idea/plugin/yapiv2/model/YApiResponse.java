@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * yapi 返回结果
  *
- * @date 2019/1/31 12:08 PM
+ * @author aqiu 2019/1/31 12:08 PM
  */
 @SuppressWarnings("unused")
 public class YApiResponse implements Serializable {

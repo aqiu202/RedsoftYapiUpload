@@ -24,8 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * <b>事件类，所有的解析动作的起点 {@link #actionPerformed}</b>
  *
- * @author aqiu
- * @date 2020/7/24 9:24 上午
+ * @author aqiu 2020/7/24 9:24 上午
  **/
 public class YApiUploadAction extends AnAction {
 
@@ -34,7 +33,6 @@ public class YApiUploadAction extends AnAction {
         Project project = e.getData(CommonDataKeys.PROJECT);
 
         YApiProjectProperty property = ProjectConfigReader.read(project);
-        // tokenPsiUtil
         String token = property.getToken();
         // 项目ID
         int projectId = property.getProjectId();

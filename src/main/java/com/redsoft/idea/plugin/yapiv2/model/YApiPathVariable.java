@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * PathVariable 请求参数
  *
- * @date 2019/5/24 2:24 PM
+ * @author aqiu  2019/5/24 2:24 PM
  */
 @SuppressWarnings("unused")
 public class YApiPathVariable extends ValueWrapper {

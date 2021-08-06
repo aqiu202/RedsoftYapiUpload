@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * 新增菜单
  *
- * @date 2019/2/1 10:44 AM
+ * @author aqiu 2019/2/1 10:44 AM
  */
 @SuppressWarnings("unused")
 public class YApiCatMenuParam implements Serializable {

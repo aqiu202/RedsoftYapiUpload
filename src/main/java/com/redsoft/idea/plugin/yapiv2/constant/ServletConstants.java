@@ -2,8 +2,7 @@ package com.redsoft.idea.plugin.yapiv2.constant;
 
 /**
  * java 注解
- *
- * @date 2019/5/18 4:49 PM
+ * @author aqiu 2019/5/18 4:49 PM
  */
 public interface ServletConstants {
 

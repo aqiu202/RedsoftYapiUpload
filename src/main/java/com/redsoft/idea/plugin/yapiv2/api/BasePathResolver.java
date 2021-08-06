@@ -8,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * <b>接口路由解析抽象解析器</b>
- * @author aqiu
- * @date 2020/7/23 3:44 下午
+ * @author aqiu 2020/7/23 3:44 下午
  **/
 public interface BasePathResolver {
 

@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * 描述工具
  *
- * @date 2019/4/30 4:13 PM
+ * @author aqiu 2019/4/30 4:13 PM
  */
 public final class DesUtils {
 
@@ -42,8 +42,8 @@ public final class DesUtils {
     }
 
     /**
-     * @description 通过paramName 获得描述
-     * @date 2019/5/22
+     * 通过paramName 获得描述
+     * @author aqiu 2019/5/22
      */
     public static String getParamDesc(PsiMethod psiMethodTarget, String paramName) {
         if (psiMethodTarget.getDocComment() != null) {
@@ -65,8 +65,8 @@ public final class DesUtils {
     }
 
     /**
-     * @description 获得属性注释
-     * @date 2019/4/27
+     * 获得属性注释
+     * @author aqiu 2019/4/27
      */
     public static String getFiledDesc(PsiField psiField) {
         PsiDocComment psiDocComment = psiField.getDocComment();
@@ -84,8 +84,8 @@ public final class DesUtils {
 
 
     /**
-     * @description 获得link 备注
-     * @date 2019/5/18
+     * 获得link 备注
+     * @author aqiu 2019/5/18
      */
     public static String getLinkRemark(PsiField field, Project project) {
         StringBuilder remark = new StringBuilder(DesUtils.getFiledDesc(field));

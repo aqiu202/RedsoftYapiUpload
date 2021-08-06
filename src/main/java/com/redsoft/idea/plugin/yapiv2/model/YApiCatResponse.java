@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 分类列表
  *
- * @date 2019/2/1 10:30 AM
+ * @author aqiu 2019/2/1 10:30 AM
  */
 @SuppressWarnings("unused")
 public class YApiCatResponse implements Serializable {

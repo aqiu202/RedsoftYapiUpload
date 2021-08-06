@@ -23,8 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * java类型基础工具类
- * @author aqiu
- * @date 2019/1/30 9:58 AM
+ * @author aqiu 2019/1/30 9:58 AM
  */
 public class TypeUtils {
 
@@ -212,11 +211,10 @@ public class TypeUtils {
     }
 
     /**
+     * 是否是Map类型或者是Map的封装类型
      * @param psiType: 类型
      * @return {@link boolean}
-     * @author aqiu
-     * @date 2019-07-03 09:43
-     * @description 是否是Map类型或者是Map的封装类型
+     * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isMap(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();
@@ -236,12 +234,11 @@ public class TypeUtils {
     }
 
     /**
+     * 是否是Map类型或者是Map的封装类型
      * @param project: 项目
      * @param typePkName: 类完整包名
      * @return {@link boolean}
-     * @author aqiu
-     * @date 2019-07-03 09:43
-     * @description 是否是Map类型或者是Map的封装类型
+     * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isMap(Project project, String typePkName) {
         if (isMapType(typePkName)) {
@@ -261,11 +258,10 @@ public class TypeUtils {
     }
 
     /**
+     * 是否是集合类型或者是集合的封装类型
      * @param psiType: 类型
      * @return {@link boolean}
-     * @author aqiu
-     * @date 2019-07-03 09:43
-     * @description 是否是集合类型或者是集合的封装类型
+     * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isCollection(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();
@@ -285,12 +281,11 @@ public class TypeUtils {
     }
 
     /**
+     * 是否是集合类型或者是集合的封装类型
      * @param project: 项目
      * @param typePkName: 类完整包名
      * @return {@link boolean}
-     * @author aqiu
-     * @date 2019-07-03 09:43
-     * @description 是否是集合类型或者是集合的封装类型
+     * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isCollection(Project project, String typePkName) {
         if (isCollectionType(typePkName)) {

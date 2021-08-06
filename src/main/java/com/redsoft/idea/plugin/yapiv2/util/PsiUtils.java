@@ -21,9 +21,8 @@ public final class PsiUtils {
     }
 
     /**
-     * @author Redsoft
-     * @date 2020/5/5 10:10 下午
-     * @description 获取事件触发的当前类
+     * <p>获取事件触发的当前类</p>
+     * @author aqiu 2020/5/5 10:10 下午
      * @param e: 事件
      * @return {@link PsiClass}
      **/
@@ -37,8 +36,7 @@ public final class PsiUtils {
 
     /**
      * 获取当前选中字符
-     * @author aqiu
-     * @date 2020/5/5 10:21 下午
+     * @author aqiu 2020/5/5 10:21 下午
      * @param e 事件
      * @return {@link String}
      **/
@@ -49,8 +47,7 @@ public final class PsiUtils {
 
     /**
      * 获取当前选中字符
-     * @author aqiu
-     * @date 2020/5/5 10:21 下午
+     * @author aqiu 2020/5/5 10:21 下午
      * @param editor 编辑器
      * @return {@link String}
      **/

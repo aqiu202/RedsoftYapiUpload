@@ -1,9 +1,8 @@
 package com.redsoft.idea.plugin.yapiv2.model;
 
 /**
- * @description 接口状态
- * @author aqiu
- * @date 2019/7/31
+ * 接口状态
+ * @author aqiu 2019/7/31
  */
 public enum YApiStatus {
 

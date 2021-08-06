@@ -19,8 +19,7 @@ import java.util.Collection;
 /**
  * <b>json5解析器默认实现</b>
  *
- * @author aqiu
- * @date 2020/7/24 9:56 上午
+ * @author aqiu 2020/7/24 9:56 上午
  **/
 public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonParser,
         ObjectRawParser {
@@ -82,8 +81,11 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
     public Jsonable buildPojo(Collection<FieldValueWrapper> wrappers) {
         JsonObject jsonObject = new JsonObject();
         for (FieldValueWrapper wrapper : wrappers) {
-            jsonObject.addItem(new JsonItem<>(wrapper.getFieldName(), (Json<?>) wrapper.getValue(),
-                    wrapper.getDescription()));
+            final Jsonable value = wrapper.getValue();
+            if (value instanceof Json) {
+                jsonObject.addItem(new JsonItem<>(wrapper.getFieldName(), (Json<?>) value,
+                        wrapper.getDescription()));
+            }
         }
         return jsonObject;
     }

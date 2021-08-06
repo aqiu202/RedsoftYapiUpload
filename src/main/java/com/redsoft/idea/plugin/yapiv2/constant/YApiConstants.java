@@ -3,7 +3,7 @@ package com.redsoft.idea.plugin.yapiv2.constant;
 /**
  * yapi 接口
  *
- * @date 2019/1/31 3:29 PM
+ * @author aqiu 2019/1/31 3:29 PM
  */
 @SuppressWarnings("unused")
 public interface YApiConstants {

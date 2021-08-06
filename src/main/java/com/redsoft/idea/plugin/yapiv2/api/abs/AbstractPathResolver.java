@@ -12,8 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * <b>根据SpringMVC注解解析路由</b>
- * @author aqiu
- * @date 2020/7/23 3:44 下午
+ * @author aqiu 2020/7/23 3:44 下午
  **/
 public abstract class AbstractPathResolver implements BasePathResolver {
 

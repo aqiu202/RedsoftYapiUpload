@@ -3,7 +3,7 @@ package com.redsoft.idea.plugin.yapiv2.constant;
 /**
  * Spring mvc 注解
  *
- * @date 2019/2/11 3:57 PM
+ * @author aqiu 2019/2/11 3:57 PM
  */
 public interface SpringMVCConstants {
 

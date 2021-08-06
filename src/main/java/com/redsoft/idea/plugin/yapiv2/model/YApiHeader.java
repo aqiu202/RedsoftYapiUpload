@@ -1,9 +1,9 @@
 package com.redsoft.idea.plugin.yapiv2.model;
 
 /**
- * header
+ * header类型参数
  *
- * @date 2019/5/9 10:11 PM
+ * @author aqiu 2019/5/9 10:11 PM
  */
 @SuppressWarnings("unused")
 public class YApiHeader extends ValueWrapper {

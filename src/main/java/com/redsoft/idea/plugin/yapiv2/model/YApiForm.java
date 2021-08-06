@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * form
+ * form类型参数
  *
- * @date 2019/2/11 5:05 PM
+ * @author aqiu 2019/2/11 5:05 PM
  */
 @SuppressWarnings("unused")
 public class YApiForm extends ValueWrapper implements Serializable {

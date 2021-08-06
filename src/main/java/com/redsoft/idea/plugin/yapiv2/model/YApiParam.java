@@ -9,9 +9,9 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * yapi dto
+ * yapi接口信息
  *
- * @date 2019/2/11 3:16 PM
+ * @author aqiu 2019/2/11 3:16 PM
  */
 public class YApiParam implements Serializable, ResultConvert<Collection<YApiSaveParam>> {
 

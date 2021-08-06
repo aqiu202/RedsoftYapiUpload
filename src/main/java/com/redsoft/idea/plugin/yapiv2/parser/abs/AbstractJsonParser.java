@@ -178,8 +178,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     /**
      * <b>解析具体字段</b>
-     * @author aqiu
-     * @date 2020/7/23 3:14 下午
+     * @author aqiu 2020/7/23 3:14 下午
      **/
     protected Jsonable parseFieldValue(PsiField field) {
         return this.parse(field.getType().getCanonicalText());
@@ -187,8 +186,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     /**
      * <b>根据解析到的所有字段信息构建最终的解析结果</b>
-     * @author aqiu
-     * @date 2020/7/23 3:15 下午
+     * @author aqiu 2020/7/23 3:15 下午
      **/
     public abstract Jsonable buildPojo(Collection<FieldValueWrapper> wrappers);
 }

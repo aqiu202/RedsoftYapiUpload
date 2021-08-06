@@ -12,8 +12,7 @@ public final class PropertyNamingUtils {
     /**
      * 驼峰转下划线命名
      *
-     * @author AQIU
-     * @date 2018年5月16日 下午2:44:14
+     * @author aqiu 2018年5月16日 下午2:44:14
      * @param propName propName
      */
     public static String underline(String propName) {
@@ -44,8 +43,7 @@ public final class PropertyNamingUtils {
     /**
      * 小驼峰转大驼峰
      *
-     * @author AQIU
-     * @date 2018年5月16日 下午2:43:49
+     * @author aqiu 2018年5月16日 下午2:43:49
      * @param propName propName
      */
     public static String upperCamel(String propName) {

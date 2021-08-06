@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * <b>简单的参数处理抽象类</b>
  * <p>只需要定义{@link #getPsiParamFilter}方法过滤要处理的参数
  * 和{@link #doResolverItem}方法依次处理各个参数即可</p>
- * @author aqiu
- * @date 2020/7/23 4:38 下午
+ * @author aqiu 2020/7/23 4:38 下午
  **/
 public abstract class AbstractRequestParamResolver implements PsiParamListFilter,
         RequestParamResolver,
