@@ -27,7 +27,7 @@ public class YApiSwaggerSupport implements YApiSupport {
         String title = PsiAnnotationUtils
                 .getPsiParameterAnnotationValue(psiMethod, SwaggerConstants.API_OPERATION);
         if (Strings.isNotBlank(title)) {
-            apiDTO.setTitle(title);
+            apiDTO.setTitle(title.replace("\"", ""));
         }
 
     }
@@ -37,7 +37,7 @@ public class YApiSwaggerSupport implements YApiSupport {
         String desc = PsiAnnotationUtils
                 .getPsiParameterAnnotationValue(wrapper.getSource(), SwaggerConstants.API_PARAM);
         if (Strings.isNotBlank(desc)) {
-            wrapper.setDesc(desc);
+            wrapper.setDesc(desc.replace("\"", ""));
         }
     }
 
@@ -47,7 +47,7 @@ public class YApiSwaggerSupport implements YApiSupport {
                 .getPsiParameterAnnotationValue(wrapper.getSource(),
                         SwaggerConstants.API_MODEL_PROPERTY);
         if (Strings.isNotBlank(desc)) {
-            wrapper.setDesc(desc);
+            wrapper.setDesc(desc.replace("\"", ""));
         }
     }
 }
