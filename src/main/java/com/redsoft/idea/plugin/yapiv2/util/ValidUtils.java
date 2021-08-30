@@ -10,6 +10,9 @@ import com.redsoft.idea.plugin.yapiv2.range.LongRange;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+/**
+ * 数据校验工具类
+ */
 public final class ValidUtils {
 
     private ValidUtils() {

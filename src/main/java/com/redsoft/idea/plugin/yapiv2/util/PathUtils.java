@@ -3,6 +3,9 @@ package com.redsoft.idea.plugin.yapiv2.util;
 import com.jgoodies.common.base.Strings;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * 接口路由处理工具
+ */
 public final class PathUtils {
 
     private PathUtils() {

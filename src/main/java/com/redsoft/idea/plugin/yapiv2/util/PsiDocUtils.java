@@ -11,6 +11,9 @@ import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Psi注释读取工具类
+ */
 public final class PsiDocUtils {
 
     private PsiDocUtils() {

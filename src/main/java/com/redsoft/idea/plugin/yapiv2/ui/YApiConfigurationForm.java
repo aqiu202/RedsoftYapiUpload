@@ -10,6 +10,9 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * 配置面板
+ */
 public class YApiConfigurationForm {
 
     private JTextField urlField;

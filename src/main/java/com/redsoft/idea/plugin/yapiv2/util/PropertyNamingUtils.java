@@ -4,6 +4,10 @@ import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.constant.PropertyNamingStrategy;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * 字段名称转换工具类
+ * @author aqiu202
+ */
 public final class PropertyNamingUtils {
 
     private static final char underline = '_';

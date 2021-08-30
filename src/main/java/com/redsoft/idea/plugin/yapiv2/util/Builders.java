@@ -6,6 +6,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * 通用Builders
+ * @param <T>
+ */
 public final class Builders<T> {
 
     private final Supplier<T> supplier;

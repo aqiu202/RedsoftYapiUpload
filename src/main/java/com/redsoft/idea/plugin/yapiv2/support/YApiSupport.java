@@ -1,16 +1,13 @@
 package com.redsoft.idea.plugin.yapiv2.support;
 
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 
+/**
+ * Yapi接口信息的扩展支持
+ */
 public interface YApiSupport {
-
-    default boolean isImportant() {
-        return false;
-    }
 
     default int getOrder() {
         return 0;

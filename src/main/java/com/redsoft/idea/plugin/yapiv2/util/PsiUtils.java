@@ -15,6 +15,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Psi基础工具类
+ */
 public final class PsiUtils {
 
     private PsiUtils() {

@@ -9,6 +9,9 @@ import com.redsoft.idea.plugin.yapiv2.support.YApiSupport;
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
 import org.jetbrains.annotations.NonNls;
 
+/**
+ * 对Swagger注解的支持
+ */
 public class YApiSwaggerSupport implements YApiSupport {
 
 
@@ -18,18 +21,12 @@ public class YApiSwaggerSupport implements YApiSupport {
     public static final YApiSwaggerSupport INSTANCE = new YApiSwaggerSupport();
 
     @Override
-    public boolean isImportant() {
-        return true;
-    }
-
-    @Override
     public void handleMethod(PsiMethod psiMethod, @NonNls YApiParam apiDTO) {
         String title = PsiAnnotationUtils
                 .getPsiParameterAnnotationValue(psiMethod, SwaggerConstants.API_OPERATION);
         if (Strings.isNotBlank(title)) {
             apiDTO.setTitle(title.replace("\"", ""));
         }
-
     }
 
     @Override

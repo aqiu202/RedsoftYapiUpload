@@ -5,6 +5,9 @@ import com.redsoft.idea.plugin.yapiv2.constant.HttpMethodConstants;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import java.util.Collection;
 
+/**
+ * Psi参数解析工具类
+ */
 public final class PsiParamUtils {
 
     private PsiParamUtils() {
