@@ -4,16 +4,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Psi基础工具类
@@ -23,36 +19,55 @@ public final class PsiUtils {
     private PsiUtils() {
     }
 
-    /**
-     * <p>获取事件触发的当前类</p>
-     * @author aqiu 2020/5/5 10:10 下午
-     * @param e: 事件
-     * @return {@link PsiClass}
-     **/
-    public static PsiClass currentClass(AnActionEvent e) {
-        PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-        PsiElement referenceAt = Objects.requireNonNull(psiFile)
-                .findElementAt(Objects.requireNonNull(e.getData(CommonDataKeys.EDITOR))
-                        .getCaretModel().getOffset());
-        return PsiTreeUtil.getContextOfType(referenceAt, PsiClass.class, true);
+    public static PsiMethod getSelectMethod(AnActionEvent e) {
+        return findThenGet(e, PsiMethod.class);
+    }
+
+    public static PsiClass getSelectClass(AnActionEvent e) {
+        return findThenGet(e, PsiClass.class);
+    }
+
+    public static PsiDirectory getSelectPackage(AnActionEvent e) {
+        return findThenGet(e, PsiDirectory.class);
+    }
+
+    public static <T> T findThenGet(AnActionEvent e, Class<T> clz) {
+        PsiElement pe = e.getData(CommonDataKeys.PSI_ELEMENT);
+        return (pe != null && clz.isAssignableFrom(pe.getClass())) ? (T) pe : null;
+    }
+
+    public static void collectClasses(PsiDirectory psiDirectory, Set<PsiClass> classes) {
+        if (psiDirectory.getChildren().length > 0) {
+            PsiElement[] children = psiDirectory.getChildren();
+            for (PsiElement child : children) {
+                if (child instanceof PsiJavaFile) {
+                    classes.addAll(Arrays.asList(((PsiJavaFile) child).getClasses()));
+                }
+                if (child instanceof PsiDirectory) {
+                    collectClasses((PsiDirectory) child, classes);
+                }
+            }
+        }
     }
 
     /**
      * 获取当前选中字符
-     * @author aqiu 2020/5/5 10:21 下午
+     *
      * @param e 事件
      * @return {@link String}
+     * @author aqiu 2020/5/5 10:21 下午
      **/
     public static String getSelectedText(AnActionEvent e) {
         Editor editor = e.getData(CommonDataKeys.EDITOR);
-        return getSelectedText(Objects.requireNonNull(editor));
+        return editor == null ? null : getSelectedText(editor);
     }
 
     /**
      * 获取当前选中字符
-     * @author aqiu 2020/5/5 10:21 下午
+     *
      * @param editor 编辑器
      * @return {@link String}
+     * @author aqiu 2020/5/5 10:21 下午
      **/
     public static String getSelectedText(@NotNull Editor editor) {
         return editor.getSelectionModel().getSelectedText();
@@ -60,9 +75,10 @@ public final class PsiUtils {
 
     /**
      * 通过类完整路径获取相应的psiClass对象
-     * @author aqiu
-     * @param project 项目
+     *
+     * @param project    项目
      * @param typePkName 类完整路径
+     * @author aqiu
      */
     public static PsiClass findPsiClass(Project project, String typePkName) {
         return JavaPsiFacade.getInstance(project)
@@ -72,9 +88,10 @@ public final class PsiUtils {
 
     /**
      * 通过类完整路径获取相应的psiClassType对象
-     * @author aqiu
-     * @param project 项目
+     *
+     * @param project    项目
      * @param typePkName 类完整路径
+     * @author aqiu
      */
     public static PsiClassType findPsiClassType(Project project, String typePkName) {
         return PsiType.getTypeByName(typePkName, project,

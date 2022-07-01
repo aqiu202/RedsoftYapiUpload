@@ -12,6 +12,7 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert<YAp
     private static final String KEY_DATA_MODE = "data-mode";
     private static final String KEY_STRATEGY = "property-naming-strategy";
     private static final String KEY_ENABLE_BASIC_SCOPE = "enable-basic-scope";
+    private static final String KEY_ENABLE_TYPE_DESC = "enable-type-desc";
 
     @Override
     public Element serialize(@NotNull YApiProjectProperty property) {
@@ -21,6 +22,7 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert<YAp
         int strategy = property.getStrategy();
         int dataMode = property.getDataMode();
         boolean enableBasicScope = property.isEnableBasicScope();
+        boolean typeDesc = property.isEnableTypeDesc();
         Element element = new Element("redsoft");
         if (Strings.isNotBlank(url)) {
             element.setAttribute(KEY_URL, url);
@@ -32,6 +34,7 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert<YAp
         element.setAttribute(KEY_DATA_MODE, Integer.toString(dataMode));
         element.setAttribute(KEY_STRATEGY, Integer.toString(strategy));
         element.setAttribute(KEY_ENABLE_BASIC_SCOPE, Boolean.toString(enableBasicScope));
+        element.setAttribute(KEY_ENABLE_TYPE_DESC, Boolean.toString(typeDesc));
         return element;
     }
 
@@ -64,9 +67,10 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert<YAp
             dataMode = Integer.parseInt(d);
         }
         property.setDataMode(dataMode);
-        String e = element.getAttributeValue(KEY_ENABLE_BASIC_SCOPE);
-        boolean enableBasicScope = Boolean.parseBoolean(e);
-        property.setEnableBasicScope(enableBasicScope);
+        String enableBasicScope = element.getAttributeValue(KEY_ENABLE_BASIC_SCOPE);
+        property.setEnableBasicScope(Boolean.parseBoolean(enableBasicScope));
+        String typeDesc = element.getAttributeValue(KEY_ENABLE_TYPE_DESC);
+        property.setEnableTypeDesc(Boolean.parseBoolean(typeDesc));
         return property;
     }
 }

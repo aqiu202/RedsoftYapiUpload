@@ -102,7 +102,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
     }
 
     @Override
-    public String getJsonResponse(PsiType psiType) {
+    public String getJson(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();
         Jsonable jsonable = this.parse(this.handleTypePkName(typePkName));
         if (jsonable instanceof ItemJsonSchema) {

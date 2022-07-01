@@ -8,10 +8,11 @@ import com.redsoft.idea.plugin.yapiv2.constant.YApiConstants;
 import com.redsoft.idea.plugin.yapiv2.ui.YApiConfigurationForm;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiPropertyConvertHolder;
-import javax.swing.JComponent;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class YApiSearchableConfigurable implements SearchableConfigurable {
 
@@ -62,7 +63,8 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
                 yApiConfigurationForm.getTokenField().getText(),
                 yApiConfigurationForm.getNamingStrategyComboBox().getSelectedIndex(),
                 yApiConfigurationForm.getDataModeComboBox().getSelectedIndex(),
-                yApiConfigurationForm.getEnableBasicScopeCheckBox().isSelected());
+                yApiConfigurationForm.getEnableBasicScopeCheckBox().isSelected(),
+                yApiConfigurationForm.getEnableTypeDescCheckBox().isSelected());
         return !this.yApiProjectProperty
                 .equals(ProjectConfigReader.read(this.project));
     }
@@ -93,6 +95,8 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
         if (Strings.isNotBlank(token)) {
             yApiConfigurationForm.getTokenField().setText(token);
         }
+        yApiConfigurationForm.getEnableBasicScopeCheckBox().setSelected(property.isEnableBasicScope());
+        yApiConfigurationForm.getEnableTypeDescCheckBox().setSelected(property.isEnableTypeDesc());
 
     }
 

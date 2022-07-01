@@ -75,12 +75,10 @@ public final class PropertyNamingUtils {
             case KebabCase:
                 return middleLine(propName);
             case SnakeCase:
-            case LowerCaseWithUnderscoresStrategy:
                 return underline(propName);
             case LowerCase:
                 return lowerCase(propName);
             case UpperCamelCase:
-            case PascalCaseStrategy:
                 return upperCamel(propName);
             default:
                 return propName;

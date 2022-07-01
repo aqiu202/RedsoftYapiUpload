@@ -166,6 +166,7 @@ public class TypeUtils {
 
         fileTypes.put(SpringMVCConstants.MultipartFile, "file");
         fileTypes.put(SpringMVCConstants.MultipartFile + "[]", "file[]");
+        fileTypes.put("List<" +SpringMVCConstants.MultipartFile + ">", "file[]");
 
     }
 

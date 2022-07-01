@@ -39,8 +39,9 @@ public class ProjectConfigReader {
                                     projectConfig.split("projectId\">")[1].split("</")[0]));
                     property.setUrl(projectConfig.split("yapiUrl\">")[1].split("</")[0]);
                     property.setEnableBasicScope(projectConfig.contains("basicScope\">") && "true"
-                            .equals(projectConfig.split("basicScope\">")[1].split("</")[0]
-                                    .toLowerCase()));
+                            .equalsIgnoreCase(projectConfig.split("basicScope\">")[1].split("</")[0]));
+                    property.setEnableTypeDesc(projectConfig.contains("typeDesc\">") && "true"
+                            .equalsIgnoreCase(projectConfig.split("typeDesc\">")[1].split("</")[0]));
                 }
             } catch (Exception ignored) {
             }

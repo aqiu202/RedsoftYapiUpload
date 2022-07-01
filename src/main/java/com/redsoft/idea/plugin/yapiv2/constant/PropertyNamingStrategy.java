@@ -10,11 +10,6 @@ public enum PropertyNamingStrategy {
      */
     SnakeCase,
     /**
-     * 同 SnakeCase
-     * @deprecated
-     */
-    LowerCaseWithUnderscoresStrategy,
-    /**
      * 全部转化为小写 --3
      */
     LowerCase,
@@ -22,11 +17,6 @@ public enum PropertyNamingStrategy {
      * 大驼峰规则 --4
      */
     UpperCamelCase,
-    /**
-     * 同 UpperCamelCase
-     * @deprecated
-     */
-    PascalCaseStrategy,
     /**
      * 不做处理 --0
      */
@@ -40,16 +30,12 @@ public enum PropertyNamingStrategy {
             case "2":
             case "snakecase":
                 return SnakeCase;
-            case "lowercasewithunderscoresstrategy":
-                return LowerCaseWithUnderscoresStrategy;
             case "3":
             case "lowercase":
                 return LowerCase;
             case "4":
             case "uppercamelcase":
                 return UpperCamelCase;
-            case "pascalcasestrategy":
-                return PascalCaseStrategy;
             default:
                 return None;
         }

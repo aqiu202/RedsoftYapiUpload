@@ -14,20 +14,26 @@ public class YApiProjectProperty {
     private int projectId = DEFAULT_PROJECT_ID;
     private String token = DEFAULT_TOKEN;
     private int strategy = DEFAULT_STRATEGY;
+    /**
+     * 数据格式 0：json-schema（默认），1：json5
+     */
     private int dataMode = DEFAULT_DATA_MODE;
     private boolean enableBasicScope;
+
+    private boolean enableTypeDesc;
 
     public YApiProjectProperty() {
 
     }
 
     public YApiProjectProperty(String url, int projectId, String token, int strategy,
-            int dataMode, boolean enableBasicScope) {
+            int dataMode, boolean enableBasicScope, boolean enableTypeDesc) {
         this.projectId = projectId;
         this.token = token;
         this.strategy = strategy;
         this.dataMode = dataMode;
         this.enableBasicScope = enableBasicScope;
+        this.enableTypeDesc = enableTypeDesc;
         this.setUrl(url);
     }
 
@@ -83,10 +89,18 @@ public class YApiProjectProperty {
         this.enableBasicScope = enableBasicScope;
     }
 
+    public boolean isEnableTypeDesc() {
+        return enableTypeDesc;
+    }
+
+    public void setEnableTypeDesc(boolean enableTypeDesc) {
+        this.enableTypeDesc = enableTypeDesc;
+    }
+
     @Override
     public int hashCode() {
         return Objects
-                .hash(this.url, this.projectId, this.token, this.strategy, this.enableBasicScope);
+                .hash(this.url, this.projectId, this.token, this.strategy, this.enableBasicScope, this.enableTypeDesc);
     }
 
     @Override
@@ -103,6 +117,7 @@ public class YApiProjectProperty {
                 Objects.equals(token, that.token) &&
                 Objects.equals(strategy, that.strategy) &&
                 Objects.equals(dataMode, that.dataMode) &&
-                Objects.equals(enableBasicScope, that.enableBasicScope);
+                Objects.equals(enableBasicScope, that.enableBasicScope) &&
+                Objects.equals(enableTypeDesc, that.enableTypeDesc);
     }
 }

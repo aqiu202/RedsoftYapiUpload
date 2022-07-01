@@ -16,6 +16,8 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,9 +26,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolver {
 
-
-    public RequestFormResolverImpl(Project project) {
-        super(project);
+    public RequestFormResolverImpl(YApiProjectProperty property, Project project) {
+        super(property, project);
     }
 
     @NotNull

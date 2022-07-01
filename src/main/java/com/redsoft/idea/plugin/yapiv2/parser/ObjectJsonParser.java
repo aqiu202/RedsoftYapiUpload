@@ -8,6 +8,6 @@ import com.intellij.psi.PsiType;
  **/
 public interface ObjectJsonParser extends BaseObjectParser {
 
-    String getJsonResponse(PsiType psiType);
+    String getJson(PsiType psiType);
 
 }

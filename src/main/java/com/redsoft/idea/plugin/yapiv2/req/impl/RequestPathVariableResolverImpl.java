@@ -13,10 +13,17 @@ import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
 import org.jetbrains.annotations.NotNull;
 
 public class RequestPathVariableResolverImpl extends AbstractRequestParamResolver {
 
+    private final YApiProjectProperty property;
+
+    public RequestPathVariableResolverImpl(YApiProjectProperty property) {
+        this.property = property;
+    }
     @NotNull
     @Override
     public PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m,
@@ -34,6 +41,9 @@ public class RequestPathVariableResolverImpl extends AbstractRequestParamResolve
             YApiPathVariable pathVariable = new YApiPathVariable();
             pathVariable.full(this.handleParamAnnotation(param, annotation));
             pathVariable.setDesc(DesUtils.getParamDesc(m, param.getName()));
+            if (property.isEnableTypeDesc()) {
+                pathVariable.setTypeDesc(param.getType().getPresentableText());
+            }
             Set<YApiPathVariable> pathVariables = target.getReq_params();
             if (Objects.isNull(pathVariables)) {
                 pathVariables = new LinkedHashSet<>();

@@ -12,23 +12,25 @@ import com.redsoft.idea.plugin.yapiv2.req.abs.AbstractCompoundRequestParamResolv
 import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiParamUtils;
 import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
+import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 
 public class RequestQueryResolverImpl extends AbstractCompoundRequestParamResolver {
 
-    public RequestQueryResolverImpl(Project project) {
-        super(project);
+    public RequestQueryResolverImpl(YApiProjectProperty property, Project project) {
+        super(property, project);
     }
 
     @NotNull
     @Override
     public PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m,
-            @NotNull YApiParam target) {
+                                            @NotNull YApiParam target) {
         //没有body的方法，除去文件类型的参数和被@PathVariable注解标注的参数
         if (PsiParamUtils.noBody(target.getMethods())) {
             return p -> !TypeUtils.isFile(p.getType().getCanonicalText()) && PsiAnnotationUtils

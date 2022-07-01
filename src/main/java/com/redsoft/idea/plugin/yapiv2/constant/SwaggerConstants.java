@@ -6,6 +6,7 @@ package com.redsoft.idea.plugin.yapiv2.constant;
  **/
 public interface SwaggerConstants {
 
+    String API = "io.swagger.annotations.Api";
     String API_OPERATION = "io.swagger.annotations.ApiOperation";
 
     String API_MODEL_PROPERTY = "io.swagger.annotations.ApiModelProperty";

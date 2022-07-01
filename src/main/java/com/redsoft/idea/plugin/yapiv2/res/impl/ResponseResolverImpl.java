@@ -41,7 +41,7 @@ public class ResponseResolverImpl implements ResponseResolver {
         if (ContentTypeResolver.RAW_VALUE.equals(target.getRes_body_type())) {
             target.setResponse(this.objectRawParser.getRawResponse(returnType));
         } else {
-            target.setResponse(this.objectJsonParser.getJsonResponse(returnType));
+            target.setResponse(this.objectJsonParser.getJson(returnType));
         }
     }
 }

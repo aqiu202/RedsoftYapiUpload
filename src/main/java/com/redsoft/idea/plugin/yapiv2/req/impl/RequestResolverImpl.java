@@ -15,11 +15,11 @@ public class RequestResolverImpl implements RequestResolver {
     private final List<RequestParamResolver> paramResolvers;
 
     public RequestResolverImpl(YApiProjectProperty property, Project project) {
-        RequestParamResolver queryResolver = new RequestQueryResolverImpl(project);
+        RequestParamResolver queryResolver = new RequestQueryResolverImpl(property, project);
         RequestParamResolver bodyResolver = new RequestBodyResolverImpl(property, project);
         RequestParamResolver headerResolver = new RequestHeaderResolverImpl();
-        RequestParamResolver pathVariableResolver = new RequestPathVariableResolverImpl();
-        RequestParamResolver formResolver = new RequestFormResolverImpl(project);
+        RequestParamResolver pathVariableResolver = new RequestPathVariableResolverImpl(property);
+        RequestParamResolver formResolver = new RequestFormResolverImpl(property, project);
         paramResolvers = Arrays.asList(pathVariableResolver, formResolver, queryResolver,
                 bodyResolver, headerResolver);
     }

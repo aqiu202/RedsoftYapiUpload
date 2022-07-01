@@ -22,6 +22,7 @@ public class YApiConfigurationForm {
     private JFormattedTextField projectIdField;
     private ComboBox<String> namingStrategyComboBox;
     private ComboBox<String> dataModeComboBox;
+    private JCheckBox enableTypeDescCheckBox;
 
     public JPanel getPanel() {
         return panel;
@@ -45,6 +46,10 @@ public class YApiConfigurationForm {
 
     public JCheckBox getEnableBasicScopeCheckBox() {
         return enableBasicScopeCheckBox;
+    }
+
+    public JCheckBox getEnableTypeDescCheckBox() {
+        return enableTypeDescCheckBox;
     }
 
     public ComboBox<String> getDataModeComboBox() {

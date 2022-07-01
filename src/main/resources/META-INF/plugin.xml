@@ -202,12 +202,18 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action id="RedsoftYapiUpload"
+        <action id="YapiUpload"
                 class="com.redsoft.idea.plugin.yapiv2.action.YApiUploadAction"
                 text="上传到YApi"
                 description="YApi文档上传插件">
             <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift alt u"/>
+        </action>
+        <action id="BatchYapiUpload"
+                class="com.redsoft.idea.plugin.yapiv2.action.YApiUploadAction"
+                text="批量上传到YApi"
+                description="YApi文档上传插件">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>
     </actions>
 

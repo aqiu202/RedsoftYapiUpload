@@ -1,5 +1,6 @@
 package com.redsoft.idea.plugin.yapiv2.api;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +11,6 @@ import org.jetbrains.annotations.NotNull;
  **/
 public interface MenuResolver {
 
-    void set(@NotNull PsiDocComment docComment, @NotNull YApiParam target);
+    void set(@NotNull PsiClass c, @NotNull YApiParam target);
 
 }

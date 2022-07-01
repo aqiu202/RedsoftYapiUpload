@@ -6,14 +6,17 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.redsoft.idea.plugin.yapiv2.base.DeprecatedAssert;
 import com.redsoft.idea.plugin.yapiv2.base.impl.DeprecatedAssertImpl;
+import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.parser.PsiClassParser;
 import com.redsoft.idea.plugin.yapiv2.parser.PsiMethodParser;
+import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.jetbrains.annotations.NotNull;
 
 public class PsiClassParserImpl implements PsiClassParser {
 
@@ -36,8 +39,15 @@ public class PsiClassParserImpl implements PsiClassParser {
 
     @Override
     public List<PsiMethod> getApiMethods(@NotNull PsiClass c) {
-        return Stream.of(c.getMethods()).filter(m -> !(m.getName().equals(c.getName()) ||
-                m.getModifierList().hasModifierProperty(PsiModifier.PRIVATE) ||
-                deprecatedAssert.isDeprecated(m))).collect(Collectors.toList());
+        return Stream.of(c.getMethods()).filter(m -> {
+            return !(m.getName().equals(c.getName()) ||
+                    m.getModifierList().hasModifierProperty(PsiModifier.PRIVATE) ||
+                    //过滤没有RequestMapping注解的方法
+                    PsiAnnotationUtils
+                            .findAnnotation(m, SpringMVCConstants.RequestMapping, SpringMVCConstants.GetMapping,
+                                    SpringMVCConstants.PostMapping, SpringMVCConstants.PutMapping,
+                                    SpringMVCConstants.DeleteMapping, SpringMVCConstants.PatchMapping) == null ||
+                    deprecatedAssert.isDeprecated(m));
+        }).collect(Collectors.toList());
     }
 }

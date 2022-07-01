@@ -1,44 +1,39 @@
 package com.redsoft.idea.plugin.yapiv2.req.abs;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.jgoodies.common.base.Strings;
 import com.redsoft.idea.plugin.yapiv2.constant.SpringMVCConstants;
 import com.redsoft.idea.plugin.yapiv2.model.ValueWrapper;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
 import com.redsoft.idea.plugin.yapiv2.support.YApiSupportHolder;
-import com.redsoft.idea.plugin.yapiv2.util.DesUtils;
-import com.redsoft.idea.plugin.yapiv2.util.PsiAnnotationUtils;
-import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
-import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
-import com.redsoft.idea.plugin.yapiv2.util.ValidUtils;
+import com.redsoft.idea.plugin.yapiv2.util.*;
+import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * <b>解析复杂类型的参数的解析抽象类</b>
+ *
  * @author aqiu 2020/7/24 1:40 下午
  **/
 public abstract class AbstractCompoundRequestParamResolver extends AbstractRequestParamResolver {
 
     protected final Project project;
+    protected final YApiProjectProperty property;
 
-    public AbstractCompoundRequestParamResolver(Project project) {
+    public AbstractCompoundRequestParamResolver(YApiProjectProperty property, Project project) {
+        this.property = property;
         this.project = project;
     }
 
     @Override
     public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
-            @NotNull YApiParam target) {
+                               @NotNull YApiParam target) {
         Collection<ValueWrapper> valueWrappers = this.resolvePojo(m, param);
         this.doSet(target, valueWrappers);
     }
@@ -63,6 +58,9 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         valueWrapper.setRequired(ValidUtils.getRequired(field));
         valueWrapper.setName(field.getName());
         valueWrapper.setDesc(DesUtils.getLinkRemark(field, project));
+        if (property.isEnableTypeDesc()) {
+            valueWrapper.setTypeDesc(fType.getPresentableText());
+        }
         Object obj = TypeUtils.getDefaultValueByPackageName(fType.getCanonicalText());
         if (Objects.nonNull(obj)) {
             valueWrapper.setExample(obj.toString());
@@ -71,10 +69,20 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
     }
 
     protected Collection<ValueWrapper> resolvePojo(@NotNull PsiMethod m,
-            @NotNull PsiParameter param) {
+                                                   @NotNull PsiParameter param) {
         String typePkName = param.getType().getCanonicalText();
         String typeName = param.getType().getPresentableText();
         List<ValueWrapper> valueWrappers = new ArrayList<>();
+        if (typePkName.contains("[]")) {
+            typePkName = typePkName.replace("[]", "");
+        }
+        int index;
+        while ((index = typePkName.indexOf("<")) != -1) {
+            typePkName = typePkName.substring(index + 1);
+        }
+        if (typePkName.contains(">")) {
+            typePkName = typePkName.replace(">", "");
+        }
         //如果是基本类型
         if (this.isBasicType(typePkName)) {
             ValueWrapper valueWrapper;
@@ -86,8 +94,11 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
                 valueWrapper = this.resolveBasic(param);
             }
             if (Strings.isBlank(valueWrapper.getDesc())) {
-                String desc = DesUtils.getParamDesc(m, param.getName()) + "(" + typeName + ")";
+                String desc = DesUtils.getParamDesc(m, param.getName());
                 valueWrapper.setDesc(desc);
+                if (property.isEnableTypeDesc()) {
+                    valueWrapper.setTypeDesc(typeName);
+                }
             }
             valueWrapper.setSource(param);
             YApiSupportHolder.supports.handleParam(valueWrapper);
@@ -109,8 +120,7 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
     }
 
     /**
-     *
-     * @param target 参数
+     * @param target   参数
      * @param wrappers 参数值
      */
     protected abstract void doSet(@NotNull YApiParam target, Collection<ValueWrapper> wrappers);

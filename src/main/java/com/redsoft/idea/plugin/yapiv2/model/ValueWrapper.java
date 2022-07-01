@@ -15,6 +15,8 @@ public class ValueWrapper {
      * 描述
      */
     protected String desc;
+
+    protected String typeDesc;
     /**
      * 示例
      */
@@ -58,6 +60,14 @@ public class ValueWrapper {
         this.required = required;
     }
 
+    public String getTypeDesc() {
+        return typeDesc;
+    }
+
+    public void setTypeDesc(String typeDesc) {
+        this.typeDesc = typeDesc;
+    }
+
     public String getExample() {
         return example;
     }
@@ -78,6 +88,9 @@ public class ValueWrapper {
         }
         if (Strings.isNotBlank(valueWrapper.getExample())) {
             this.setExample(valueWrapper.getExample());
+        }
+        if (Strings.isNotBlank(valueWrapper.getTypeDesc())) {
+            this.setTypeDesc(valueWrapper.getTypeDesc());
         }
     }
 

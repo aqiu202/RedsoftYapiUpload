@@ -4,26 +4,20 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.javadoc.PsiDocComment;
-import com.redsoft.idea.plugin.yapiv2.api.ApiResolver;
-import com.redsoft.idea.plugin.yapiv2.api.BaseInfoResolver;
-import com.redsoft.idea.plugin.yapiv2.api.HttpMethodResolver;
-import com.redsoft.idea.plugin.yapiv2.api.MenuResolver;
-import com.redsoft.idea.plugin.yapiv2.api.PathResolver;
-import com.redsoft.idea.plugin.yapiv2.api.StatusResolver;
+import com.redsoft.idea.plugin.yapiv2.api.*;
 import com.redsoft.idea.plugin.yapiv2.base.ContentTypeResolver;
 import com.redsoft.idea.plugin.yapiv2.model.YApiParam;
-import com.redsoft.idea.plugin.yapiv2.model.YApiStatus;
 import com.redsoft.idea.plugin.yapiv2.req.RequestResolver;
+import com.redsoft.idea.plugin.yapiv2.req.YApiParamResolver;
+import com.redsoft.idea.plugin.yapiv2.req.impl.DocTagValueResolver;
 import com.redsoft.idea.plugin.yapiv2.req.impl.RequestContentTypeResolverImpl;
 import com.redsoft.idea.plugin.yapiv2.req.impl.RequestResolverImpl;
+import com.redsoft.idea.plugin.yapiv2.req.impl.TypeDescValueResolver;
 import com.redsoft.idea.plugin.yapiv2.res.DocTagValueHandler;
 import com.redsoft.idea.plugin.yapiv2.res.ResponseResolver;
 import com.redsoft.idea.plugin.yapiv2.res.impl.ResponseContentTypeResolverImpl;
 import com.redsoft.idea.plugin.yapiv2.res.impl.ResponseResolverImpl;
-import com.redsoft.idea.plugin.yapiv2.util.CollectionUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
-import java.util.Objects;
-import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
@@ -38,24 +32,9 @@ public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
     private final RequestResolver requestResolver;
     private final ResponseResolver responseResolver;
 
-    private final Consumer<YApiParam> docTagValueResolver = (param) -> {
-        param.setTitle(this.handleDocTagValue(param.getTitle()));
-        param.setMenu(this.handleDocTagValue(param.getMenu()));
-        param.setMenuDesc(this.handleDocTagValue(param.getMenuDesc()));
-        param.setStatus(YApiStatus.getStatus(this.handleDocTagValue(param.getStatus())));
-        if (CollectionUtils.isNotEmpty(param.getParams())) {
-            param.getParams()
-                    .forEach(query -> query.setDesc(this.handleDocTagValue(query.getDesc())));
-        }
-        if (CollectionUtils.isNotEmpty(param.getReq_body_form())) {
-            param.getReq_body_form()
-                    .forEach(form -> form.setDesc(this.handleDocTagValue(form.getDesc())));
-        }
-        if (CollectionUtils.isNotEmpty(param.getReq_params())) {
-            param.getReq_params().forEach(pathVariable -> pathVariable
-                    .setDesc(this.handleDocTagValue(pathVariable.getDesc())));
-        }
-    };
+    private final YApiParamResolver docTagValueResolver = new DocTagValueResolver();
+
+    private final YApiParamResolver descValueResolver = new TypeDescValueResolver();
 
     public ApiResolverImpl(YApiProjectProperty property, Project project) {
         requestResolver = new RequestResolverImpl(property, project);
@@ -70,13 +49,12 @@ public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
         PsiDocComment classDoc = c.getDocComment();
         PsiDocComment methodDoc = m.getDocComment();
         statusResolver.resolve(classDoc, methodDoc, target);
-        if (Objects.nonNull(classDoc)) {
-            menuResolver.set(classDoc, target);
-        }
+        menuResolver.set(c, target);
         requestResolver.resolve(m, target);
         requestContentTypeResolver.resolve(c, m, target);
         responseContentTypeResolver.resolve(c, m, target);
         docTagValueResolver.accept(target);
+        descValueResolver.accept(target);
         responseResolver.resolve(m.getReturnType(), target);
     }
 }

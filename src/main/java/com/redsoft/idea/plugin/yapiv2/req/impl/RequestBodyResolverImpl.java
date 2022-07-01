@@ -39,7 +39,7 @@ public class RequestBodyResolverImpl extends AbstractRequestParamResolver {
     @Override
     public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
             @NotNull YApiParam target) {
-        target.setRequestBody(this.objectJsonParser.getJsonResponse(param.getType()));
+        target.setRequestBody(this.objectJsonParser.getJson(param.getType()));
         target.setReq_body_is_json_schema(this.dataMode == 0);
     }
 
