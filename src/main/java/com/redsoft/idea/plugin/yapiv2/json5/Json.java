@@ -54,7 +54,7 @@ public class Json<T> implements Jsonable {
         if (commentMode == COMMENT_MODE_SINGLE) {
             vs += ", // " + description;
         } else if (commentMode == COMMENT_MODE_MULTIPLE) {
-            vs += "/* " + description + " */";
+            vs += ", /* " + description + " */";
         }
         return vs;
     }

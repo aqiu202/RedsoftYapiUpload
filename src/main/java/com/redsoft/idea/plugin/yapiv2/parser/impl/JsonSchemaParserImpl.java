@@ -10,24 +10,21 @@ import com.redsoft.idea.plugin.yapiv2.parser.abs.AbstractJsonParser;
 import com.redsoft.idea.plugin.yapiv2.range.DecimalRange;
 import com.redsoft.idea.plugin.yapiv2.range.IntegerRange;
 import com.redsoft.idea.plugin.yapiv2.range.LongRange;
-import com.redsoft.idea.plugin.yapiv2.schema.ArraySchema;
-import com.redsoft.idea.plugin.yapiv2.schema.BooleanSchema;
-import com.redsoft.idea.plugin.yapiv2.schema.IntegerSchema;
-import com.redsoft.idea.plugin.yapiv2.schema.NumberSchema;
-import com.redsoft.idea.plugin.yapiv2.schema.ObjectSchema;
-import com.redsoft.idea.plugin.yapiv2.schema.SchemaHelper;
-import com.redsoft.idea.plugin.yapiv2.schema.StringSchema;
+import com.redsoft.idea.plugin.yapiv2.schema.*;
 import com.redsoft.idea.plugin.yapiv2.schema.base.ItemJsonSchema;
 import com.redsoft.idea.plugin.yapiv2.schema.base.SchemaType;
 import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.util.ValidUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
+
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * <b>json-schema解析器默认实现</b>
+ *
  * @author aqiu 2020/7/24 9:56 上午
  **/
 public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSchemaJsonParser {
@@ -46,8 +43,8 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
 
 
     @Override
-    public ItemJsonSchema parseJsonSchema(String typePkName) {
-        return (ItemJsonSchema) super.parse(typePkName);
+    public ItemJsonSchema parseJsonSchema(String typePkName, List<String> ignores) {
+        return (ItemJsonSchema) super.parse(typePkName, ignores);
     }
 
     @Override
@@ -61,17 +58,19 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ObjectSchema parseMap(String typePkName) {
-        return new ObjectSchema();
+    public ObjectSchema parseMap(String typePkName, String description) {
+        ObjectSchema objectSchema = new ObjectSchema();
+        objectSchema.setDescription(description);
+        return objectSchema;
     }
 
     @Override
-    public ArraySchema parseCollection(String typePkName) {
+    public ArraySchema parseCollection(String typePkName, List<String> ignores) {
         ArraySchema result = new ArraySchema();
         if (Strings.isBlank(typePkName)) {
             return result.setItems(new ObjectSchema());
         }
-        return result.setItems(this.parseJsonSchema(typePkName));
+        return result.setItems(this.parseJsonSchema(typePkName, ignores));
     }
 
     @Override
@@ -89,7 +88,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ItemJsonSchema parseFieldValue(PsiField psiField) {
+    public ItemJsonSchema parseFieldValue(PsiField psiField, List<String> ignores) {
         PsiType type = psiField.getType();
         String typePkName = type.getCanonicalText();
         ItemJsonSchema itemJsonSchema;
@@ -97,7 +96,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
             itemJsonSchema = this.parseBasicField(psiField);
             itemJsonSchema.setMock(TypeUtils.formatMockType(type.getPresentableText()));
         } else {
-            itemJsonSchema = this.parseCompoundField(psiField);
+            itemJsonSchema = this.parseCompoundField(psiField, ignores);
         }
         return itemJsonSchema;
     }
@@ -179,11 +178,11 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         return result;
     }
 
-    private ItemJsonSchema parseCompoundField(PsiField psiField) {
+    private ItemJsonSchema parseCompoundField(PsiField psiField, List<String> ignores) {
         PsiType psiType = psiField.getType();
         String typeName = psiType.getPresentableText();
         boolean wrapArray = typeName.endsWith("[]");
-        ItemJsonSchema result = this.parseJsonSchema(psiType.getCanonicalText());
+        ItemJsonSchema result = this.parseJsonSchema(psiType.getCanonicalText(), ignores);
         if (result instanceof ArraySchema) {
             ArraySchema a = (ArraySchema) result;
             if (typeName.contains("Set") && !wrapArray) {

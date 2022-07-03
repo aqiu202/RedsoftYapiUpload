@@ -65,7 +65,7 @@ public class TypeUtils {
         normalTypes.put("Long", 1L);
         normalTypes.put("Float", 1.0F);
         normalTypes.put("Double", 1.0D);
-        normalTypes.put("String", "String");
+        normalTypes.put("String", "string");
         normalTypes.put("Date", LocalDateTime.now().format(dateTimeFormat));
         normalTypes.put("Time", LocalTime.now().format(timeFormat));
         normalTypes.put("LocalDateTime", LocalDateTime.now().format(dateTimeFormat));
@@ -108,7 +108,7 @@ public class TypeUtils {
                 .put("java.time.LocalDate", LocalDate.now().format(dateFormat));
         normalTypesPackages
                 .put("java.time.LocalTime", LocalTime.now().format(timeFormat));
-        normalTypesPackages.put("java.lang.String", "String");
+        normalTypesPackages.put("java.lang.String", "string");
         normalTypesPackages.put("java.math.BigDecimal", 0.111111);
 
         basicTypeMappings.put("int", SchemaType.integer);
@@ -167,6 +167,8 @@ public class TypeUtils {
         fileTypes.put(SpringMVCConstants.MultipartFile, "file");
         fileTypes.put(SpringMVCConstants.MultipartFile + "[]", "file[]");
         fileTypes.put("List<" +SpringMVCConstants.MultipartFile + ">", "file[]");
+        fileTypes.put("Set<" +SpringMVCConstants.MultipartFile + ">", "file[]");
+        fileTypes.put("Collection<" +SpringMVCConstants.MultipartFile + ">", "file[]");
 
     }
 
@@ -213,9 +215,9 @@ public class TypeUtils {
 
     /**
      * 是否是Map类型或者是Map的封装类型
+     * @author aqiu 2019-07-03 09:43
      * @param psiType: 类型
      * @return {@link boolean}
-     * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isMap(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();
@@ -236,10 +238,10 @@ public class TypeUtils {
 
     /**
      * 是否是Map类型或者是Map的封装类型
+     * @author aqiu 2019-07-03 09:43
      * @param project: 项目
      * @param typePkName: 类完整包名
      * @return {@link boolean}
-     * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isMap(Project project, String typePkName) {
         if (isMapType(typePkName)) {
@@ -283,10 +285,10 @@ public class TypeUtils {
 
     /**
      * 是否是集合类型或者是集合的封装类型
+     * @author aqiu 2019-07-03 09:43
      * @param project: 项目
      * @param typePkName: 类完整包名
      * @return {@link boolean}
-     * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isCollection(Project project, String typePkName) {
         if (isCollectionType(typePkName)) {

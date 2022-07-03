@@ -20,12 +20,13 @@ import com.redsoft.idea.plugin.yapiv2.util.PropertyNamingUtils;
 import com.redsoft.idea.plugin.yapiv2.util.PsiUtils;
 import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFieldNameHandler,
         DocTagValueHandler {
@@ -53,14 +54,14 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
     }
 
     @Override
-    public Jsonable parse(String typePkName) {
+    public Jsonable parse(String typePkName, List<String> ignores) {
         //是否是数组
         boolean isArray = typePkName.endsWith("[]");
         if (isArray) {
             typePkName = typePkName.substring(0, typePkName.length() - 2);
             //如果是多维数组，递归解析
             if (typePkName.endsWith("[]")) {
-                return this.parseCollection(typePkName);
+                return this.parseCollection(typePkName, ignores);
             }
         }
         int s = typePkName.indexOf("<");
@@ -79,14 +80,14 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         if (TypeUtils.isBasicType(type)) {
             result = this.parseBasic(type);
         } else if (TypeUtils.isMap(this.project, type)) {
-            //对Map和Map类型的封装类进行过滤
+            //对Map及其子类进行处理
             result = this.parseMap(type);
         } else if (TypeUtils.isCollection(this.project, type)) {
             //如果是集合类型（List Set）
-            result = this.parseCollection(genericType);
+            result = this.parseCollection(genericType, ignores);
         } else {
             //其他情况 pojo
-            result = this.parsePojo(type, genericType);
+            result = this.parsePojo(type, genericType, ignores);
         }
         return result;
     }
@@ -104,7 +105,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
     @Override
     public String getJson(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();
-        Jsonable jsonable = this.parse(this.handleTypePkName(typePkName));
+        Jsonable jsonable = this.parse(this.handleTypePkName(typePkName), new ArrayList<>());
         if (jsonable instanceof ItemJsonSchema) {
             ((ItemJsonSchema) jsonable).set$schema(YApiConstants.$schema);
         }
@@ -113,7 +114,11 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
 
     @Override
-    public Jsonable parsePojo(String typePkName, String genericType) {
+    public Jsonable parsePojo(String typePkName, String genericType, List<String> ignores) {
+        if (ignores.contains(typePkName)) {
+            return this.parseMap(typePkName, typePkName);
+        }
+        ignores.add(typePkName);
         PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
         List<FieldValueWrapper> wrapperList = new ArrayList<>();
         if (Objects.nonNull(psiClass)) {
@@ -122,12 +127,21 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
                         .hasModifierProperty(PsiModifier.STATIC)) {
                     continue;
                 }
+                String fieldTypeName = field.getType().getCanonicalText();
                 //防止对象内部嵌套自身导致死循环
-                if (field.getType().getCanonicalText().contains(
-                        Objects.requireNonNull(psiClass.getQualifiedName()))) {
-                    continue;
-                }
-                wrapperList.add(this.parseField(field, genericType));
+//                if (fieldTypeName.contains(
+//                        Objects.requireNonNull(psiClass.getQualifiedName()))) {
+//                    continue;
+//                }
+//                if (ignores.contains(fieldTypeName)) {
+//                    FieldValueWrapper fieldValueWrapper = new FieldValueWrapper(field);
+//                    fieldValueWrapper.setFieldName(this.handleFieldName(field.getName()));
+//                    fieldValueWrapper.setValue(this.parseMap(fieldTypeName));
+//                    fieldValueWrapper.setDescription(fieldTypeName);
+//                    wrapperList.add(fieldValueWrapper);
+//                } else {
+                wrapperList.add(this.parseField(field, genericType, ignores));
+//                }
             }
         }
         return this.buildPojo(wrapperList);
@@ -142,29 +156,30 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     /**
      * 字段类型含有泛型时对类型的处理
-     * @author aqiu
-     * @param typePkName 含有泛型的字段类型 例如：List<T>
+     *
+     * @param typePkName  含有泛型的字段类型 例如：List<T>
      * @param genericType 泛型的对应类型
      * @return 处理后的真实类型
+     * @author aqiu
      */
     protected String handleGenericType(String typePkName, String genericType) {
         return TypeUtils.parseGenericType(typePkName, genericType);
     }
 
     @Override
-    public FieldValueWrapper parseField(PsiField field, String genericType) {
+    public FieldValueWrapper parseField(PsiField field, String genericType, List<String> ignores) {
         boolean hasGenericType = Strings.isNotBlank(genericType);
         FieldValueWrapper result = new FieldValueWrapper(field);
         if (hasGenericType) {
             String typePkName = field.getType().getCanonicalText();
             if (TypeUtils.hasGenericType(typePkName)) {
                 typePkName = this.handleGenericType(typePkName, genericType);
-                result.setValue(this.parse(typePkName));
+                result.setValue(this.parse(typePkName, ignores));
             } else {
-                result.setValue(this.parseFieldValue(field));
+                result.setValue(this.parseFieldValue(field, ignores));
             }
         } else {
-            result.setValue(this.parseFieldValue(field));
+            result.setValue(this.parseFieldValue(field, ignores));
         }
         if (this.needDescription()) {
             String desc = DesUtils.getLinkRemark(field, this.project);
@@ -178,14 +193,16 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     /**
      * <b>解析具体字段</b>
+     *
      * @author aqiu 2020/7/23 3:14 下午
      **/
-    protected Jsonable parseFieldValue(PsiField field) {
-        return this.parse(field.getType().getCanonicalText());
+    protected Jsonable parseFieldValue(PsiField field, List<String> ignores) {
+        return this.parse(field.getType().getCanonicalText(), ignores);
     }
 
     /**
      * <b>根据解析到的所有字段信息构建最终的解析结果</b>
+     *
      * @author aqiu 2020/7/23 3:15 下午
      **/
     public abstract Jsonable buildPojo(Collection<FieldValueWrapper> wrappers);

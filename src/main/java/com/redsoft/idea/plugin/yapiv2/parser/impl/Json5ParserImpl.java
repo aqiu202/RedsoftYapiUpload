@@ -14,7 +14,10 @@ import com.redsoft.idea.plugin.yapiv2.parser.ObjectRawParser;
 import com.redsoft.idea.plugin.yapiv2.parser.abs.AbstractJsonParser;
 import com.redsoft.idea.plugin.yapiv2.util.TypeUtils;
 import com.redsoft.idea.plugin.yapiv2.xml.YApiProjectProperty;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * <b>json5解析器默认实现</b>
@@ -45,8 +48,8 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
     }
 
     @Override
-    public Json<?> parseJson5(String typePkName) {
-        return (Json<?>) super.parse(typePkName);
+    public Json<?> parseJson5(String typePkName, List<String> ignores) {
+        return (Json<?>) super.parse(typePkName, ignores);
     }
 
     @Override
@@ -55,21 +58,21 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
     }
 
     @Override
-    public JsonObject parseMap(String typePkName) {
-        return new JsonObject(new JsonItem<>("key", new Json<>("value"), "map"));
+    public JsonObject parseMap(String typePkName, String description) {
+        return new JsonObject(new JsonItem<>("key", new Json<>("value"), description));
     }
 
     @Override
-    public JsonArray<?> parseCollection(String typePkName) {
+    public JsonArray<?> parseCollection(String typePkName, List<String> ignores) {
         if (Strings.isBlank(typePkName)) {
             return new JsonArray<>();
         }
-        return new JsonArray<>(this.parseJson5(typePkName));
+        return new JsonArray<>(this.parseJson5(typePkName, ignores));
     }
 
     @Override
     public String getRawResponse(PsiType psiType) {
-        return this.parse(psiType.getCanonicalText()).toJson();
+        return this.parse(psiType.getCanonicalText(), new ArrayList<>()).toJson();
     }
 
     @Override
