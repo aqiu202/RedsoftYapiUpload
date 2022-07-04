@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>RedsoftYapiUpload</id>
     <name>Redsoft YApi Upload</name>
-    <vendor email="aqiuqiuweb@163.com" url="http://www.qdredsoft.com">青岛红柿子软件技术有限公司</vendor>
+    <vendor email="aqiuqiuweb@163.com" url="https://github.com/aqiu202">aqiu</vendor>
 
     <description><![CDATA[
       a small plugin for IntelliJ IDEA uploading http api information to YApi.(Base on <a href="https://github.com/diwand/YApiIdeaUploadPlugin">YApiIdeaUploadPlugin</a>)<br>
