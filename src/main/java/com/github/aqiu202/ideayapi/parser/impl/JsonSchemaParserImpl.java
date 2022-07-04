@@ -4,7 +4,7 @@ import com.github.aqiu202.ideayapi.config.xml.YApiProjectProperty;
 import com.github.aqiu202.ideayapi.mode.schema.*;
 import com.github.aqiu202.ideayapi.mode.schema.base.ItemJsonSchema;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
-import com.github.aqiu202.ideayapi.model.FieldValueWrapper;
+import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.range.DecimalRange;
 import com.github.aqiu202.ideayapi.model.range.IntegerRange;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
@@ -74,24 +74,25 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ItemJsonSchema buildPojo(Collection<FieldValueWrapper> wrappers) {
+    public ItemJsonSchema buildPojo(Collection<ValueWrapper> wrappers) {
         ObjectSchema objectSchema = new ObjectSchema();
-        for (FieldValueWrapper wrapper : wrappers) {
-            String fieldName = wrapper.getFieldName();
-            ItemJsonSchema value = (ItemJsonSchema) wrapper.getValue();
+        for (ValueWrapper wrapper : wrappers) {
+            String fieldName = wrapper.getName();
+            ItemJsonSchema value = (ItemJsonSchema) wrapper.getJson();
             // 字段备注
-            String desc = wrapper.getDescription();
+            String desc = wrapper.getDesc();
             if (Strings.isBlank(desc)) {
                 desc = "";
             }
-            // 类型备注
-            String description = value.getDescription();
-            if (Strings.isNotBlank(description)) {
-                desc += description;
+            if (value != null) {
+                // 类型备注
+                String description = value.getDescription();
+                if (Strings.isNotBlank(description)) {
+                    desc += description;
+                }
+                objectSchema.addProperty(fieldName, value.setDescription(desc));
             }
-            objectSchema.addProperty(fieldName,
-                    ((ItemJsonSchema) wrapper.getValue()).setDescription(desc));
-            if (ValidUtils.notNullOrBlank(wrapper.getField())) {
+            if (ValidUtils.notNullOrBlank(wrapper.getSource())) {
                 objectSchema.addRequired(fieldName);
             }
         }

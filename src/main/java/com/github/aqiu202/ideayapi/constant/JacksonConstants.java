@@ -11,6 +11,8 @@ public interface JacksonConstants {
 
     String JSON_IGNORE_PROPERTIES = "com.fasterxml.jackson.annotation.JsonIgnoreProperties";
 
+    String JSON_INCLUDE_PROPERTIES = "com.fasterxml.jackson.annotation.JsonIncludeProperties";
+
     String JSON_VALUE = "com.fasterxml.jackson.annotation.JsonValue";
 
     String JSON_FORMAT = "com.fasterxml.jackson.annotation.JsonFormat";

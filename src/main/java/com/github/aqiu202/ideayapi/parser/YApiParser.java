@@ -4,7 +4,6 @@ import com.github.aqiu202.ideayapi.constant.NotificationConstants;
 import com.github.aqiu202.ideayapi.constant.YApiConstants;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.base.DeprecatedAssert;
-import com.github.aqiu202.ideayapi.parser.base.impl.DeprecatedAssertImpl;
 import com.github.aqiu202.ideayapi.parser.impl.PsiClassParserImpl;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.intellij.notification.NotificationType;
@@ -24,8 +23,6 @@ import java.util.Set;
  * @author aqiu 2019-06-15 11:46
  **/
 public class YApiParser {
-
-    private final DeprecatedAssert deprecatedAssert = new DeprecatedAssertImpl();
 
     private final Project project;
     private final PsiMethodParser methodParser;
@@ -50,7 +47,7 @@ public class YApiParser {
         if (selectMethod != null) {
             PsiClass currentClass = (PsiClass) selectMethod.getParent();
             //获取该方法是否已经标记过时
-            if (this.deprecatedAssert.isDeprecated(currentClass, selectMethod)) {
+            if (DeprecatedAssert.instance.isDeprecated(currentClass, selectMethod)) {
                 NotificationConstants.NOTIFICATION_GROUP
                         .createNotification(YApiConstants.name, "该类/方法已过时",
                                 "该类/方法(或注释中)含有@Deprecated注解，如需上传，请删除该注解", NotificationType.WARNING)
@@ -64,7 +61,7 @@ public class YApiParser {
         PsiClass selectedClass = PsiUtils.getSelectClass(e);
         if (selectedClass != null) {
             //获取该类是否已经过时
-            if (deprecatedAssert.isDeprecated(selectedClass)) {
+            if (DeprecatedAssert.instance.isDeprecated(selectedClass)) {
                 NotificationConstants.NOTIFICATION_GROUP
                         .createNotification(YApiConstants.name, "该类已过时",
                                 "该类(或注释中)含有@Deprecated注解，如需上传，请删除该注解", NotificationType.WARNING)
@@ -80,7 +77,7 @@ public class YApiParser {
             Set<PsiClass> classes = new HashSet<>();
             PsiUtils.collectClasses(selectDir, classes);
             classes.stream()
-                    .filter(c -> !this.deprecatedAssert.isDeprecated(c))
+                    .filter(c -> !DeprecatedAssert.instance.isDeprecated(c))
                     .forEach(c -> yApiParams.addAll(this.classParser.parse(c)));
 
         }

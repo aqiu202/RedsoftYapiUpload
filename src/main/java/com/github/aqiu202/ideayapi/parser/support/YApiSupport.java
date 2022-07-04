@@ -2,6 +2,8 @@ package com.github.aqiu202.ideayapi.parser.support;
 
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiParam;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 
 /**
@@ -13,9 +15,16 @@ public interface YApiSupport {
         return 0;
     }
 
-    void handleMethod(PsiMethod psiMethod, YApiParam apiDTO);
+    default void handleMethod(PsiMethod psiMethod, YApiParam apiDTO) {
+    }
 
-    void handleParam(ValueWrapper wrapper);
+    default void handleParam(ValueWrapper wrapper) {
+    }
 
-    void handleField(ValueWrapper wrapper);
+    default void handleField(ValueWrapper wrapper) {
+    }
+
+    default boolean isIgnored(PsiField field, PsiClass psiClass) {
+        return false;
+    }
 }

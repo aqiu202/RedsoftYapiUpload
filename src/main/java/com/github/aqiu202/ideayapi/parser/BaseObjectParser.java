@@ -1,6 +1,6 @@
 package com.github.aqiu202.ideayapi.parser;
 
-import com.github.aqiu202.ideayapi.model.FieldValueWrapper;
+import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.util.DesUtils;
 import com.intellij.psi.PsiField;
 import org.jetbrains.annotations.Nullable;
@@ -38,9 +38,9 @@ public interface BaseObjectParser {
 
     Jsonable parsePojo(String typePkName, String genericType, List<String> ignores);
 
-    default FieldValueWrapper parseField(PsiField field, String genericType) {
+    default ValueWrapper parseField(PsiField field, String genericType) {
         return parseField(field, genericType, new ArrayList<>());
     }
 
-    FieldValueWrapper parseField(PsiField field, String genericType, List<String> ignores);
+    ValueWrapper parseField(PsiField field, String genericType, List<String> ignores);
 }

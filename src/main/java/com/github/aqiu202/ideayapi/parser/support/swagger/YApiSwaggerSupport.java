@@ -23,28 +23,29 @@ public class YApiSwaggerSupport implements YApiSupport {
     @Override
     public void handleMethod(PsiMethod psiMethod, @NonNls YApiParam apiDTO) {
         String title = PsiAnnotationUtils
-                .getPsiParameterAnnotationValue(psiMethod, SwaggerConstants.API_OPERATION);
+                .getPsiAnnotationAttributeValue(psiMethod, SwaggerConstants.API_OPERATION);
         if (Strings.isNotBlank(title)) {
-            apiDTO.setTitle(title.replace("\"", ""));
+            apiDTO.setTitle(title);
         }
     }
 
     @Override
     public void handleParam(@NonNls ValueWrapper wrapper) {
         String desc = PsiAnnotationUtils
-                .getPsiParameterAnnotationValue(wrapper.getSource(), SwaggerConstants.API_PARAM);
+                .getPsiAnnotationAttributeValue(wrapper.getSource(), SwaggerConstants.API_PARAM);
         if (Strings.isNotBlank(desc)) {
-            wrapper.setDesc(desc.replace("\"", ""));
+            wrapper.setDesc(desc);
         }
     }
 
     @Override
     public void handleField(@NonNls ValueWrapper wrapper) {
         String desc = PsiAnnotationUtils
-                .getPsiParameterAnnotationValue(wrapper.getSource(),
+                .getPsiAnnotationAttributeValue(wrapper.getSource(),
                         SwaggerConstants.API_MODEL_PROPERTY);
         if (Strings.isNotBlank(desc)) {
-            wrapper.setDesc(desc.replace("\"", ""));
+            wrapper.setDesc(desc);
         }
     }
+
 }

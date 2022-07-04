@@ -1,5 +1,7 @@
 package com.github.aqiu202.ideayapi.parser.support;
 
+import com.github.aqiu202.ideayapi.parser.support.jackson.YApiJacksonSupport;
+import com.github.aqiu202.ideayapi.parser.support.spring.YApiSpringSupport;
 import com.github.aqiu202.ideayapi.parser.support.swagger.YApiSwaggerSupport;
 
 /**
@@ -7,5 +9,8 @@ import com.github.aqiu202.ideayapi.parser.support.swagger.YApiSwaggerSupport;
  */
 public interface YApiSupportHolder {
 
-    YApiSupport supports = new YApiSupports(YApiSwaggerSupport.INSTANCE);
+    YApiSupport supports = new YApiSupports(
+            YApiSpringSupport.INSTANCE,
+            YApiJacksonSupport.INSTANCE,
+            YApiSwaggerSupport.INSTANCE);
 }

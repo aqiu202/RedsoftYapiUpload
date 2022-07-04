@@ -1,6 +1,8 @@
 package com.github.aqiu202.ideayapi.parser.base;
 
+import com.github.aqiu202.ideayapi.parser.base.impl.DeprecatedAssertImpl;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +12,10 @@ import org.jetbrains.annotations.NotNull;
  * @author aqiu 2020/7/23 3:51 下午
  **/
 public interface DeprecatedAssert {
+
+    DeprecatedAssert instance = new DeprecatedAssertImpl();
+
+    boolean isDeprecated(@NotNull PsiField c);
 
     boolean isDeprecated(@NotNull PsiClass c);
 

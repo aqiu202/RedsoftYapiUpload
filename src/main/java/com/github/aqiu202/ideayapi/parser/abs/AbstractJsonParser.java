@@ -4,12 +4,16 @@ import com.github.aqiu202.ideayapi.config.xml.YApiProjectProperty;
 import com.github.aqiu202.ideayapi.constant.PropertyNamingStrategy;
 import com.github.aqiu202.ideayapi.constant.SpringWebFluxConstants;
 import com.github.aqiu202.ideayapi.constant.YApiConstants;
+import com.github.aqiu202.ideayapi.http.filter.PsiFieldFilter;
+import com.github.aqiu202.ideayapi.http.filter.PsiFieldListFilter;
 import com.github.aqiu202.ideayapi.http.res.DocTagValueHandler;
 import com.github.aqiu202.ideayapi.http.res.ResponseFieldNameHandler;
 import com.github.aqiu202.ideayapi.mode.schema.base.ItemJsonSchema;
-import com.github.aqiu202.ideayapi.model.FieldValueWrapper;
+import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.Jsonable;
 import com.github.aqiu202.ideayapi.parser.ObjectJsonParser;
+import com.github.aqiu202.ideayapi.parser.base.DeprecatedAssert;
+import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.github.aqiu202.ideayapi.util.DesUtils;
 import com.github.aqiu202.ideayapi.util.PropertyNamingUtils;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
@@ -23,10 +27,8 @@ import com.jgoodies.common.base.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFieldNameHandler,
         DocTagValueHandler {
@@ -112,6 +114,16 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         return jsonable.toJson();
     }
 
+    @Override
+    public PsiFieldFilter getPsiFieldFilter() {
+        return (f, c) ->
+                !DeprecatedAssert.instance.isDeprecated(f) && !YApiSupportHolder.supports.isIgnored(f, c);
+    }
+
+    @Override
+    public PsiFieldListFilter getPsiFieldListFilter() {
+        return c -> Arrays.stream(c.getAllFields()).filter(f -> this.getPsiFieldFilter().apply(f, c)).collect(Collectors.toList());
+    }
 
     @Override
     public Jsonable parsePojo(String typePkName, String genericType, List<String> ignores) {
@@ -120,14 +132,16 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         }
         ignores.add(typePkName);
         PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
-        List<FieldValueWrapper> wrapperList = new ArrayList<>();
+        List<ValueWrapper> wrapperList = new ArrayList<>();
         if (Objects.nonNull(psiClass)) {
-            for (PsiField field : psiClass.getAllFields()) {
+            for (PsiField field : this.getPsiFieldListFilter().apply(psiClass)) {
                 if (Objects.requireNonNull(field.getModifierList())
                         .hasModifierProperty(PsiModifier.STATIC)) {
                     continue;
                 }
-                wrapperList.add(this.parseField(field, genericType, ignores));
+                ValueWrapper valueWrapper = this.parseField(field, genericType, ignores);
+                YApiSupportHolder.supports.handleField(valueWrapper);
+                wrapperList.add(valueWrapper);
             }
         }
         return this.buildPojo(wrapperList);
@@ -153,29 +167,30 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
     }
 
     @Override
-    public FieldValueWrapper parseField(PsiField field, String genericType, List<String> ignores) {
+    public ValueWrapper parseField(PsiField field, String genericType, List<String> ignores) {
         boolean hasGenericType = Strings.isNotBlank(genericType);
-        FieldValueWrapper result = new FieldValueWrapper(field);
+        ValueWrapper result = new ValueWrapper();
+        result.setSource(field);
         if (hasGenericType) {
             String typePkName = field.getType().getCanonicalText();
             if (TypeUtils.hasGenericType(typePkName)) {
                 typePkName = this.handleGenericType(typePkName, genericType);
-                result.setValue(this.parse(typePkName, ignores));
+                result.setJson(this.parse(typePkName, ignores));
             } else {
-                result.setValue(this.parseFieldValue(field, ignores));
+                result.setJson(this.parseFieldValue(field, ignores));
             }
         } else {
-            result.setValue(this.parseFieldValue(field, ignores));
+            result.setJson(this.parseFieldValue(field, ignores));
         }
         if (this.needDescription()) {
             String desc = DesUtils.getLinkRemark(field, this.project);
             desc = this.handleDocTagValue(desc);
             if (Strings.isNotBlank(desc)) {
-                result.setDescription(desc);
+                result.setDesc(desc);
             }
         }
         String fieldName = this.handleFieldName(field.getName());
-        result.setFieldName(fieldName);
+        result.setName(fieldName);
         return result;
     }
 
@@ -193,5 +208,5 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
      *
      * @author aqiu 2020/7/23 3:15 下午
      **/
-    public abstract Jsonable buildPojo(Collection<FieldValueWrapper> wrappers);
+    public abstract Jsonable buildPojo(Collection<ValueWrapper> wrappers);
 }

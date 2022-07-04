@@ -2,6 +2,8 @@ package com.github.aqiu202.ideayapi.parser.support;
 
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiParam;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 
 import java.util.*;
@@ -46,4 +48,13 @@ public class YApiSupports implements YApiSupport {
         this.supportList.forEach((i) -> i.handleField(wrapper));
     }
 
+    @Override
+    public boolean isIgnored(PsiField field, PsiClass psiClass) {
+        for (YApiSupport support : this.supportList) {
+            if (support.isIgnored(field, psiClass)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

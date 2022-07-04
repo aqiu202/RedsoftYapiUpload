@@ -3,6 +3,7 @@ package com.github.aqiu202.ideayapi.http.filter;
 import com.github.aqiu202.ideayapi.constant.ServletConstants;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiParam;
+import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
@@ -46,25 +47,25 @@ public interface PsiParamListFilter {
         ValueWrapper valueWrapper = new ValueWrapper();
         PsiAnnotationMemberValue element = psiAnnotation.findAttributeValue("name");
         if (Objects.nonNull(element)) {
-            String name = element.getText().replace("\"", "");
+            String name = PsiAnnotationUtils.resolveAnnotationValue(element.getText());
             if (Strings.isBlank(name)) {
-                name = Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText()
-                        .replace("\"", "");
+                name = PsiAnnotationUtils.resolveAnnotationValue(Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
             }
             valueWrapper.setName(name);
         }
         PsiAnnotationMemberValue required = psiAnnotation.findAttributeValue("required");
         if (Objects.nonNull(required)) {
             valueWrapper.setRequired(
-                    required.getText().replace("\"", "")
+                    PsiAnnotationUtils.resolveAnnotationValue(required.getText())
                             .replace("false", "0")
                             .replace("true", "1"));
         }
         PsiAnnotationMemberValue defaultValue = psiAnnotation.findAttributeValue("defaultValue");
+        String stringValue;
         if (Objects.nonNull(defaultValue)
-                && !"\"\\n\\t\\t\\n\\t\\t\\n\\uE000\\uE001\\uE002\\n\\t\\t\\t\\t\\n\""
-                .equals(defaultValue.getText())) {
-            valueWrapper.setExample(defaultValue.getText().replace("\"", ""));
+                && !"\\n\\t\\t\\n\\t\\t\\n\\uE000\\uE001\\uE002\\n\\t\\t\\t\\t\\n"
+                .equals((stringValue = PsiAnnotationUtils.resolveAnnotationValue(defaultValue.getText())))) {
+            valueWrapper.setExample(stringValue);
             valueWrapper.setRequired("0");
         }
         if (Strings.isBlank(valueWrapper.getRequired())) {

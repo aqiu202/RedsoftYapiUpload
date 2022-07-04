@@ -8,7 +8,6 @@ import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.PsiClassParser;
 import com.github.aqiu202.ideayapi.parser.PsiMethodParser;
 import com.github.aqiu202.ideayapi.parser.base.DeprecatedAssert;
-import com.github.aqiu202.ideayapi.parser.base.impl.DeprecatedAssertImpl;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 
 public class PsiClassParserImpl implements PsiClassParser {
 
-    private final DeprecatedAssert deprecatedAssert = new DeprecatedAssertImpl();
     private final PsiMethodParser methodParser;
 
 
@@ -60,6 +58,6 @@ public class PsiClassParserImpl implements PsiClassParser {
                         .findAnnotation(m, SpringMVCConstants.RequestMapping, SpringMVCConstants.GetMapping,
                                 SpringMVCConstants.PostMapping, SpringMVCConstants.PutMapping,
                                 SpringMVCConstants.DeleteMapping, SpringMVCConstants.PatchMapping) == null ||
-                deprecatedAssert.isDeprecated(m));
+                DeprecatedAssert.instance.isDeprecated(m));
     }
 }

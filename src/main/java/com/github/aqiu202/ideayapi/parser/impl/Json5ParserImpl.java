@@ -5,7 +5,7 @@ import com.github.aqiu202.ideayapi.mode.json5.Json;
 import com.github.aqiu202.ideayapi.mode.json5.JsonArray;
 import com.github.aqiu202.ideayapi.mode.json5.JsonItem;
 import com.github.aqiu202.ideayapi.mode.json5.JsonObject;
-import com.github.aqiu202.ideayapi.model.FieldValueWrapper;
+import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.Json5JsonParser;
 import com.github.aqiu202.ideayapi.parser.Jsonable;
 import com.github.aqiu202.ideayapi.parser.ObjectRawParser;
@@ -81,13 +81,13 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
     }
 
     @Override
-    public Jsonable buildPojo(Collection<FieldValueWrapper> wrappers) {
+    public Jsonable buildPojo(Collection<ValueWrapper> wrappers) {
         JsonObject jsonObject = new JsonObject();
-        for (FieldValueWrapper wrapper : wrappers) {
-            final Jsonable value = wrapper.getValue();
+        for (ValueWrapper wrapper : wrappers) {
+            final Jsonable value = wrapper.getJson();
             if (value instanceof Json) {
                 // 字段备注
-                String desc = wrapper.getDescription();
+                String desc = wrapper.getDesc();
                 if (Strings.isBlank(desc)) {
                     desc = "";
                 }
@@ -98,11 +98,12 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
                         // 类型备注
                         String description = item.getDescription();
                         if (Strings.isNotBlank(description)) {
+                            item.setDescription("");
                             desc += description;
                         }
                     }
                 }
-                jsonObject.addItem(new JsonItem<>(wrapper.getFieldName(), (Json<?>) value, desc));
+                jsonObject.addItem(new JsonItem<>(wrapper.getName(), (Json<?>) value, desc));
             }
         }
         return jsonObject;

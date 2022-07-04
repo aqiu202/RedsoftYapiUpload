@@ -2,6 +2,7 @@ package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.constant.AnnotationConstants;
 import com.intellij.psi.*;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -98,9 +99,9 @@ public final class PsiAnnotationUtils {
      * @param psiParameter   psiParameter
      * @param annotationName annotationName
      */
-    public static String getPsiParameterAnnotationValue(PsiModifierListOwner psiParameter,
+    public static String getPsiAnnotationAttributeValue(PsiModifierListOwner psiParameter,
                                                         String annotationName) {
-        return getPsiParameterAnnotationParam(psiParameter, annotationName,
+        return getPsiAnnotationAttributeValue(psiParameter, annotationName,
                 PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME);
     }
 
@@ -111,21 +112,25 @@ public final class PsiAnnotationUtils {
      * @param annotationName annotationName
      */
     @Nullable
-    public static String getPsiParameterAnnotationParam(PsiModifierListOwner psiParameter,
+    public static String getPsiAnnotationAttributeValue(PsiModifierListOwner psiParameter,
                                                         String annotationName, String paramName) {
         PsiAnnotation annotation = PsiAnnotationUtils
                 .findAnnotation(psiParameter, annotationName);
         if (annotation == null) {
             return null;
         }
-        return Objects.requireNonNull(annotation.findAttributeValue(paramName)).getText();
+        return resolveAnnotationValue(Objects.requireNonNull(annotation.findAttributeValue(paramName)).getText());
     }
 
     @Nullable
     public static String getPsiAnnotationAttributeValue(PsiAnnotation annotation,
                                                         String attributeName) {
         PsiAnnotationMemberValue consumes = annotation.findAttributeValue(attributeName);
-        return Objects.isNull(consumes) ? null : consumes.getText();
+        return Objects.isNull(consumes) ? null : resolveAnnotationValue(consumes.getText());
 
+    }
+
+    public static String resolveAnnotationValue(String value) {
+        return StringUtils.isBlank(value) ? value : value.replace("\"", "");
     }
 }

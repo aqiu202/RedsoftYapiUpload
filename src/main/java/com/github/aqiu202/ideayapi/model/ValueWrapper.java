@@ -1,7 +1,9 @@
 package com.github.aqiu202.ideayapi.model;
 
+import com.github.aqiu202.ideayapi.parser.Jsonable;
 import com.intellij.psi.PsiVariable;
 import com.jgoodies.common.base.Strings;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -28,6 +30,8 @@ public class ValueWrapper {
     protected String name;
 
     private PsiVariable source;
+
+    private Jsonable json;
 
     public PsiVariable getSource() {
         return source;
@@ -75,6 +79,15 @@ public class ValueWrapper {
 
     public void setExample(String example) {
         this.example = example;
+    }
+
+    @Nullable
+    public Jsonable getJson() {
+        return json;
+    }
+
+    public void setJson(@Nullable Jsonable json) {
+        this.json = json;
     }
 
     public void full(ValueWrapper valueWrapper) {

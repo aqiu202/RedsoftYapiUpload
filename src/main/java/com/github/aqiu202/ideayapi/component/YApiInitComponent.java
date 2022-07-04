@@ -25,10 +25,11 @@ public class YApiInitComponent implements ProjectComponent {
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
-            String changeLogTitle = "<h4>2.0.6版本，兼容IDEA 2021.2版本</h4>";
+            String changeLogTitle = "<h4>2.1.0版本，添加批量导入功能，兼容Jackson部分注解</h4>";
             String changeLogContent = "<ol>\n"
-                    + "        <li>兼容IDEA 2021.2版本</li>\n"
-                    + "        <li>代码和注释模板优化</li>\n"
+                    + "        <li>添加批量导入功能（项目目录右键-批量上传到YApi）</li>\n"
+                    + "        <li>兼容Jackson部分注解</li>\n"
+                    + "        <li>修复已知问题--#11,#15,#16,#17,#18,#19,#20</li>\n"
                     + "     </ol>";
             NotificationConstants.NOTIFICATION_GROUP_WINDOW.createNotification(YApiConstants.name,
                             "更新内容",
