@@ -183,34 +183,34 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <applicationService
-                serviceImplementation="com.redsoft.idea.plugin.yapiv2.config.YApiApplicationPersistentState"/>
+                serviceImplementation="com.github.aqiu202.ideayapi.config.YApiApplicationPersistentState"/>
         <projectConfigurable
-                instance="com.redsoft.idea.plugin.yapiv2.config.YApiSearchableConfigurable"/>
+                instance="com.github.aqiu202.ideayapi.config.YApiSearchableConfigurable"/>
         <projectService
-                serviceImplementation="com.redsoft.idea.plugin.yapiv2.config.YApiProjectPersistentState"/>
+                serviceImplementation="com.github.aqiu202.ideayapi.config.YApiProjectPersistentState"/>
         <defaultLiveTemplatesProvider
-                implementation="com.redsoft.idea.plugin.yapiv2.template.YApiTemplateProvider"/>
+                implementation="com.github.aqiu202.ideayapi.template.YApiTemplateProvider"/>
         <liveTemplateContext
-                implementation="com.redsoft.idea.plugin.yapiv2.template.YApiTemplateContextType"/>
+                implementation="com.github.aqiu202.ideayapi.template.YApiTemplateContextType"/>
     </extensions>
 
     <project-components>
         <component>
-            <implementation-class>com.redsoft.idea.plugin.yapiv2.component.YApiInitComponent</implementation-class>
+            <implementation-class>com.github.aqiu202.ideayapi.component.YApiInitComponent</implementation-class>
         </component>
     </project-components>
 
     <actions>
         <!-- Add your actions here -->
         <action id="YapiUpload"
-                class="com.redsoft.idea.plugin.yapiv2.action.YApiUploadAction"
+                class="com.github.aqiu202.ideayapi.action.YApiUploadAction"
                 text="上传到YApi"
                 description="YApi文档上传插件">
             <add-to-group group-id="EditorLangPopupMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift alt u"/>
         </action>
         <action id="BatchYapiUpload"
-                class="com.redsoft.idea.plugin.yapiv2.action.YApiUploadAction"
+                class="com.github.aqiu202.ideayapi.action.YApiUploadAction"
                 text="批量上传到YApi"
                 description="YApi文档上传插件">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
