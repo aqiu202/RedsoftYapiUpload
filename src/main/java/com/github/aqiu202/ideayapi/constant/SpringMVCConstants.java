@@ -33,6 +33,6 @@ public interface SpringMVCConstants {
 
     String MultipartFile = "org.springframework.web.multipart.MultipartFile";
 
-    String DateFormat = "org.springframework.format.annotation.DateFormat";
+    String DateTimeFormat = "org.springframework.format.annotation.DateTimeFormat";
 
 }

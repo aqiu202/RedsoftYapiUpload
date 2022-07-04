@@ -19,8 +19,8 @@ public class YApiSpringSupport implements YApiSupport {
     public void handleParam(ValueWrapper wrapper) {
         PsiParameter param = (PsiParameter) wrapper.getSource();
         if (TypeUtils.isDate(param.getType().getCanonicalText())
-                && PsiAnnotationUtils.isAnnotatedWith(param, SpringMVCConstants.DateFormat)) {
-            String pattern = PsiAnnotationUtils.getPsiAnnotationAttributeValue(param, SpringMVCConstants.DateFormat, "pattern");
+                && PsiAnnotationUtils.isAnnotatedWith(param, SpringMVCConstants.DateTimeFormat)) {
+            String pattern = PsiAnnotationUtils.getPsiAnnotationAttributeValue(param, SpringMVCConstants.DateTimeFormat, "pattern");
             if (StringUtils.isNotBlank(pattern)) {
                 try {
                     wrapper.setExample(LocalDateTime.now().format(DateTimeFormatter
