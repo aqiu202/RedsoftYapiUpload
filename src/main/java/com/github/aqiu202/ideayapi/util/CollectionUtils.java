@@ -11,7 +11,15 @@ public final class CollectionUtils {
         return coll == null || coll.isEmpty();
     }
 
+    public static boolean isEmpty(Object[] arr) {
+        return arr == null || arr.length == 0;
+    }
+
     public static boolean isNotEmpty(Collection<?> coll) {
         return !isEmpty(coll);
+    }
+
+    public static boolean isNotEmpty(Object[] arr) {
+        return !isEmpty(arr);
     }
 }
