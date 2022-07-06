@@ -1,13 +1,23 @@
 package com.github.aqiu202.ideayapi.util;
 
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -52,11 +62,56 @@ public final class PsiUtils {
         }
     }
 
+    public static Set<PsiClass> getClassesFormVirtualFile(VirtualFile virtualFile, Project project) {
+        Set<PsiClass> results = new HashSet<>();
+        VfsUtilCore.visitChildrenRecursively(virtualFile, new VirtualFileVisitor() {
+            @Override
+            public boolean visitFile(@NotNull VirtualFile file) {
+                if (file.getFileType() instanceof JavaFileType) {
+                    PsiJavaFile psiJavaFile = convertPsiJavaFile(file, project);
+                    if (psiJavaFile != null) {
+                        results.addAll(Arrays.asList(psiJavaFile.getClasses()));
+                    }
+                    return false;
+                }
+                return file.isDirectory();
+            }
+        });
+        return results;
+    }
+
     public static Collection<PsiClass> joinAllClasses(Collection<PsiJavaFile> javaFiles) {
         Set<PsiClass> results = new HashSet<>();
         javaFiles.forEach(file -> results.addAll(Arrays.asList(file.getClasses())));
         return results;
     }
+
+    private static String readVirtualFileContent(VirtualFile file) throws IOException {
+        InputStream inputStream = file.getInputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final int bufferSize = 256;
+        byte[] buff = new byte[bufferSize];
+        int rc;
+        while ((rc = inputStream.read(buff, 0, bufferSize)) > 0) {
+            baos.write(buff, 0, rc);
+        }
+        return baos.toString(StandardCharsets.UTF_8.name());
+    }
+
+    @Nullable
+    private static PsiJavaFile convertPsiJavaFile(VirtualFile file, Project project) {
+        FileType fileType = file.getFileType();
+        try {
+            if (fileType instanceof JavaFileType) {
+                return (PsiJavaFile) PsiFileFactory.getInstance(project).createFileFromText(file.getName(),
+                        fileType, readVirtualFileContent(file));
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return null;
+    }
+
 
     /**
      * 获取当前选中字符

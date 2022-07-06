@@ -21,8 +21,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * <b>接口信息解析入口</b>
@@ -82,14 +83,14 @@ public class YApiParser {
             classes.stream()
                     .filter(c -> !DeprecatedAssert.instance.isDeprecated(c))
                     .forEach(c -> yApiParams.addAll(this.classParser.parse(c)));
-        } else { //尝试获取选取的文件集合
+        } else { //尝试获取选取的文件/文件夹集合
             VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
             if (CollectionUtils.isNotEmpty(virtualFiles)) {
-                Set<PsiJavaFile> files = Arrays.stream(virtualFiles).map(this::convertPsiJavaFile)
-                        .filter(Objects::nonNull).collect(Collectors.toSet());
-                PsiUtils.joinAllClasses(files).stream()
-                        .filter(c -> !DeprecatedAssert.instance.isDeprecated(c))
-                        .forEach(c -> yApiParams.addAll(this.classParser.parse(c)));
+                for (VirtualFile virtualFile : virtualFiles) {
+                    PsiUtils.getClassesFormVirtualFile(virtualFile, project).stream()
+                            .filter(c -> !DeprecatedAssert.instance.isDeprecated(c))
+                            .forEach(c -> yApiParams.addAll(this.classParser.parse(c)));
+                }
             }
         }
         return yApiParams;
