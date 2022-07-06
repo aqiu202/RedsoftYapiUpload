@@ -9,6 +9,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -36,7 +38,7 @@ public final class PsiUtils {
         return (pe != null && clz.isAssignableFrom(pe.getClass())) ? (T) pe : null;
     }
 
-    public static void collectClasses(PsiDirectory psiDirectory, Set<PsiClass> classes) {
+    public static void collectClasses(PsiDirectory psiDirectory, Collection<PsiClass> classes) {
         if (psiDirectory.getChildren().length > 0) {
             PsiElement[] children = psiDirectory.getChildren();
             for (PsiElement child : children) {
@@ -48,6 +50,12 @@ public final class PsiUtils {
                 }
             }
         }
+    }
+
+    public static Collection<PsiClass> joinAllClasses(Collection<PsiJavaFile> javaFiles) {
+        Set<PsiClass> results = new HashSet<>();
+        javaFiles.forEach(file -> results.addAll(Arrays.asList(file.getClasses())));
+        return results;
     }
 
     /**

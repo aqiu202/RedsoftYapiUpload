@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <b>接口信息解析入口</b>
@@ -84,14 +85,11 @@ public class YApiParser {
         } else { //尝试获取选取的文件集合
             VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
             if (CollectionUtils.isNotEmpty(virtualFiles)) {
-                Arrays.stream(virtualFiles).map(this::convertPsiJavaFile).filter(Objects::nonNull)
-                        .forEach(f -> {
-                            for (PsiClass aClass : f.getClasses()) {
-                                if (!DeprecatedAssert.instance.isDeprecated(aClass)) {
-                                    yApiParams.addAll(this.classParser.parse(aClass));
-                                }
-                            }
-                        });
+                Set<PsiJavaFile> files = Arrays.stream(virtualFiles).map(this::convertPsiJavaFile)
+                        .filter(Objects::nonNull).collect(Collectors.toSet());
+                PsiUtils.joinAllClasses(files).stream()
+                        .filter(c -> !DeprecatedAssert.instance.isDeprecated(c))
+                        .forEach(c -> yApiParams.addAll(this.classParser.parse(c)));
             }
         }
         return yApiParams;
