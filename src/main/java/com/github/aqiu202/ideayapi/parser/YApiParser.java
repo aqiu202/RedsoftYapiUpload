@@ -7,20 +7,15 @@ import com.github.aqiu202.ideayapi.parser.base.DeprecatedAssert;
 import com.github.aqiu202.ideayapi.parser.impl.PsiClassParserImpl;
 import com.github.aqiu202.ideayapi.util.CollectionUtils;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
-import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiMethod;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -94,32 +89,6 @@ public class YApiParser {
             }
         }
         return yApiParams;
-    }
-
-    private String readVirtualFileContent(VirtualFile file) throws IOException {
-        InputStream inputStream = file.getInputStream();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final int bufferSize = 256;
-        byte[] buff = new byte[bufferSize];
-        int rc;
-        while ((rc = inputStream.read(buff, 0, bufferSize)) > 0) {
-            baos.write(buff, 0, rc);
-        }
-        return baos.toString(StandardCharsets.UTF_8.name());
-    }
-
-    @Nullable
-    private PsiJavaFile convertPsiJavaFile(VirtualFile file) {
-        FileType fileType = file.getFileType();
-        try {
-            if (fileType instanceof JavaFileType) {
-                return (PsiJavaFile) PsiFileFactory.getInstance(this.project).createFileFromText(file.getName(),
-                        fileType, this.readVirtualFileContent(file));
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return null;
     }
 
 }
