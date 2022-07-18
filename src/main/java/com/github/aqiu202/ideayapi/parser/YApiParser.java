@@ -16,6 +16,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiMethod;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,22 +74,24 @@ public class YApiParser {
             List<YApiParam> params = this.classParser.parse(selectedClass);
             yApiParams.addAll(params);
         } else if ((selectDir = PsiUtils.getSelectPackage(e)) != null) {// 如果选取的是文件夹
-            Set<PsiClass> classes = new HashSet<>();
-            PsiUtils.collectClasses(selectDir, classes);
-            classes.stream()
-                    .filter(c -> !DeprecatedAssert.instance.isDeprecated(c))
-                    .forEach(c -> yApiParams.addAll(this.classParser.parse(c)));
+            PsiUtils.collectPsiClasses(selectDir)
+                    .forEach(c -> this.handleClass(c, yApiParams));
         } else { //尝试获取选取的文件/文件夹集合
             VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
             if (CollectionUtils.isNotEmpty(virtualFiles)) {
                 for (VirtualFile virtualFile : virtualFiles) {
-                    PsiUtils.getClassesFormVirtualFile(virtualFile, project).stream()
-                            .filter(c -> !DeprecatedAssert.instance.isDeprecated(c))
-                            .forEach(c -> yApiParams.addAll(this.classParser.parse(c)));
+                    PsiUtils.getClassesFormVirtualFile(virtualFile, project)
+                            .forEach(c -> this.handleClass(c, yApiParams));
                 }
             }
         }
         return yApiParams;
+    }
+
+    private void handleClass(PsiClass c, Collection<YApiParam> params) {
+        if (!DeprecatedAssert.instance.isDeprecated(c)) {
+            params.addAll(this.classParser.parse(c));
+        }
     }
 
 }

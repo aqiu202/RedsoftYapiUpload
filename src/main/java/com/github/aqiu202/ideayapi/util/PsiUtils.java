@@ -3,7 +3,6 @@ package com.github.aqiu202.ideayapi.util;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -48,18 +47,24 @@ public final class PsiUtils {
         return (pe != null && clz.isAssignableFrom(pe.getClass())) ? (T) pe : null;
     }
 
-    public static void collectClasses(PsiDirectory psiDirectory, Collection<PsiClass> classes) {
-        if (psiDirectory.getChildren().length > 0) {
-            PsiElement[] children = psiDirectory.getChildren();
-            for (PsiElement child : children) {
-                if (child instanceof PsiJavaFile) {
-                    classes.addAll(Arrays.asList(((PsiJavaFile) child).getClasses()));
-                }
-                if (child instanceof PsiDirectory) {
-                    collectClasses((PsiDirectory) child, classes);
-                }
+    public static Collection<PsiClass> collectPsiClasses(PsiJavaFile javaFile) {
+        return Arrays.asList(javaFile.getClasses());
+    }
+
+    public static Collection<PsiClass> collectPsiClasses(PsiDirectory dir) {
+        return collectPsiClasses(dir, new HashSet<>());
+    }
+
+    public static Collection<PsiClass> collectPsiClasses(PsiDirectory dir, Collection<PsiClass> preResult) {
+        for (PsiElement child : dir.getChildren()) {
+            if (child instanceof PsiJavaFile) {
+                preResult.addAll(collectPsiClasses(((PsiJavaFile) child)));
+            }
+            if (child instanceof PsiDirectory) {
+                collectPsiClasses(((PsiDirectory) child), preResult);
             }
         }
+        return preResult;
     }
 
     public static Set<PsiClass> getClassesFormVirtualFile(VirtualFile virtualFile, Project project) {
@@ -77,12 +82,6 @@ public final class PsiUtils {
                 return file.isDirectory();
             }
         });
-        return results;
-    }
-
-    public static Collection<PsiClass> joinAllClasses(Collection<PsiJavaFile> javaFiles) {
-        Set<PsiClass> results = new HashSet<>();
-        javaFiles.forEach(file -> results.addAll(Arrays.asList(file.getClasses())));
         return results;
     }
 
@@ -110,30 +109,6 @@ public final class PsiUtils {
             return null;
         }
         return null;
-    }
-
-
-    /**
-     * 获取当前选中字符
-     *
-     * @param e 事件
-     * @return {@link String}
-     * @author aqiu 2020/5/5 10:21 下午
-     **/
-    public static String getSelectedText(AnActionEvent e) {
-        Editor editor = e.getData(CommonDataKeys.EDITOR);
-        return editor == null ? null : getSelectedText(editor);
-    }
-
-    /**
-     * 获取当前选中字符
-     *
-     * @param editor 编辑器
-     * @return {@link String}
-     * @author aqiu 2020/5/5 10:21 下午
-     **/
-    public static String getSelectedText(@NotNull Editor editor) {
-        return editor.getSelectionModel().getSelectedText();
     }
 
     /**
