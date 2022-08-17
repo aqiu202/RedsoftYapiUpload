@@ -63,7 +63,7 @@ public class YApiUpload {
                                     gson.toJson(yapiSaveParam))), "utf-8");
             return gson.fromJson(response, YApiResponse.class);
         } else {
-            return yapiResponse;
+            throw new IOException(yapiResponse.getErrmsg());
         }
     }
 

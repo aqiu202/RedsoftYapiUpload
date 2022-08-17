@@ -2,6 +2,7 @@ package com.github.aqiu202.ideayapi.mode.schema.base;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
 public class EnumableSchema extends ItemJsonSchema implements Enumable {
@@ -10,6 +11,7 @@ public class EnumableSchema extends ItemJsonSchema implements Enumable {
         super(type);
     }
 
+    @SerializedName("enum")
     private List<String> _enum;
     private String enumDesc;
 

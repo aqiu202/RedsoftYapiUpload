@@ -4,15 +4,19 @@ import com.github.aqiu202.ideayapi.config.xml.YApiProjectProperty;
 import com.github.aqiu202.ideayapi.mode.schema.*;
 import com.github.aqiu202.ideayapi.mode.schema.base.ItemJsonSchema;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
+import com.github.aqiu202.ideayapi.model.EnumFields;
+import com.github.aqiu202.ideayapi.model.EnumResult;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.range.DecimalRange;
 import com.github.aqiu202.ideayapi.model.range.IntegerRange;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
 import com.github.aqiu202.ideayapi.parser.JsonSchemaJsonParser;
 import com.github.aqiu202.ideayapi.parser.abs.AbstractJsonParser;
+import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.github.aqiu202.ideayapi.util.ValidUtils;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiType;
 import com.jgoodies.common.base.Strings;
@@ -103,8 +107,16 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     public ItemJsonSchema parseFieldValue(PsiField psiField, List<String> ignores) {
         PsiType type = psiField.getType();
         String typePkName = type.getCanonicalText();
+        EnumResult enumResult = PsiUtils.isEnum(this.project, typePkName);
         ItemJsonSchema itemJsonSchema;
-        if (TypeUtils.isBasicType(typePkName)) {
+        if (enumResult.isValid()) {
+            itemJsonSchema = new StringSchema();
+            StringSchema stringSchema = (StringSchema) itemJsonSchema;
+            PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
+            EnumFields enumFields = PsiUtils.resolveEnum(psiClass);
+            stringSchema.setEnum(enumFields.getFieldNames());
+            stringSchema.setEnumDesc(enumFields.getFieldsDescription());
+        } else if (TypeUtils.isBasicType(typePkName)) {
             itemJsonSchema = this.parseBasicField(psiField);
         } else {
             itemJsonSchema = this.parseCompoundField(psiField, ignores);

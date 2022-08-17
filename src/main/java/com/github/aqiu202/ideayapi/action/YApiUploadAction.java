@@ -81,6 +81,7 @@ public class YApiUploadAction extends AnAction {
                                         NotificationType.ERROR)
                                 .notify(project);
                     }
+                    return;
                 }
                 String menu = entry.getKey();
                 String url = yapiUrl + "/project/" + projectId + "/interface/api/cat_"

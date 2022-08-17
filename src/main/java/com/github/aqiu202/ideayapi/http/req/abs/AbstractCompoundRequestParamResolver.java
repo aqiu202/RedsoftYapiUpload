@@ -2,6 +2,8 @@ package com.github.aqiu202.ideayapi.http.req.abs;
 
 import com.github.aqiu202.ideayapi.config.xml.YApiProjectProperty;
 import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
+import com.github.aqiu202.ideayapi.model.EnumFields;
+import com.github.aqiu202.ideayapi.model.EnumResult;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
@@ -43,12 +45,17 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
     }
 
     protected ValueWrapper resolveBasic(@NotNull PsiParameter param) {
-        ValueWrapper valueWrapper = new ValueWrapper();
-        valueWrapper.setRequired(ValidUtils.getRequired(param));
-        valueWrapper.setName(param.getName());
+        ValueWrapper valueWrapper = this.resolveParameter(param);
         valueWrapper.setExample(
                 TypeUtils.getDefaultValueByPackageName(param.getType().getCanonicalText())
                         .toString());
+        return valueWrapper;
+    }
+
+    protected ValueWrapper resolveParameter(@NotNull PsiParameter parameter) {
+        ValueWrapper valueWrapper = new ValueWrapper();
+        valueWrapper.setRequired(ValidUtils.getRequired(parameter));
+        valueWrapper.setName(parameter.getName());
         return valueWrapper;
     }
 
@@ -105,15 +112,23 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
             valueWrappers.add(valueWrapper);
         } else {
             PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
-            for (PsiField field : Objects.requireNonNull(psiClass).getAllFields()) {
-                if (Objects.requireNonNull(field.getModifierList())
-                        .hasModifierProperty(PsiModifier.STATIC)) {
-                    continue;
-                }
-                ValueWrapper valueWrapper = this.resolveField(field);
-                valueWrapper.setSource(field);
-                YApiSupportHolder.supports.handleField(valueWrapper);
+            EnumResult enumResult = PsiUtils.isEnum(this.project, typePkName);
+            if (enumResult.isValid()) {
+                ValueWrapper valueWrapper = this.resolveParameter(param);
+                EnumFields enumFields = PsiUtils.resolveEnum(psiClass);
+                valueWrapper.setDesc(enumFields.getDescriptionString());
                 valueWrappers.add(valueWrapper);
+            } else {
+                for (PsiField field : Objects.requireNonNull(psiClass).getAllFields()) {
+                    if (Objects.requireNonNull(field.getModifierList())
+                            .hasModifierProperty(PsiModifier.STATIC)) {
+                        continue;
+                    }
+                    ValueWrapper valueWrapper = this.resolveField(field);
+                    valueWrapper.setSource(field);
+                    YApiSupportHolder.supports.handleField(valueWrapper);
+                    valueWrappers.add(valueWrapper);
+                }
             }
         }
         return valueWrappers;

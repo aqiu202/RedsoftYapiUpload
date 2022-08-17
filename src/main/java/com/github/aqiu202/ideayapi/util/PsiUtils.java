@@ -1,5 +1,8 @@
 package com.github.aqiu202.ideayapi.util;
 
+import com.github.aqiu202.ideayapi.model.EnumField;
+import com.github.aqiu202.ideayapi.model.EnumFields;
+import com.github.aqiu202.ideayapi.model.EnumResult;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -17,10 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Psi基础工具类
@@ -29,6 +30,8 @@ public final class PsiUtils {
 
     private PsiUtils() {
     }
+
+    private static volatile PsiClassType ENUM_CLASS_TYPE = null;
 
     public static PsiMethod getSelectMethod(AnActionEvent e) {
         return findThenGet(e, PsiMethod.class);
@@ -134,6 +137,24 @@ public final class PsiUtils {
     public static PsiClassType findPsiClassType(Project project, String typePkName) {
         return PsiType.getTypeByName(typePkName, project,
                 GlobalSearchScope.allScope(project));
+    }
+
+    public static EnumResult isEnum(Project project, String typePkName) {
+        if (ENUM_CLASS_TYPE == null) {
+            synchronized (PsiUtils.class) {
+                if (ENUM_CLASS_TYPE == null) {
+                    ENUM_CLASS_TYPE = findPsiClassType(project, "java.lang.Enum");
+                }
+            }
+        }
+        PsiClassType psiClassType = findPsiClassType(project, typePkName);
+        return new EnumResult(ENUM_CLASS_TYPE.isAssignableFrom(psiClassType), psiClassType);
+    }
+
+    public static EnumFields resolveEnum(PsiClass psiClass) {
+        return new EnumFields(Arrays.stream(psiClass.getFields()).map(
+                filed -> new EnumField(filed.getName(), DesUtils.getFiledDesc(filed))
+        ).collect(Collectors.toList()));
     }
 
 }

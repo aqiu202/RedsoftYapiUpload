@@ -10,7 +10,7 @@ public enum SchemaType {
     bool("boolean"),
     timestamp("timestamp");
 
-    private String name;
+    private final String name;
 
     SchemaType(String name) {
         this.name = name;
@@ -31,6 +31,10 @@ public enum SchemaType {
             default:
                 return string;
         }
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

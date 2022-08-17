@@ -19,6 +19,9 @@ public class ValueWrapper {
      */
     protected String desc;
 
+
+    protected boolean rawDesc = false;
+
     protected String typeDesc;
     /**
      * 示例
@@ -57,6 +60,14 @@ public class ValueWrapper {
         this.desc = desc;
     }
 
+    public boolean isRawDesc() {
+        return rawDesc;
+    }
+
+    public void setRawDesc(boolean rawDesc) {
+        this.rawDesc = rawDesc;
+    }
+
     public String getRequired() {
         return required;
     }
@@ -91,6 +102,7 @@ public class ValueWrapper {
     }
 
     public void full(ValueWrapper valueWrapper) {
+        this.setRawDesc(valueWrapper.isRawDesc());
         if (Strings.isNotBlank(valueWrapper.getName())) {
             this.setName(valueWrapper.getName());
         }
