@@ -80,8 +80,8 @@ public class YApiUploadAction extends AnAction {
                                 .createNotification(YApiConstants.name, "上传失败", "api上传失败原因:" + e1,
                                         NotificationType.ERROR)
                                 .notify(project);
+                        return;
                     }
-                    return;
                 }
                 String menu = entry.getKey();
                 String url = yapiUrl + "/project/" + projectId + "/interface/api/cat_"
