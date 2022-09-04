@@ -137,12 +137,14 @@ public class YApiUpload {
                     .ObjectToString(HttpClientUtils.getHttpclient().execute(
                             this.getHttpPost(yApiUrl + YApiConstants.yapiAddCat,
                                     gson.toJson(yapiCatMenuParam))), "utf-8");
+            YApiResponse yApiResponse = gson.fromJson(responseCat, YApiResponse.class);
+            Object data = yApiResponse.getData();
             YApiCatResponse yapiCatResponse = gson
-                    .fromJson(gson.fromJson(responseCat, YApiResponse.class).getData().toString(),
+                    .fromJson(Objects.requireNonNull(data).toString(),
                             YApiCatResponse.class);
             this.addMenu(property.getProjectId(), catMenuMapSub, yapiCatResponse);
             return new YApiResponse(yapiCatResponse.get_id());
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new YApiResponse(0, e.toString());
         }
