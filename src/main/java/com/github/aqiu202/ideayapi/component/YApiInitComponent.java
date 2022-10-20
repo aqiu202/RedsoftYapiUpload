@@ -25,7 +25,7 @@ public class YApiInitComponent implements ProjectComponent {
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
-            String changeLogTitle = "<h4>2.1.1+4版本，优化批量导入功能，可支持多选文件/文件夹后上传</h4>";
+            String changeLogTitle = "<h4>2.1.1+3版本，优化批量导入功能，可支持多选文件/文件夹后上传</h4>";
             String changeLogContent = "<ol>\n"
                     + "        <li>优化批量导入功能，可支持多选文件/文件夹后上传</li>\n"
                     + "        <li>修复问题#21，#23</li>\n"
