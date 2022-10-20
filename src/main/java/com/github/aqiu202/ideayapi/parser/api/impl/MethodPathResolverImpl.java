@@ -10,6 +10,7 @@ import com.intellij.psi.PsiModifierListOwner;
 import com.jgoodies.common.base.Strings;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

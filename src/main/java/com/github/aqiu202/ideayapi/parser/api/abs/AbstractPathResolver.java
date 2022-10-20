@@ -14,19 +14,19 @@ import java.util.*;
  **/
 public abstract class AbstractPathResolver implements BasePathResolver {
 
-    protected final Set<String> empty = Collections.singleton("");
+    protected static final Set<String> empty = Collections.singleton("");
 
     @Override
     public Set<String> getPathByAnnotation(@NotNull PsiAnnotation psiAnnotation) {
         PsiAnnotationMemberValue element = psiAnnotation.findAttributeValue("value");
         if (element == null) {
-            return this.empty;
+            return empty;
         }
         String value = element.getText().replace(" ", "");
         if ("{}".equals(value)) {
             value = Objects.requireNonNull(psiAnnotation.findAttributeValue("path")).getText().replace(" ", "");
         }
-        return "{}".equals(value) ? this.empty : this.processPath(value);
+        return "{}".equals(value) ? empty : this.processPath(value);
     }
 
     protected Set<String> processPath(@NotNull String pathString) {
