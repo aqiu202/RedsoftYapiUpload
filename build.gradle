@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.4.18'
+    id 'org.jetbrains.intellij' version '1.10.0'
 }
 
 group 'com.github.aqiu202.ideayapi'
@@ -24,11 +24,11 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    plugins = ["java"]
+//    version = '2019.2'
+    version = '2022.1.1'
     type = 'IU'
-//    version '2020.1'
-    version '2019.2'
-    updateSinceUntilBuild = false
+    plugins = ["java"]
+//    updateSinceUntilBuild = false
 }
 patchPluginXml {
 
