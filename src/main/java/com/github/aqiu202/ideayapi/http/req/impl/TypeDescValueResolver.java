@@ -4,6 +4,7 @@ import com.github.aqiu202.ideayapi.http.req.YApiParamResolver;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.util.CollectionUtils;
+import com.github.aqiu202.ideayapi.util.DesUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -14,20 +15,19 @@ public class TypeDescValueResolver implements YApiParamResolver {
     public void accept(YApiParam param) {
         if (CollectionUtils.isNotEmpty(param.getParams())) {
             param.getParams().stream().filter(p -> StringUtils.isNotBlank(p.getTypeDesc()))
-                    .forEach(query -> query.setDesc(this.handleDescWithType(query)));
+                    .forEach(this::handleDescWithType);
         }
         if (CollectionUtils.isNotEmpty(param.getReq_body_form())) {
             param.getReq_body_form().stream().filter(p -> StringUtils.isNotBlank(p.getTypeDesc()))
-                    .forEach(form -> form.setDesc(this.handleDescWithType(form)));
+                    .forEach(this::handleDescWithType);
         }
         if (CollectionUtils.isNotEmpty(param.getReq_params())) {
             param.getReq_params().stream().filter(p -> StringUtils.isNotBlank(p.getTypeDesc()))
-                    .forEach(pathVariable -> pathVariable.setDesc(this.handleDescWithType(pathVariable)));
+                    .forEach(this::handleDescWithType);
         }
     }
 
-    private String handleDescWithType(ValueWrapper valueWrapper) {
-        String desc;
-        return (StringUtils.isBlank(desc = valueWrapper.getDesc()) ? "" : desc) + "(" + valueWrapper.getTypeDesc() + ")";
+    private void handleDescWithType(ValueWrapper valueWrapper) {
+        DesUtils.handleTypeDesc(valueWrapper);
     }
 }

@@ -1,5 +1,10 @@
 package com.github.aqiu202.ideayapi.config.xml;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class YApiProjectProperty {
@@ -21,6 +26,9 @@ public class YApiProjectProperty {
     private boolean enableBasicScope;
 
     private boolean enableTypeDesc;
+    private boolean useMethodDefineAsRemark;
+    private String ignoredReqFields;
+    private String ignoredResFields;
 
     public YApiProjectProperty() {
 
@@ -97,6 +105,44 @@ public class YApiProjectProperty {
         this.enableTypeDesc = enableTypeDesc;
     }
 
+    public boolean isUseMethodDefineAsRemark() {
+        return useMethodDefineAsRemark;
+    }
+
+    public void setUseMethodDefineAsRemark(boolean useMethodDefineAsRemark) {
+        this.useMethodDefineAsRemark = useMethodDefineAsRemark;
+    }
+
+    public String getIgnoredReqFields() {
+        return ignoredReqFields;
+    }
+
+    public void setIgnoredReqFields(String ignoredReqFields) {
+        this.ignoredReqFields = ignoredReqFields;
+    }
+
+    public String getIgnoredResFields() {
+        return ignoredResFields;
+    }
+
+    public List<String> getIgnoredReqFieldList() {
+        if (StringUtils.isBlank(this.ignoredReqFields)) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(this.ignoredReqFields.split(","));
+    }
+
+    public List<String> getIgnoredResFieldList() {
+        if (StringUtils.isBlank(this.ignoredResFields)) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(this.ignoredResFields.split(","));
+    }
+
+    public void setIgnoredResFields(String ignoredResFields) {
+        this.ignoredResFields = ignoredResFields;
+    }
+
     @Override
     public int hashCode() {
         return Objects
@@ -118,6 +164,9 @@ public class YApiProjectProperty {
                 Objects.equals(strategy, that.strategy) &&
                 Objects.equals(dataMode, that.dataMode) &&
                 Objects.equals(enableBasicScope, that.enableBasicScope) &&
-                Objects.equals(enableTypeDesc, that.enableTypeDesc);
+                Objects.equals(useMethodDefineAsRemark, that.useMethodDefineAsRemark) &&
+                Objects.equals(enableTypeDesc, that.enableTypeDesc) &&
+                Objects.equals(ignoredReqFields, that.ignoredReqFields) &&
+                Objects.equals(ignoredResFields, that.ignoredResFields);
     }
 }

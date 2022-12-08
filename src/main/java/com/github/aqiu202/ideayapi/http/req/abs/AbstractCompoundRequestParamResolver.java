@@ -10,7 +10,7 @@ import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.github.aqiu202.ideayapi.util.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -100,7 +100,7 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
             } else {
                 valueWrapper = this.resolveBasic(param);
             }
-            if (Strings.isBlank(valueWrapper.getDesc())) {
+            if (StringUtils.isBlank(valueWrapper.getDesc())) {
                 String desc = DesUtils.getParamDesc(m, param.getName());
                 valueWrapper.setDesc(desc);
                 if (property.isEnableTypeDesc()) {
@@ -122,6 +122,9 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
                 for (PsiField field : Objects.requireNonNull(psiClass).getAllFields()) {
                     if (Objects.requireNonNull(field.getModifierList())
                             .hasModifierProperty(PsiModifier.STATIC)) {
+                        continue;
+                    }
+                    if (this.property.getIgnoredReqFieldList().contains(field.getName())) {
                         continue;
                     }
                     ValueWrapper valueWrapper = this.resolveField(field);

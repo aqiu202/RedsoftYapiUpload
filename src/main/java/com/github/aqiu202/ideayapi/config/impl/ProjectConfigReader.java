@@ -21,7 +21,7 @@ public class ProjectConfigReader {
 
     private final static ProjectConfigurationReader<YApiProjectProperty> reader = (project -> {
         YApiProjectPersistentState projectState = ServiceManager
-                .getService(Objects.requireNonNull(project), YApiProjectPersistentState.class);
+                .getService(project, YApiProjectPersistentState.class);
         Element element = projectState.getState();
         if (element == null) {
             YApiProjectProperty property = new YApiProjectProperty();
@@ -43,6 +43,8 @@ public class ProjectConfigReader {
                             .equalsIgnoreCase(projectConfig.split("basicScope\">")[1].split("</")[0]));
                     property.setEnableTypeDesc(projectConfig.contains("typeDesc\">") && "true"
                             .equalsIgnoreCase(projectConfig.split("typeDesc\">")[1].split("</")[0]));
+                    property.setUseMethodDefineAsRemark(projectConfig.contains("useMethodDefineAsRemark\">") && "true"
+                            .equalsIgnoreCase(projectConfig.split("useMethodDefineAsRemark\">")[1].split("</")[0]));
                 }
             } catch (Exception ignored) {
             }

@@ -4,7 +4,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.javadoc.PsiDocTagValue;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +45,7 @@ public final class PsiDocUtils {
         return Stream.of(docComment.getDescriptionElements())
                 .map(PsiElement::getText)
                 .map(String::trim)
-                .filter(Strings::isNotBlank)
+                .filter(StringUtils::isNotBlank)
                 .collect(Collectors.joining());
     }
 

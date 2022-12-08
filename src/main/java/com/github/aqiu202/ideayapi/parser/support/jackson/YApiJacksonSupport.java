@@ -25,7 +25,7 @@ public class YApiJacksonSupport implements YApiSupport {
     public void handleField(ValueWrapper wrapper) {
         PsiVariable field = wrapper.getSource();
         if (PsiAnnotationUtils.isAnnotatedWith(field, JacksonConstants.JSON_PROPERTY)) {
-            String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(field, JacksonConstants.JSON_PROPERTY, "value");
+            String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(field, JacksonConstants.JSON_PROPERTY);
             if (StringUtils.isNotBlank(value)) {
                 wrapper.setName(value);
             }
@@ -70,7 +70,7 @@ public class YApiJacksonSupport implements YApiSupport {
             return !Arrays.asList(ignoredFields).contains(field.getName());
         }
         if (PsiAnnotationUtils.isAnnotatedWith(field, JacksonConstants.JSON_IGNORE)) {
-            String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(field, JacksonConstants.JSON_IGNORE, "value");
+            String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(field, JacksonConstants.JSON_IGNORE);
             return "true".equals(value);
         }
         return YApiSupport.super.isIgnored(field, psiClass);

@@ -1,7 +1,7 @@
 package com.github.aqiu202.ideayapi.mode.json5;
 
 import com.github.aqiu202.ideayapi.parser.Jsonable;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 public class Json<T> implements Jsonable {
 
@@ -48,7 +48,7 @@ public class Json<T> implements Jsonable {
 
     public String toString(String description) {
         String vs = value instanceof String ? ("\"" + value + "\"") : this.value.toString();
-        if (Strings.isBlank(description)) {
+        if (StringUtils.isBlank(description)) {
             return vs;
         }
         if (commentMode == COMMENT_MODE_SINGLE) {

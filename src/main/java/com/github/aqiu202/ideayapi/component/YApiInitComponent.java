@@ -25,11 +25,11 @@ public class YApiInitComponent implements ProjectComponent {
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
-            String changeLogTitle = "<h4>2.1.1+3版本，优化批量导入功能，可支持多选文件/文件夹后上传</h4>";
+            String changeLogTitle = "<h4>2.2.0版本，优化配置，添加请求/响应字段忽略配置</h4>";
             String changeLogContent = "<ol>\n"
-                    + "        <li>优化批量导入功能，可支持多选文件/文件夹后上传</li>\n"
-                    + "        <li>修复问题#21，#23</li>\n"
-                    + "        <li>修复类上没有@RequestMapping系列注解时报错的问题</li>\n"
+                    + "        <li>优化配置，添加请求/响应字段忽略配置</li>\n"
+                    + "        <li>读取注解的属性时可正常获取静态常量的值</li>\n"
+                    + "        <li>添加配置项--是否将接口定义信息设置为接口备注</li>\n"
                     + "     </ol>";
             NotificationConstants.NOTIFICATION_GROUP_WINDOW.createNotification(YApiConstants.name,
                             "更新内容",

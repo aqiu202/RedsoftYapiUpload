@@ -1,6 +1,6 @@
 package com.github.aqiu202.ideayapi.http.res;
 
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * <b>注释值的处理</b>
@@ -15,7 +15,7 @@ public interface DocTagValueHandler {
      * @param value 注释值
      */
     default String handleDocTagValue(String value) {
-        if (Strings.isBlank(value)) {
+        if (StringUtils.isBlank(value)) {
             return value;
         }
         //使用正则替换掉重量级的Jsoup

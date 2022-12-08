@@ -1,7 +1,7 @@
 package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.constant.PropertyNamingStrategy;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,7 +29,7 @@ public final class PropertyNamingUtils {
     }
 
     public static String splitWith(String propName, char line) {
-        if (Strings.isNotBlank(propName)) {
+        if (StringUtils.isNotBlank(propName)) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < propName.length(); i++) {
                 char c = propName.charAt(i);
@@ -52,7 +52,7 @@ public final class PropertyNamingUtils {
      * @author aqiu 2018年5月16日 下午2:43:49
      */
     public static String upperCamel(String propName) {
-        if (Strings.isNotBlank(propName)) {
+        if (StringUtils.isNotBlank(propName)) {
             return Character.toUpperCase(propName.charAt(0)) + propName.substring(1);
         } else {
             return propName;
@@ -65,7 +65,7 @@ public final class PropertyNamingUtils {
      * @param propName 字段名称
      */
     public static String lowerCase(String propName) {
-        if (Strings.isNotBlank(propName)) {
+        if (StringUtils.isNotBlank(propName)) {
             return propName.toLowerCase();
         } else {
             return propName;

@@ -1,6 +1,6 @@
 package com.github.aqiu202.ideayapi.util;
 
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +17,7 @@ public final class PathUtils {
 
     public static String pathFormat(@NotNull String path, boolean defaultRoot) {
         String pathStr = path.trim();
-        if (!defaultRoot && Strings.isEmpty(pathStr)) {
+        if (!defaultRoot && StringUtils.isEmpty(pathStr)) {
             return "";
         }
         String split = "/";

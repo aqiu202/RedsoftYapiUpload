@@ -10,6 +10,7 @@ import com.github.aqiu202.ideayapi.model.YApiSaveParam;
 import com.github.aqiu202.ideayapi.parser.PsiMethodParser;
 import com.github.aqiu202.ideayapi.parser.YApiParser;
 import com.github.aqiu202.ideayapi.parser.impl.PsiMethodParserImpl;
+import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.github.aqiu202.ideayapi.upload.YApiUpload;
 import com.intellij.notification.NotificationListener.UrlOpeningListener;
 import com.intellij.notification.NotificationType;
@@ -17,7 +18,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
-import com.jgoodies.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +37,7 @@ public class YApiUploadAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getData(CommonDataKeys.PROJECT);
+        YApiSupportHolder.init(project);
 
         YApiProjectProperty property = ProjectConfigReader.read(project);
         String token = property.getToken();
@@ -45,7 +46,7 @@ public class YApiUploadAction extends AnAction {
         // yapi地址
         String yapiUrl = property.getUrl();
         // 配置校验
-        if (Strings.isEmpty(token) || Strings.isEmpty(yapiUrl) || projectId <= 0) {
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(yapiUrl) || projectId <= 0) {
             NotificationConstants.NOTIFICATION_GROUP
                     .createNotification(YApiConstants.name, "配置信息异常", "请检查配置参数是否正常",
                             NotificationType.ERROR).notify(project);
@@ -103,7 +104,7 @@ public class YApiUploadAction extends AnAction {
     private void setDefaultInfo(Collection<YApiSaveParam> yapiSaveParams, String token) {
         for (YApiSaveParam yapiSaveParam : yapiSaveParams) {
             yapiSaveParam.setToken(token);
-            if (Strings.isEmpty(yapiSaveParam.getMenu())) {
+            if (StringUtils.isEmpty(yapiSaveParam.getMenu())) {
                 yapiSaveParam.setMenu(YApiConstants.menu);
             }
         }

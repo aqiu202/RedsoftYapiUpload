@@ -1,6 +1,6 @@
 package com.github.aqiu202.ideayapi.config.xml;
 
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +13,7 @@ public class DefaultYApiApplicationPropertyXmlConvert implements
     public Element serialize(@NotNull YApiApplicationProperty property) {
         Element element = new Element("app-redsoft");
         String version = property.getVersion();
-        if (Strings.isNotBlank(version)) {
+        if (StringUtils.isNotBlank(version)) {
             element.setAttribute(KEY_VERSION, version);
         }
         return element;
@@ -23,7 +23,7 @@ public class DefaultYApiApplicationPropertyXmlConvert implements
     public YApiApplicationProperty deserialize(@NotNull Element element) {
         YApiApplicationProperty property = new YApiApplicationProperty();
         String version = element.getAttributeValue(KEY_VERSION);
-        if (Strings.isNotBlank(version)) {
+        if (StringUtils.isNotBlank(version)) {
             property.setVersion(version);
         }
         return property;

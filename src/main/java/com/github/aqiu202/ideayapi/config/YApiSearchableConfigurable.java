@@ -7,7 +7,7 @@ import com.github.aqiu202.ideayapi.config.xml.YApiPropertyConvertHolder;
 import com.github.aqiu202.ideayapi.constant.YApiConstants;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +46,7 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
     public JComponent createComponent() {
         if (yApiConfigurationForm == null) {
             yApiConfigurationForm = new YApiConfigurationForm();
+            yApiConfigurationForm.init();
         }
         return yApiConfigurationForm.getPanel();
     }
@@ -54,7 +55,7 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
     public boolean isModified() {
         String idStr = yApiConfigurationForm.getProjectIdField().getText();
         int projectId = 1;
-        if (Strings.isNotBlank(idStr)) {
+        if (StringUtils.isNotBlank(idStr)) {
             projectId = Integer.parseInt(idStr);
         }
         this.yApiProjectProperty = new YApiProjectProperty(
@@ -65,6 +66,10 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
                 yApiConfigurationForm.getDataModeComboBox().getSelectedIndex(),
                 yApiConfigurationForm.getEnableBasicScopeCheckBox().isSelected(),
                 yApiConfigurationForm.getEnableTypeDescCheckBox().isSelected());
+        this.yApiProjectProperty.setUseMethodDefineAsRemark(
+                yApiConfigurationForm.getUseMethodDefineAsRemarkCheckBox().isSelected());
+        this.yApiProjectProperty.setIgnoredReqFields(yApiConfigurationForm.getIgnoredReqFields());
+        this.yApiProjectProperty.setIgnoredResFields(yApiConfigurationForm.getIgnoredResFields());
         return !this.yApiProjectProperty
                 .equals(ProjectConfigReader.read(this.project));
     }
@@ -83,7 +88,7 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
     private void loadValue() {
         YApiProjectProperty property = ProjectConfigReader.read(this.project);
         String url = property.getUrl();
-        if (Strings.isNotBlank(url)) {
+        if (StringUtils.isNotBlank(url)) {
             yApiConfigurationForm.getUrlField().setText(url);
         }
         yApiConfigurationForm.getProjectIdField().setText(String.valueOf(property.getProjectId()));
@@ -92,12 +97,14 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
         int dataMode = property.getDataMode();
         yApiConfigurationForm.getDataModeComboBox().setSelectedIndex(dataMode);
         String token = property.getToken();
-        if (Strings.isNotBlank(token)) {
+        if (StringUtils.isNotBlank(token)) {
             yApiConfigurationForm.getTokenField().setText(token);
         }
         yApiConfigurationForm.getEnableBasicScopeCheckBox().setSelected(property.isEnableBasicScope());
         yApiConfigurationForm.getEnableTypeDescCheckBox().setSelected(property.isEnableTypeDesc());
-
+        yApiConfigurationForm.getUseMethodDefineAsRemarkCheckBox().setSelected(property.isUseMethodDefineAsRemark());
+        yApiConfigurationForm.setIgnoredReqFields(property.getIgnoredReqFieldList());
+        yApiConfigurationForm.setIgnoredResFields(property.getIgnoredResFieldList());
     }
 
 }

@@ -28,7 +28,7 @@ public class ResponseResolverImpl implements ResponseResolver {
         } else {
             this.objectJsonParser = new Json5ParserImpl(property, project);
         }
-        this.objectRawParser = new Json5ParserImpl(project, false);
+        this.objectRawParser = new Json5ParserImpl(property, project, false, true);
     }
 
     @Override

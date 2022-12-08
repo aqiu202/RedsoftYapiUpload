@@ -1,7 +1,7 @@
 package com.github.aqiu202.ideayapi.model;
 
 import com.github.aqiu202.ideayapi.constant.YApiConstants;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -83,7 +83,7 @@ public class YApiCatMenuParam implements Serializable {
         this.name = name;
         this.project_id = project_id;
         this.token = token;
-        if (Strings.isEmpty(name)) {
+        if (StringUtils.isEmpty(name)) {
             this.name = YApiConstants.menu;
         }
     }

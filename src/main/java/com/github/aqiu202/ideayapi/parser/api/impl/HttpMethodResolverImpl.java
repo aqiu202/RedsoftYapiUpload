@@ -6,6 +6,7 @@ import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.api.HttpMethodResolver;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.intellij.psi.*;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -27,9 +28,9 @@ public class HttpMethodResolverImpl implements HttpMethodResolver {
             if (annotation != null) {
                 // 类上不处理缺省方法
                 if (!(owner instanceof PsiClass)) {
-                    PsiAnnotationMemberValue m = annotation.findAttributeValue("method");
-                    if (m != null) {
-                        methods.addAll(this.processMethod(m.getText().toUpperCase()));
+                    String methodVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation, "method");
+                    if (StringUtils.isNotBlank(methodVal)) {
+                        methods.addAll(this.processMethod(methodVal.toUpperCase()));
                     }
                 }
             } else if (PsiAnnotationUtils

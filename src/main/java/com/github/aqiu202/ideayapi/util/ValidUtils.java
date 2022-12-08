@@ -6,7 +6,7 @@ import com.github.aqiu202.ideayapi.model.range.IntegerRange;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifierListOwner;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -68,38 +68,48 @@ public final class ValidUtils {
                                          boolean enableBasicScope) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
                 .findAnnotation(psiModifierListOwner, ValidConstants.Size);
+        Integer min = null;
+        Integer max = null;
         if (Objects.nonNull(psiAnnotation)) {
-            return new IntegerRange(
-                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("min"))
-                            .getText()),
-                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("max"))
-                            .getText()),
-                    enableBasicScope);
+            String minVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "min");
+            if (StringUtils.isNotBlank(minVal)) {
+                min = Integer.valueOf(minVal);
+            }
+            String maxVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "max");
+            if (StringUtils.isNotBlank(maxVal)) {
+                max = Integer.valueOf(maxVal);
+            }
         }
-        return new IntegerRange(null, null, enableBasicScope);
+        return new IntegerRange(min, max, enableBasicScope);
     }
 
     public static IntegerRange rangeLength(PsiModifierListOwner psiModifierListOwner,
                                            boolean enableBasicScope) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
                 .findAnnotation(psiModifierListOwner, ValidConstants.Length);
+        Integer min = null;
+        Integer max = null;
         if (Objects.nonNull(psiAnnotation)) {
-            return new IntegerRange(
-                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("min"))
-                            .getText()),
-                    Integer.valueOf(Objects.requireNonNull(psiAnnotation.findAttributeValue("max"))
-                            .getText()),
-                    enableBasicScope);
+            String minVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "min");
+            if (StringUtils.isNotBlank(minVal)) {
+                min = Integer.valueOf(minVal);
+            }
+            String maxVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "max");
+            if (StringUtils.isNotBlank(maxVal)) {
+                max = Integer.valueOf(maxVal);
+            }
         }
-        return new IntegerRange(null, null, enableBasicScope);
+        return new IntegerRange(min, max, enableBasicScope);
     }
 
     public static Long getMin(PsiModifierListOwner psiModifierListOwner) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
                 .findAnnotation(psiModifierListOwner, ValidConstants.Min);
         if (Objects.nonNull(psiAnnotation)) {
-            return Long.valueOf(
-                    Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
+            String attributeValue = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation);
+            if (StringUtils.isNotBlank(attributeValue)) {
+                return Long.valueOf(attributeValue);
+            }
         }
         return null;
     }
@@ -108,8 +118,10 @@ public final class ValidUtils {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
                 .findAnnotation(psiModifierListOwner, ValidConstants.Max);
         if (Objects.nonNull(psiAnnotation)) {
-            return Long.valueOf(
-                    Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
+            String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation);
+            if (StringUtils.isNotBlank(value)) {
+                return Long.valueOf(value);
+            }
         }
         return null;
     }
@@ -133,14 +145,15 @@ public final class ValidUtils {
             PsiAnnotation psiAnnotation = PsiAnnotationUtils
                     .findAnnotation(psiModifierListOwner, ValidConstants.Range);
             if (Objects.nonNull(psiAnnotation)) {
-                return new LongRange(
-                        Long.valueOf(
-                                Objects.requireNonNull(psiAnnotation.findAttributeValue("min"))
-                                        .getText()),
-                        Long.valueOf(
-                                Objects.requireNonNull(psiAnnotation.findAttributeValue("max"))
-                                        .getText()),
-                        enableBasicScope);
+                String minVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "min");
+                if (StringUtils.isNotBlank(minVal)) {
+                    min = Long.valueOf(minVal);
+                }
+                String maxVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "max");
+                if (StringUtils.isNotBlank(maxVal)) {
+                    max = Long.valueOf(maxVal);
+                }
+                return new LongRange(min, max, enableBasicScope);
             }
         }
         return result;
@@ -164,16 +177,12 @@ public final class ValidUtils {
             PsiAnnotation psiAnnotation = PsiAnnotationUtils
                     .findAnnotation(psiModifierListOwner, ValidConstants.Digits);
             if (Objects.nonNull(psiAnnotation)) {
-                int integer = Integer.parseInt(
-                        Objects.requireNonNull(psiAnnotation.findAttributeValue("integer"))
-                                .getText());
-                int fraction = Integer.parseInt(
-                        Objects.requireNonNull(psiAnnotation.findAttributeValue("fraction"))
-                                .getText());
-                if (integer == 0 || fraction == 0) {
+                String integerVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "integer");
+                String fractionVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "fraction");
+                if (StringUtils.isBlank(integerVal) || StringUtils.isBlank(fractionVal)) {
                     return null;
                 }
-                String maxValue = maxValue(integer, fraction);
+                String maxValue = maxValue(Integer.parseInt(integerVal), Integer.parseInt(fractionVal));
                 return new DecimalRange(
                         new BigDecimal("-" + maxValue),
                         new BigDecimal(maxValue));
@@ -186,8 +195,10 @@ public final class ValidUtils {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
                 .findAnnotation(psiModifierListOwner, ValidConstants.DecimalMin);
         if (Objects.nonNull(psiAnnotation)) {
-            return new BigDecimal(
-                    Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
+            String attributeValue = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation);
+            if (StringUtils.isNotBlank(attributeValue)) {
+                return new BigDecimal(attributeValue);
+            }
         }
         return null;
     }
@@ -196,8 +207,10 @@ public final class ValidUtils {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
                 .findAnnotation(psiModifierListOwner, ValidConstants.DecimalMax);
         if (Objects.nonNull(psiAnnotation)) {
-            return new BigDecimal(
-                    Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
+            String attributeValue = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation);
+            if (StringUtils.isNotBlank(attributeValue)) {
+                return new BigDecimal(attributeValue);
+            }
         }
         return null;
     }
@@ -206,9 +219,8 @@ public final class ValidUtils {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
                 .findAnnotation(psiModifierListOwner, ValidConstants.Pattern);
         if (Objects.nonNull(psiAnnotation)) {
-            String pattern = Objects.requireNonNull(psiAnnotation.findAttributeValue("regexp"))
-                    .getText();
-            if (Strings.isNotBlank(pattern)) {
+            String pattern = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "regexp");
+            if (StringUtils.isNotBlank(pattern)) {
                 return pattern.replace("\\\\", "\\").replace("\"", "");
             }
         }

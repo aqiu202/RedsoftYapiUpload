@@ -2,7 +2,7 @@ package com.github.aqiu202.ideayapi.model;
 
 import com.github.aqiu202.ideayapi.parser.Jsonable;
 import com.intellij.psi.PsiVariable;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -103,19 +103,19 @@ public class ValueWrapper {
 
     public void full(ValueWrapper valueWrapper) {
         this.setRawDesc(valueWrapper.isRawDesc());
-        if (Strings.isNotBlank(valueWrapper.getName())) {
+        if (StringUtils.isNotBlank(valueWrapper.getName())) {
             this.setName(valueWrapper.getName());
         }
-        if (Strings.isNotBlank(valueWrapper.getDesc())) {
+        if (StringUtils.isNotBlank(valueWrapper.getDesc())) {
             this.setDesc(valueWrapper.getDesc());
         }
-        if (Strings.isNotBlank(valueWrapper.getRequired())) {
+        if (StringUtils.isNotBlank(valueWrapper.getRequired())) {
             this.setRequired(valueWrapper.getRequired());
         }
-        if (Strings.isNotBlank(valueWrapper.getExample())) {
+        if (StringUtils.isNotBlank(valueWrapper.getExample())) {
             this.setExample(valueWrapper.getExample());
         }
-        if (Strings.isNotBlank(valueWrapper.getTypeDesc())) {
+        if (StringUtils.isNotBlank(valueWrapper.getTypeDesc())) {
             this.setTypeDesc(valueWrapper.getTypeDesc());
         }
     }

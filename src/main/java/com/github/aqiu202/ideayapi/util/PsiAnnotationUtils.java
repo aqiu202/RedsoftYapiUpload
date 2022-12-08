@@ -1,12 +1,11 @@
 package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.constant.AnnotationConstants;
+import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.intellij.psi.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 /**
  * Psi注解读取工具类
@@ -57,7 +56,7 @@ public final class PsiAnnotationUtils {
             return null;
         }
         for (String qualifiedName : qualifiedNames) {
-            PsiAnnotation annotation = annotationOwner.findAnnotation(qualifiedName);
+            PsiAnnotation annotation = findAnnotationQuick(annotationOwner, qualifiedName);
             if (annotation != null) {
                 return annotation;
             }
@@ -113,21 +112,39 @@ public final class PsiAnnotationUtils {
      */
     @Nullable
     public static String getPsiAnnotationAttributeValue(PsiModifierListOwner psiParameter,
-                                                        String annotationName, String paramName) {
+                                                        String annotationName, String attributeName) {
         PsiAnnotation annotation = PsiAnnotationUtils
                 .findAnnotation(psiParameter, annotationName);
         if (annotation == null) {
             return null;
         }
-        return resolveAnnotationValue(Objects.requireNonNull(annotation.findAttributeValue(paramName)).getText());
+        return getPsiAnnotationAttributeValue(annotation, attributeName);
     }
+
+//    public static String getPsiAnnotationAttributeValue(PsiAnnotation psiAnnotation, String attributeName) {
+//        JvmAnnotationAttribute attribute = psiAnnotation.findAttribute(attributeName);
+//        if (attribute != null) {
+//            JvmAnnotationAttributeValue attributeValue = attribute.getAttributeValue();
+//            if (attributeValue instanceof )
+//        }
+//        return null;
+//    }
 
     @Nullable
     public static String getPsiAnnotationAttributeValue(PsiAnnotation annotation,
                                                         String attributeName) {
-        PsiAnnotationMemberValue consumes = annotation.findAttributeValue(attributeName);
-        return Objects.isNull(consumes) ? null : resolveAnnotationValue(consumes.getText());
-
+        PsiAnnotationMemberValue attributeValue = annotation.findAttributeValue(attributeName);
+        if (attributeValue != null) {
+            Object result = YApiSupportHolder.evaluationHelper.computeConstantExpression(attributeValue);
+            if (result != null) {
+                return resolveAnnotationValue(result.toString());
+            }
+        }
+        return null;
+    }
+    @Nullable
+    public static String getPsiAnnotationAttributeValue(PsiAnnotation annotation) {
+        return getPsiAnnotationAttributeValue(annotation, PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME);
     }
 
     public static String resolveAnnotationValue(String value) {

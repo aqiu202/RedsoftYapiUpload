@@ -1,12 +1,13 @@
 package com.github.aqiu202.ideayapi.util;
 
+import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -27,7 +28,7 @@ public final class DesUtils {
         boolean beginIndexFlag;
         boolean endIndexFlag;
         do {
-            if (Strings.isEmpty(source.trim()) || source.equals(String.valueOf(element))) {
+            if (StringUtils.isEmpty(source.trim()) || source.equals(String.valueOf(element))) {
                 source = "";
                 break;
             }
@@ -75,7 +76,7 @@ public final class DesUtils {
         PsiDocComment psiDocComment = psiField.getDocComment();
         if (Objects.nonNull(psiDocComment)) {
             String fileText = psiDocComment.getText();
-            if (!Strings.isEmpty(fileText)) {
+            if (!StringUtils.isEmpty(fileText)) {
                 return trimFirstAndLastChar(
                         fileText.replace("*", "").replace("/", "")
                                 .replace("\n", "")
@@ -137,7 +138,7 @@ public final class DesUtils {
                             remark.append(":").append(value);
                         }
                         String filedValue = DesUtils.getFiledDesc(psiField);
-                        if (!Strings.isEmpty(filedValue)) {
+                        if (!StringUtils.isEmpty(filedValue)) {
                             remark.append("(").append(filedValue).append(")");
                         }
                     }
@@ -148,7 +149,13 @@ public final class DesUtils {
         return remark.toString();
     }
 
-    public static String handleTypeDesc(String desc) {
-        return Strings.isBlank(desc) ? "" : ("(" + desc + ")");
+    public static String getTypeDesc(String desc) {
+        return StringUtils.isBlank(desc) ? "" : ("(" + desc + ")");
+    }
+
+    public static void handleTypeDesc(ValueWrapper valueWrapper) {
+        String desc;
+        desc = (StringUtils.isBlank(desc = valueWrapper.getDesc()) ? "" : desc) + getTypeDesc(valueWrapper.getTypeDesc());
+        valueWrapper.setDesc(desc);
     }
 }

@@ -23,7 +23,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiType;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,14 +35,16 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     protected final YApiProjectProperty property;
     protected final Project project;
+    protected final boolean notConvertFieldName;
 
-    protected AbstractJsonParser(@Nullable YApiProjectProperty property, Project project) {
+    protected AbstractJsonParser(@NotNull YApiProjectProperty property, Project project, boolean notConvertFieldName) {
         this.property = property;
         this.project = project;
+        this.notConvertFieldName = notConvertFieldName;
     }
 
-    protected AbstractJsonParser(Project project) {
-        this(null, project);
+    protected AbstractJsonParser(YApiProjectProperty property, Project project) {
+        this(property, project, false);
     }
 
     private String handleTypePkName(@NotNull String typePkName) {
@@ -96,8 +98,8 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     @Override
     public String handleFieldName(String fieldName) {
-        //配置为空的时候，不处理字段名称（暂时没有用到）
-        if (this.property == null) {
+        //Row格式的返回值不进行字段名称转换
+        if (this.notConvertFieldName) {
             return fieldName;
         }
         return PropertyNamingUtils.convert(fieldName, PropertyNamingStrategy.of(String.
@@ -128,7 +130,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
     @Override
     public Jsonable parsePojo(String typePkName, String genericType, List<String> ignores) {
         if (ignores.contains(typePkName)) {
-            return this.parseMap(typePkName, DesUtils.handleTypeDesc(typePkName));
+            return this.parseMap(typePkName, DesUtils.getTypeDesc(typePkName));
         }
         ignores.add(typePkName);
         PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
@@ -139,8 +141,13 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
                         .hasModifierProperty(PsiModifier.STATIC)) {
                     continue;
                 }
+                String fieldName = field.getName();
+                if (this.property.getIgnoredResFieldList().contains(fieldName)) {
+                    continue;
+                }
                 ValueWrapper valueWrapper = this.parseField(field, genericType, ignores);
                 YApiSupportHolder.supports.handleField(valueWrapper);
+                DesUtils.handleTypeDesc(valueWrapper);
                 wrapperList.add(valueWrapper);
             }
         }
@@ -168,7 +175,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     @Override
     public ValueWrapper parseField(PsiField field, String genericType, List<String> ignores) {
-        boolean hasGenericType = Strings.isNotBlank(genericType);
+        boolean hasGenericType = StringUtils.isNotBlank(genericType);
         ValueWrapper result = new ValueWrapper();
         result.setSource(field);
         if (hasGenericType) {
@@ -185,9 +192,12 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         if (this.needDescription()) {
             String desc = DesUtils.getLinkRemark(field, this.project);
             desc = this.handleDocTagValue(desc);
-            if (Strings.isNotBlank(desc)) {
+            if (StringUtils.isNotBlank(desc)) {
                 result.setDesc(desc);
             }
+        }
+        if (this.property.isEnableTypeDesc()) {
+            result.setTypeDesc(field.getType().getPresentableText());
         }
         String fieldName = this.handleFieldName(field.getName());
         result.setName(fieldName);

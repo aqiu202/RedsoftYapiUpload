@@ -1,6 +1,7 @@
 package com.github.aqiu202.ideayapi.parser.api.abs;
 
 import com.github.aqiu202.ideayapi.parser.api.BasePathResolver;
+import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
 import org.jetbrains.annotations.NotNull;
@@ -18,18 +19,15 @@ public abstract class AbstractPathResolver implements BasePathResolver {
 
     @Override
     public Set<String> getPathByAnnotation(@NotNull PsiAnnotation psiAnnotation) {
-        PsiAnnotationMemberValue element = psiAnnotation.findAttributeValue("value");
-        if (element == null) {
-            return empty;
+        String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation);
+        if (value == null || "{}".equals(value)) {
+            value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "path");
         }
-        String value = element.getText().replace(" ", "");
-        if ("{}".equals(value)) {
-            value = Objects.requireNonNull(psiAnnotation.findAttributeValue("path")).getText().replace(" ", "");
-        }
-        return "{}".equals(value) ? empty : this.processPath(value);
+        return (value == null || "{}".equals(value)) ? empty : this.processPath(value);
     }
 
     protected Set<String> processPath(@NotNull String pathString) {
+        pathString = pathString.replace(" ", "");
         //如果是多个
         if (pathString.startsWith("{")) {
             //去除两边的大括号

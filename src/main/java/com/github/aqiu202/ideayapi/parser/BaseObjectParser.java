@@ -20,7 +20,7 @@ public interface BaseObjectParser {
     Jsonable parseBasic(String typePkName);
 
     default Jsonable parseMap(String typePkName) {
-        return this.parseMap(typePkName, DesUtils.handleTypeDesc("map"));
+        return this.parseMap(typePkName, DesUtils.getTypeDesc("map"));
     }
 
     Jsonable parseMap(String typePkName, String description);

@@ -5,7 +5,7 @@ import com.github.aqiu202.ideayapi.model.YApiStatus;
 import com.github.aqiu202.ideayapi.parser.api.StatusResolver;
 import com.github.aqiu202.ideayapi.util.PsiDocUtils;
 import com.intellij.psi.javadoc.PsiDocComment;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,13 +21,13 @@ public class StatusResolverImpl implements StatusResolver {
         String status = YApiStatus.done.name();
         if (Objects.nonNull(classDoc)) {
             String value = PsiDocUtils.getTagValueByName(classDoc, TAG_STATUS);
-            if (Strings.isNotBlank(value)) {
+            if (StringUtils.isNotBlank(value)) {
                 status = value;
             }
         }
         if (Objects.nonNull(methodDoc)) {
             String value = PsiDocUtils.getTagValueByName(methodDoc, TAG_STATUS);
-            if (Strings.isNotBlank(value)) {
+            if (StringUtils.isNotBlank(value)) {
                 status = value;
             }
         }

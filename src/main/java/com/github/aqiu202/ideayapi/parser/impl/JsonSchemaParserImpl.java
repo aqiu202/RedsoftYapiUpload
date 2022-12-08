@@ -19,7 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiType;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -36,11 +36,6 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     public JsonSchemaParserImpl(YApiProjectProperty property, Project project) {
         super(property, project);
         this.enableBasicScope = property.isEnableBasicScope();
-    }
-
-    public JsonSchemaParserImpl(boolean enableBasicScope, Project project) {
-        super(null, project);
-        this.enableBasicScope = enableBasicScope;
     }
 
     private final boolean enableBasicScope;
@@ -71,7 +66,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     @Override
     public ArraySchema parseCollection(String typePkName, List<String> ignores) {
         ArraySchema result = new ArraySchema();
-        if (Strings.isBlank(typePkName)) {
+        if (StringUtils.isBlank(typePkName)) {
             return result.setItems(new ObjectSchema());
         }
         return result.setItems(this.parseJsonSchema(typePkName, ignores));
@@ -85,13 +80,13 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
             ItemJsonSchema value = (ItemJsonSchema) wrapper.getJson();
             // 字段备注
             String desc = wrapper.getDesc();
-            if (Strings.isBlank(desc)) {
+            if (StringUtils.isBlank(desc)) {
                 desc = "";
             }
             if (value != null) {
                 // 类型备注
                 String description = value.getDescription();
-                if (Strings.isNotBlank(description)) {
+                if (StringUtils.isNotBlank(description)) {
                     desc += description;
                 }
                 objectSchema.addProperty(fieldName, value.setDescription(desc));
@@ -186,7 +181,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
                 stringSchema.setMinLength(integerRange.getMin());
                 stringSchema.setMaxLength(integerRange.getMax());
                 String pattern = ValidUtils.getPattern(psiField);
-                if (!Strings.isEmpty(pattern)) {
+                if (!StringUtils.isEmpty(pattern)) {
                     stringSchema.setPattern(pattern);
                 }
                 result = stringSchema;

@@ -13,7 +13,7 @@ import com.github.aqiu202.ideayapi.parser.abs.AbstractJsonParser;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiType;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,12 +38,8 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
         this.needDesc = needDesc;
     }
 
-    public Json5ParserImpl(Project project) {
-        this(project, true);
-    }
-
-    public Json5ParserImpl(Project project, boolean needDesc) {
-        super(project);
+    public Json5ParserImpl(YApiProjectProperty property, Project project, boolean needDesc, boolean notConvertFieldName) {
+        super(property, project, notConvertFieldName);
         this.needDesc = needDesc;
     }
 
@@ -64,7 +60,7 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
 
     @Override
     public JsonArray<?> parseCollection(String typePkName, List<String> ignores) {
-        if (Strings.isBlank(typePkName)) {
+        if (StringUtils.isBlank(typePkName)) {
             return new JsonArray<>();
         }
         return new JsonArray<>(this.parseJson5(typePkName, ignores));
@@ -88,7 +84,7 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
             if (value instanceof Json) {
                 // 字段备注
                 String desc = wrapper.getDesc();
-                if (Strings.isBlank(desc)) {
+                if (StringUtils.isBlank(desc)) {
                     desc = "";
                 }
                 if (value instanceof JsonObject) {
@@ -97,7 +93,7 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
                         JsonItem<?> item = items.iterator().next();
                         // 类型备注
                         String description = item.getDescription();
-                        if (Strings.isNotBlank(description)) {
+                        if (StringUtils.isNotBlank(description)) {
                             item.setDescription("");
                             desc += description;
                         }

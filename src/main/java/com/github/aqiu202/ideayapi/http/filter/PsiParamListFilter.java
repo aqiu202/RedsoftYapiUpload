@@ -6,10 +6,9 @@ import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -45,36 +44,22 @@ public interface PsiParamListFilter {
     default ValueWrapper handleParamAnnotation(@NotNull PsiParameter psiParameter,
                                                @NotNull PsiAnnotation psiAnnotation) {
         ValueWrapper valueWrapper = new ValueWrapper();
-        PsiAnnotationMemberValue element = psiAnnotation.findAttributeValue("name");
-        if (Objects.nonNull(element)) {
-            String name = PsiAnnotationUtils.resolveAnnotationValue(element.getText());
-            if (Strings.isBlank(name)) {
-                name = PsiAnnotationUtils.resolveAnnotationValue(Objects.requireNonNull(psiAnnotation.findAttributeValue("value")).getText());
-            }
-            valueWrapper.setName(name);
+        String nameVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "name");
+        if (StringUtils.isBlank(nameVal)) {
+            nameVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation);
         }
-        PsiAnnotationMemberValue required = psiAnnotation.findAttributeValue("required");
-        if (Objects.nonNull(required)) {
-            valueWrapper.setRequired(
-                    PsiAnnotationUtils.resolveAnnotationValue(required.getText())
-                            .replace("false", "0")
-                            .replace("true", "1"));
-        }
-        PsiAnnotationMemberValue defaultValue = psiAnnotation.findAttributeValue("defaultValue");
-        String stringValue;
-        if (Objects.nonNull(defaultValue)
-                && !"\\n\\t\\t\\n\\t\\t\\n\\uE000\\uE001\\uE002\\n\\t\\t\\t\\t\\n"
-                .equals((stringValue = PsiAnnotationUtils.resolveAnnotationValue(defaultValue.getText())))) {
-            valueWrapper.setExample(stringValue);
+        valueWrapper.setName(nameVal);
+        String requiredVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "required");
+        valueWrapper.setRequired(Objects.equals("false", requiredVal) ? "0" : "1");
+        String defaultValue = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "defaultValue");
+        if (!Objects.equals("\\n\\t\\t\\n\\t\\t\\n\\uE000\\uE001\\uE002\\n\\t\\t\\t\\t\\n", defaultValue)) {
+            valueWrapper.setExample(defaultValue);
             valueWrapper.setRequired("0");
         }
-        if (Strings.isBlank(valueWrapper.getRequired())) {
-            valueWrapper.setRequired("1");
-        }
-        if (Strings.isBlank(valueWrapper.getName())) {
+        if (StringUtils.isBlank(valueWrapper.getName())) {
             valueWrapper.setName(psiParameter.getName());
         }
-        if (Strings.isBlank(valueWrapper.getExample())) {
+        if (StringUtils.isBlank(valueWrapper.getExample())) {
             Object o;
             if (Objects.nonNull(o = TypeUtils
                     .getDefaultValueByPackageName((psiParameter.getType().getCanonicalText())))) {

@@ -7,7 +7,7 @@ import com.github.aqiu202.ideayapi.util.PathUtils;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifierListOwner;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -34,7 +34,7 @@ public class MethodPathResolverImpl extends AbstractPathResolver {
             Set<String> pathSet = new LinkedHashSet<>();
             for (String classPath : classPaths) {
                 for (String path : paths) {
-                    String p = classPath + PathUtils.pathFormat(path, Strings.isBlank(classPath));
+                    String p = classPath + PathUtils.pathFormat(path, StringUtils.isBlank(classPath));
                     pathSet.add(p);
                 }
             }

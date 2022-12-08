@@ -1,6 +1,6 @@
 package com.github.aqiu202.ideayapi.mode.json5;
 
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,11 +35,11 @@ public class JsonArray<T> extends Json<Collection<Json<T>>> {
         String intent = this.intent(this.level);
         String desc;
         if (commentMode == COMMENT_MODE_SINGLE) {
-            desc = Strings.isBlank(description) ? "" : "// " + description;
+            desc = StringUtils.isBlank(description) ? "" : "// " + description;
             joiner = new StringJoiner(",\n", "[ " + desc + "\n",
                     "\n" + intent + "]");
         } else {
-            desc = Strings.isBlank(description) ? "" : "/* " + description + " */";
+            desc = StringUtils.isBlank(description) ? "" : "/* " + description + " */";
             joiner = new StringJoiner(",\n",
                     intent + "[ " + desc + "\n",
                     "\n" + intent + "]");

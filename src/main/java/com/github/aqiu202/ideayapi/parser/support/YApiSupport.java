@@ -15,6 +15,10 @@ public interface YApiSupport {
         return 0;
     }
 
+    default void handleMenu(PsiClass psiClass, YApiParam apiParam) {
+
+    }
+
     default void handleMethod(PsiMethod psiMethod, YApiParam apiDTO) {
     }
 

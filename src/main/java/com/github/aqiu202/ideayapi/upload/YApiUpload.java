@@ -7,7 +7,7 @@ import com.github.aqiu202.ideayapi.parser.base.ContentTypeResolver;
 import com.github.aqiu202.ideayapi.util.HttpClientUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.jgoodies.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -36,7 +36,7 @@ public class YApiUpload {
     public YApiResponse uploadSave(YApiProjectProperty property, YApiSaveParam yapiSaveParam,
                                    @SuppressWarnings("unused") String path)
             throws IOException {
-        if (Strings.isEmpty(yapiSaveParam.getTitle())) {
+        if (StringUtils.isEmpty(yapiSaveParam.getTitle())) {
             yapiSaveParam.setTitle(yapiSaveParam.getPath());
         }
         YApiHeader yapiHeader = new YApiHeader();
@@ -96,7 +96,7 @@ public class YApiUpload {
         String yApiUrl = property.getUrl();
         Map<String, Integer> catMenuMap = catMap.get(projectId);
         if (catMenuMap != null) {
-            if (!Strings.isEmpty(yapiSaveParam.getMenu())) {
+            if (!StringUtils.isEmpty(yapiSaveParam.getMenu())) {
                 if (Objects.nonNull(catMenuMap.get(yapiSaveParam.getMenu()))) {
                     return new YApiResponse(catMenuMap.get(yapiSaveParam.getMenu()));
                 }
