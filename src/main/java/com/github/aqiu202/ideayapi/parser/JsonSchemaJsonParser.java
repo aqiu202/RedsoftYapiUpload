@@ -1,6 +1,7 @@
 package com.github.aqiu202.ideayapi.parser;
 
 import com.github.aqiu202.ideayapi.mode.schema.base.ItemJsonSchema;
+import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,10 @@ import java.util.List;
  **/
 public interface JsonSchemaJsonParser extends ObjectJsonParser {
 
-    ItemJsonSchema parseJsonSchema(String typePkName, List<String> ignores);
+    ItemJsonSchema parseJsonSchema(String typePkName, LevelCounter counter);
 
     default ItemJsonSchema parseJsonSchema(String typePkName) {
-        return this.parseJsonSchema(typePkName, new ArrayList<>());
+        return this.parseJsonSchema(typePkName, new LevelCounter());
     }
 
 }

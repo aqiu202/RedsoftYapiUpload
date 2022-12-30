@@ -12,6 +12,7 @@ import com.github.aqiu202.ideayapi.model.range.IntegerRange;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
 import com.github.aqiu202.ideayapi.parser.JsonSchemaJsonParser;
 import com.github.aqiu202.ideayapi.parser.abs.AbstractJsonParser;
+import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.github.aqiu202.ideayapi.util.ValidUtils;
@@ -42,8 +43,8 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
 
 
     @Override
-    public ItemJsonSchema parseJsonSchema(String typePkName, List<String> ignores) {
-        return (ItemJsonSchema) super.parse(typePkName, ignores);
+    public ItemJsonSchema parseJsonSchema(String typePkName, LevelCounter counter) {
+        return (ItemJsonSchema) super.parse(typePkName, counter);
     }
 
     @Override
@@ -64,12 +65,12 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ArraySchema parseCollection(String typePkName, List<String> ignores) {
+    public ArraySchema parseCollection(String typePkName, LevelCounter counter) {
         ArraySchema result = new ArraySchema();
         if (StringUtils.isBlank(typePkName)) {
             return result.setItems(new ObjectSchema());
         }
-        return result.setItems(this.parseJsonSchema(typePkName, ignores));
+        return result.setItems(this.parseJsonSchema(typePkName, counter));
     }
 
     @Override
@@ -99,7 +100,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ItemJsonSchema parseFieldValue(PsiField psiField, List<String> ignores) {
+    public ItemJsonSchema parseFieldValue(PsiField psiField, LevelCounter counter) {
         PsiType type = psiField.getType();
         String typePkName = type.getCanonicalText();
         EnumResult enumResult = PsiUtils.isEnum(this.project, typePkName);
@@ -114,7 +115,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         } else if (TypeUtils.isBasicType(typePkName)) {
             itemJsonSchema = this.parseBasicField(psiField);
         } else {
-            itemJsonSchema = this.parseCompoundField(psiField, ignores);
+            itemJsonSchema = this.parseCompoundField(psiField, counter);
         }
         return itemJsonSchema;
     }
@@ -197,11 +198,11 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         return result;
     }
 
-    private ItemJsonSchema parseCompoundField(PsiField psiField, List<String> ignores) {
+    private ItemJsonSchema parseCompoundField(PsiField psiField, LevelCounter counter) {
         PsiType psiType = psiField.getType();
         String typeName = psiType.getPresentableText();
         boolean wrapArray = typeName.endsWith("[]");
-        ItemJsonSchema result = this.parseJsonSchema(psiType.getCanonicalText(), ignores);
+        ItemJsonSchema result = this.parseJsonSchema(psiType.getCanonicalText(), counter);
         if (result instanceof ArraySchema) {
             ArraySchema a = (ArraySchema) result;
             if (typeName.contains("Set") && !wrapArray) {

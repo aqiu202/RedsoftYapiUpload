@@ -1,6 +1,7 @@
 package com.github.aqiu202.ideayapi.parser;
 
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
+import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 import com.github.aqiu202.ideayapi.util.DesUtils;
 import com.intellij.psi.PsiField;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +16,7 @@ import java.util.List;
  **/
 public interface BaseObjectParser {
 
-    Jsonable parse(String typePkName, List<String> ignores);
+    Jsonable parse(String typePkName, LevelCounter counter);
 
     Jsonable parseBasic(String typePkName);
 
@@ -26,21 +27,21 @@ public interface BaseObjectParser {
     Jsonable parseMap(String typePkName, String description);
 
     default Jsonable parseCollection(@Nullable String typePkName) {
-        return this.parseCollection(typePkName, new ArrayList<>());
+        return this.parseCollection(typePkName, new LevelCounter());
     }
 
-    Jsonable parseCollection(@Nullable String typePkName, List<String> ignores);
+    Jsonable parseCollection(@Nullable String typePkName, LevelCounter counter);
 
     //仅支持解析一种泛型
     default Jsonable parsePojo(String typePkName, String genericType) {
-        return this.parsePojo(typePkName, genericType, new ArrayList<>());
+        return this.parsePojo(typePkName, genericType, new LevelCounter());
     }
 
-    Jsonable parsePojo(String typePkName, String genericType, List<String> ignores);
+    Jsonable parsePojo(String typePkName, String genericType, LevelCounter counter);
 
     default ValueWrapper parseField(PsiField field, String genericType) {
-        return parseField(field, genericType, new ArrayList<>());
+        return parseField(field, genericType, new LevelCounter());
     }
 
-    ValueWrapper parseField(PsiField field, String genericType, List<String> ignores);
+    ValueWrapper parseField(PsiField field, String genericType, LevelCounter counter);
 }

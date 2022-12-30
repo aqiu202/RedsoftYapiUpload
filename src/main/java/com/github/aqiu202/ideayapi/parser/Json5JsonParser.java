@@ -1,9 +1,7 @@
 package com.github.aqiu202.ideayapi.parser;
 
 import com.github.aqiu202.ideayapi.mode.json5.Json;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 
 /**
  * <b>json5解析器</b>
@@ -13,9 +11,9 @@ import java.util.List;
 public interface Json5JsonParser extends ObjectJsonParser {
 
     default Json<?> parseJson5(String typePkName) {
-        return this.parseJson5(typePkName, new ArrayList<>());
+        return this.parseJson5(typePkName, new LevelCounter());
     }
 
-    Json<?> parseJson5(String typePkName, List<String> ignores);
+    Json<?> parseJson5(String typePkName, LevelCounter counter);
 
 }

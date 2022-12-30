@@ -34,11 +34,18 @@ public final class PsiDocUtils {
     @Nullable
     public static String getTagValueByName(@NotNull PsiDocComment docComment, String... names) {
         PsiDocTag tag = getTagByName(docComment, names);
-        PsiDocTagValue value;
-        if (Objects.isNull(tag) || Objects.isNull(value = tag.getValueElement())) {
-            return null;
+        if (Objects.nonNull(tag)) {
+            PsiDocTagValue value = tag.getValueElement();
+            if (Objects.nonNull(value)) {
+                return value.getText();
+            } else {
+                PsiElement[] dataElements = tag.getDataElements();
+                if (dataElements.length > 0) {
+                    return dataElements[0].getText();
+                }
+            }
         }
-        return value.getText();
+        return null;
     }
 
     public static String getTagDescription(@NotNull PsiDocComment docComment) {

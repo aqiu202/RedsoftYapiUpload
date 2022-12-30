@@ -2,7 +2,6 @@ package com.github.aqiu202.ideayapi.action;
 
 import com.github.aqiu202.ideayapi.config.impl.ProjectConfigReader;
 import com.github.aqiu202.ideayapi.config.xml.YApiProjectProperty;
-import com.github.aqiu202.ideayapi.constant.NotificationConstants;
 import com.github.aqiu202.ideayapi.constant.YApiConstants;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.model.YApiResponse;
@@ -12,6 +11,7 @@ import com.github.aqiu202.ideayapi.parser.YApiParser;
 import com.github.aqiu202.ideayapi.parser.impl.PsiMethodParserImpl;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.github.aqiu202.ideayapi.upload.YApiUpload;
+import com.github.aqiu202.ideayapi.util.NotificationUtils;
 import com.intellij.notification.NotificationListener.UrlOpeningListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -47,8 +47,7 @@ public class YApiUploadAction extends AnAction {
         String yapiUrl = property.getUrl();
         // 配置校验
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(yapiUrl) || projectId <= 0) {
-            NotificationConstants.NOTIFICATION_GROUP
-                    .createNotification(YApiConstants.name, "配置信息异常", "请检查配置参数是否正常",
+            NotificationUtils.createNotification("配置信息异常", "请检查配置参数是否正常",
                             NotificationType.ERROR).notify(project);
             return;
         }
@@ -71,14 +70,12 @@ public class YApiUploadAction extends AnAction {
                         YApiResponse yapiResponse = new YApiUpload()
                                 .uploadSave(property, param, project.getBasePath());
                         if (yapiResponse.getErrcode() != 0) {
-                            NotificationConstants.NOTIFICATION_GROUP
-                                    .createNotification(YApiConstants.name, "上传失败",
+                            NotificationUtils.createNotification("上传失败",
                                             "api上传失败原因:" + yapiResponse.getErrmsg(),
                                             NotificationType.ERROR).notify(project);
                         }
                     } catch (Exception e1) {
-                        NotificationConstants.NOTIFICATION_GROUP
-                                .createNotification(YApiConstants.name, "上传失败", "api上传失败原因:" + e1,
+                        NotificationUtils.createNotification("上传失败", "api上传失败原因:" + e1,
                                         NotificationType.ERROR)
                                 .notify(project);
                         return;
@@ -89,12 +86,10 @@ public class YApiUploadAction extends AnAction {
                         + YApiUpload.catMap
                         .get(Integer.toString(projectId))
                         .get(menu);
-                NotificationConstants.NOTIFICATION_GROUP
-                        .createNotification(YApiConstants.name, "上传成功",
+                NotificationUtils.createNotification("上传成功",
                                 "<p>接口文档地址:  <a href=\"" + url + "\">" + url
                                         + "</a></p>",
-                                NotificationType.INFORMATION,
-                                new UrlOpeningListener(false))
+                                NotificationType.INFORMATION).setListener(new UrlOpeningListener(false))
                         .notify(project);
             }
             YApiUpload.catMap.clear();

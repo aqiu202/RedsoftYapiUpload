@@ -4,8 +4,7 @@ import com.github.aqiu202.ideayapi.config.ProjectConfigurationReader;
 import com.github.aqiu202.ideayapi.config.YApiProjectPersistentState;
 import com.github.aqiu202.ideayapi.config.xml.YApiProjectProperty;
 import com.github.aqiu202.ideayapi.config.xml.YApiPropertyConvertHolder;
-import com.github.aqiu202.ideayapi.constant.NotificationConstants;
-import com.github.aqiu202.ideayapi.constant.YApiConstants;
+import com.github.aqiu202.ideayapi.util.NotificationUtils;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
@@ -30,8 +29,7 @@ public class ProjectConfigReader {
                         Objects.requireNonNull(project.getProjectFile()).contentsToByteArray(),
                         StandardCharsets.UTF_8);
                 if (projectConfig.contains("yapi")) {
-                    NotificationConstants.NOTIFICATION_GROUP
-                            .createNotification(YApiConstants.name, "配置信息更新",
+                    NotificationUtils.createNotification("配置信息更新",
                                     "读取到旧版本的配置信息，配置信息已经更新", NotificationType.INFORMATION)
                             .notify(project);
                     property.setToken(projectConfig.split("projectToken\">")[1].split("</")[0]);

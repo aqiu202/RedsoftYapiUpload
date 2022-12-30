@@ -50,4 +50,6 @@ public interface YApiConstants {
     String yapiCatMenu = "/api/interface/getCatMenu";
 
     String $schema = "http://json-schema.org/draft-04/schema#";
+
+    int maxLevel = 5;
 }

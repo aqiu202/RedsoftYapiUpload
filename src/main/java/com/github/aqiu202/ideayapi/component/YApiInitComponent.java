@@ -4,9 +4,8 @@ import com.github.aqiu202.ideayapi.config.YApiApplicationPersistentState;
 import com.github.aqiu202.ideayapi.config.impl.ApplicationConfigReader;
 import com.github.aqiu202.ideayapi.config.xml.YApiApplicationProperty;
 import com.github.aqiu202.ideayapi.config.xml.YApiPropertyConvertHolder;
-import com.github.aqiu202.ideayapi.constant.NotificationConstants;
 import com.github.aqiu202.ideayapi.constant.PluginConstants;
-import com.github.aqiu202.ideayapi.constant.YApiConstants;
+import com.github.aqiu202.ideayapi.util.NotificationUtils;
 import com.intellij.notification.NotificationListener.UrlOpeningListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.components.ProjectComponent;
@@ -25,18 +24,16 @@ public class YApiInitComponent implements ProjectComponent {
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
-            String changeLogTitle = "<h4>2.2.0版本，优化配置，添加请求/响应字段忽略配置</h4>";
+            String changeLogTitle = "<h4>2.2.1版本，优化解析策略防止类型嵌套导致内存溢出</h4>";
             String changeLogContent = "<ol>\n"
-                    + "        <li>优化配置，添加请求/响应字段忽略配置</li>\n"
-                    + "        <li>读取注解的属性时可正常获取静态常量的值</li>\n"
-                    + "        <li>添加配置项--是否将接口定义信息设置为接口备注</li>\n"
+                    + "        <li>优化解析策略防止类型嵌套导致内存溢出</li>\n"
+                    + "        <li>修复已知问题#25,#26</li>\n"
                     + "     </ol>";
-            NotificationConstants.NOTIFICATION_GROUP_WINDOW.createNotification(YApiConstants.name,
-                            "更新内容",
+            NotificationUtils.createNotification("更新内容",
                             changeLogTitle + "\n" + changeLogContent
                                     + "<p>更多信息请查看<a href=\"https://github.com/aqiu202/RedsoftYApiUpload/wiki/使用指南\">使用文档</a>||"
-                                    + "<a href=\"https://github.com/aqiu202/RedsoftYapiUpload/issues\">问题反馈</a></p>",
-                            NotificationType.INFORMATION, new UrlOpeningListener(false))
+                                    + "<a href=\"https://github.com/aqiu202/RedsoftYapiUpload/issues\">问题反馈</a></p>", NotificationType.INFORMATION)
+                    .setListener(new UrlOpeningListener(false))
                     .setImportant(true)
                     .notify(this.project);
             property = new YApiApplicationProperty();
