@@ -28,7 +28,7 @@ intellij {
     version = '2022.1.1'
     type = 'IU'
     plugins = ["java"]
-//    updateSinceUntilBuild = false
+    updateSinceUntilBuild = false
 }
 patchPluginXml {
 
