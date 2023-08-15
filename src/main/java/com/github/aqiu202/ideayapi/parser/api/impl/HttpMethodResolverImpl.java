@@ -49,7 +49,11 @@ public class HttpMethodResolverImpl implements HttpMethodResolver {
                     .isAnnotatedWith(owner, SpringMVCConstants.PatchMapping)) {
                 methods.add(HttpMethodConstants.PATCH);
             }
-            if (!methods.isEmpty()) {
+            if (methods.isEmpty()) {
+                target.setMethods(new LinkedHashSet<>(Arrays.asList(HttpMethodConstants.GET,
+                        HttpMethodConstants.POST, HttpMethodConstants.PUT,
+                        HttpMethodConstants.PATCH, HttpMethodConstants.DELETE)));
+            } else {
                 target.setMethods(methods);
             }
         }
