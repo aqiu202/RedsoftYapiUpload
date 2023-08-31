@@ -10,6 +10,7 @@ import com.github.aqiu202.ideayapi.parser.impl.Json5ParserImpl;
 import com.github.aqiu202.ideayapi.parser.impl.JsonSchemaParserImpl;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +38,8 @@ public class RequestBodyResolverImpl extends AbstractRequestParamResolver {
     }
 
     @Override
-    public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
-                               @NotNull YApiParam target) {
+    public void doResolverItem(@NotNull PsiClass targetClass, @NotNull PsiMethod m,
+                               @NotNull PsiParameter param, @NotNull YApiParam target) {
         target.setRequestBody(this.objectJsonParser.getJson(param.getType()));
         target.setReq_body_is_json_schema(this.dataMode == 0);
     }

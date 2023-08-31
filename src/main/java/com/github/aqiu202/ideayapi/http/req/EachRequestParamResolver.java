@@ -1,6 +1,7 @@
 package com.github.aqiu202.ideayapi.http.req;
 
 import com.github.aqiu202.ideayapi.model.YApiParam;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
@@ -14,12 +15,13 @@ import java.util.List;
  **/
 public interface EachRequestParamResolver extends RequestParamResolver {
 
-    default void doResolve(@NotNull PsiMethod m,
+    default void doResolve(@NotNull PsiClass targetClass,
+                           @NotNull PsiMethod m,
                            @NotNull List<PsiParameter> parameterList,
                            @NotNull YApiParam target) {
-        parameterList.forEach(p -> this.doResolverItem(m, p, target));
+        parameterList.forEach(p -> this.doResolverItem(targetClass, m, p, target));
     }
 
-    void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
-                        @NotNull YApiParam target);
+    void doResolverItem(@NotNull PsiClass targetClass, @NotNull PsiMethod m,
+                        @NotNull PsiParameter param, @NotNull YApiParam target);
 }

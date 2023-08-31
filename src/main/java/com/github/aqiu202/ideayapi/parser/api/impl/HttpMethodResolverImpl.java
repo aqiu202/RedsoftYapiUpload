@@ -5,7 +5,9 @@ import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.api.HttpMethodResolver;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,35 +20,63 @@ import java.util.stream.Collectors;
 public class HttpMethodResolverImpl implements HttpMethodResolver {
 
     @Override
-    public void resolve(@NotNull PsiModifierListOwner owner, @NotNull YApiParam target) {
+    public void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
+        this.resolveWithClass(c, target);
+        this.resolveWithMethod(m, target);
+    }
+
+    protected void resolveWithClass(PsiClass c, YApiParam target) {
+        Set<String> methods = target.getMethods();
+        if (methods == null) {
+            methods = new LinkedHashSet<>();
+            if (PsiAnnotationUtils
+                    .isAnnotatedWith(c, SpringMVCConstants.GetMapping)) {
+                methods.add(HttpMethodConstants.GET);
+            } else if (PsiAnnotationUtils
+                    .isAnnotatedWith(c, SpringMVCConstants.PostMapping)) {
+                methods.add(HttpMethodConstants.POST);
+            } else if (PsiAnnotationUtils
+                    .isAnnotatedWith(c, SpringMVCConstants.PutMapping)) {
+                methods.add(HttpMethodConstants.PUT);
+            } else if (PsiAnnotationUtils
+                    .isAnnotatedWith(c, SpringMVCConstants.DeleteMapping)) {
+                methods.add(HttpMethodConstants.DELETE);
+            } else if (PsiAnnotationUtils
+                    .isAnnotatedWith(c, SpringMVCConstants.PatchMapping)) {
+                methods.add(HttpMethodConstants.PATCH);
+            }
+            if (!methods.isEmpty()) {
+                target.setMethods(methods);
+            }
+        }
+    }
+
+    protected void resolveWithMethod(PsiMethod m, YApiParam target) {
         Set<String> methods = target.getMethods();
         if (methods == null) {
             methods = new LinkedHashSet<>();
             //获取方法上的RequestMapping注解
             PsiAnnotation annotation = PsiAnnotationUtils
-                    .findAnnotation(owner, SpringMVCConstants.RequestMapping);
+                    .findAnnotation(m, SpringMVCConstants.RequestMapping);
             if (annotation != null) {
-                // 类上不处理缺省方法
-                if (!(owner instanceof PsiClass)) {
-                    String methodVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation, "method");
-                    if (StringUtils.isNotBlank(methodVal)) {
-                        methods.addAll(this.processMethod(methodVal.toUpperCase()));
-                    }
+                String methodVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation, "method");
+                if (StringUtils.isNotBlank(methodVal)) {
+                    methods.addAll(this.processMethod(methodVal.toUpperCase()));
                 }
             } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(owner, SpringMVCConstants.GetMapping)) {
+                    .isAnnotatedWith(m, SpringMVCConstants.GetMapping)) {
                 methods.add(HttpMethodConstants.GET);
             } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(owner, SpringMVCConstants.PostMapping)) {
+                    .isAnnotatedWith(m, SpringMVCConstants.PostMapping)) {
                 methods.add(HttpMethodConstants.POST);
             } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(owner, SpringMVCConstants.PutMapping)) {
+                    .isAnnotatedWith(m, SpringMVCConstants.PutMapping)) {
                 methods.add(HttpMethodConstants.PUT);
             } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(owner, SpringMVCConstants.DeleteMapping)) {
+                    .isAnnotatedWith(m, SpringMVCConstants.DeleteMapping)) {
                 methods.add(HttpMethodConstants.DELETE);
             } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(owner, SpringMVCConstants.PatchMapping)) {
+                    .isAnnotatedWith(m, SpringMVCConstants.PatchMapping)) {
                 methods.add(HttpMethodConstants.PATCH);
             }
             if (methods.isEmpty()) {

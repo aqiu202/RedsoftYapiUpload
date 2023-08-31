@@ -4,6 +4,7 @@ import com.github.aqiu202.ideayapi.http.filter.PsiParamListFilter;
 import com.github.aqiu202.ideayapi.http.req.EachRequestParamResolver;
 import com.github.aqiu202.ideayapi.http.req.RequestParamResolver;
 import com.github.aqiu202.ideayapi.model.YApiParam;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +20,7 @@ public abstract class AbstractRequestParamResolver implements PsiParamListFilter
         EachRequestParamResolver {
 
     @Override
-    public void resolve(@NotNull PsiMethod m, @NotNull YApiParam target) {
-        this.doResolve(m, this.filter(m, target), target);
+    public void resolve(@NotNull PsiClass targetClass, @NotNull PsiMethod m, @NotNull YApiParam target) {
+        this.doResolve(targetClass, m, this.filter(m, target), target);
     }
 }

@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 public class PathResolverImpl implements PathResolver {
 
     private final PathPrefixResolver pathPrefixResolver = new PathPrefixResolverImpl();
-    private final BasePathResolver clzPathResolver = new ClassPathResolverImpl();
     private final BasePathResolver methodPathResolver = new MethodPathResolverImpl();
+    private final BasePathResolver clzPathResolver = new ClassPathResolverImpl();
 
     @Override
     public void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {

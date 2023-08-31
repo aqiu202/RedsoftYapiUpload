@@ -23,9 +23,9 @@ import org.jetbrains.annotations.NotNull;
 public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
 
     private final PathResolver pathResolver = new PathResolverImpl();
-    private final HttpMethodResolver httpMethodResolver = new HttpMethodResolverImpl();
     private final MenuResolver menuResolver = new MenuResolverImpl();
     private final StatusResolver statusResolver = new StatusResolverImpl();
+    private final HttpMethodResolver httpMethodResolver = new HttpMethodResolverImpl();
     private final ContentTypeResolver requestContentTypeResolver = new RequestContentTypeResolverImpl();
     private final ContentTypeResolver responseContentTypeResolver = new ResponseContentTypeResolverImpl();
     private final BaseInfoResolver baseInfoResolver;
@@ -46,12 +46,12 @@ public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
     public void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
         this.pathResolver.resolve(c, m, target);
         this.baseInfoResolver.resolve(c, m, target);
-        this.httpMethodResolver.resolve(m, target);
+        this.httpMethodResolver.resolve(c, m, target);
         PsiDocComment classDoc = c.getDocComment();
         PsiDocComment methodDoc = m.getDocComment();
         this.statusResolver.resolve(classDoc, methodDoc, target);
         this.menuResolver.set(c, target);
-        this.requestResolver.resolve(m, target);
+        this.requestResolver.resolve(c, m, target);
         this.requestContentTypeResolver.resolve(c, m, target);
         this.responseContentTypeResolver.resolve(c, m, target);
         this.docTagValueResolver.accept(target);

@@ -5,6 +5,7 @@ import com.github.aqiu202.ideayapi.http.req.RequestParamResolver;
 import com.github.aqiu202.ideayapi.http.req.RequestResolver;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,8 +27,8 @@ public class RequestResolverImpl implements RequestResolver {
     }
 
     @Override
-    public void resolve(@NotNull PsiMethod m, @NotNull YApiParam target) {
-        this.paramResolvers.forEach(r -> r.resolve(m, target));
+    public void resolve(@NotNull PsiClass targetClass, @NotNull PsiMethod m, @NotNull YApiParam target) {
+        this.paramResolvers.forEach(r -> r.resolve(targetClass, m, target));
     }
 
 }

@@ -2,7 +2,6 @@ package com.github.aqiu202.ideayapi.parser.api.impl;
 
 import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
 import com.github.aqiu202.ideayapi.model.YApiParam;
-import com.github.aqiu202.ideayapi.parser.api.HttpMethodResolver;
 import com.github.aqiu202.ideayapi.parser.api.abs.AbstractPathResolver;
 import com.github.aqiu202.ideayapi.util.PathUtils;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
@@ -17,20 +16,8 @@ import java.util.stream.Collectors;
 
 public class ClassPathResolverImpl extends AbstractPathResolver {
 
-    private HttpMethodResolver httpMethodResolver = new HttpMethodResolverImpl();
-
-    public HttpMethodResolver getHttpMethodResolver() {
-        return httpMethodResolver;
-    }
-
-    public void setHttpMethodResolver(HttpMethodResolver httpMethodResolver) {
-        this.httpMethodResolver = httpMethodResolver;
-    }
-
     @Override
     public void resolve(@NotNull PsiModifierListOwner m, @NotNull YApiParam target) {
-        //处理在类上声明方法的情况
-        this.getHttpMethodResolver().resolve(m, target);
         //获取类上面的RequestMapping 中的value，如果路径上使用了
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
                 .findAnnotation(m, SpringMVCConstants.RequestMapping, SpringMVCConstants.GetMapping,

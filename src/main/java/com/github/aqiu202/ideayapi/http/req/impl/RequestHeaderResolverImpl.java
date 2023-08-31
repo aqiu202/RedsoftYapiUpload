@@ -7,6 +7,7 @@ import com.github.aqiu202.ideayapi.model.YApiHeader;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
@@ -28,8 +29,8 @@ public class RequestHeaderResolverImpl extends AbstractRequestParamResolver {
     }
 
     @Override
-    public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
-                               @NotNull YApiParam target) {
+    public void doResolverItem(@NotNull PsiClass targetClass, @NotNull PsiMethod m,
+                               @NotNull PsiParameter param, @NotNull YApiParam target) {
         PsiAnnotation annotation = PsiAnnotationUtils
                 .findAnnotation(param, SpringMVCConstants.RequestHeader);
         if (Objects.nonNull(annotation)) {

@@ -31,9 +31,9 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
     }
 
     @Override
-    public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
+    public void doResolverItem(@NotNull PsiClass targetClass, @NotNull PsiMethod m, @NotNull PsiParameter param,
                                @NotNull YApiParam target) {
-        Collection<ValueWrapper> valueWrappers = this.resolvePojo(m, param);
+        Collection<ValueWrapper> valueWrappers = this.resolvePojo(targetClass, m, param);
         if (CollectionUtils.isNotEmpty(valueWrappers)) {
             this.doSet(target, valueWrappers);
         }
@@ -74,7 +74,8 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         return valueWrapper;
     }
 
-    protected Collection<ValueWrapper> resolvePojo(@NotNull PsiMethod m,
+    protected Collection<ValueWrapper> resolvePojo(@NotNull PsiClass targetClass,
+                                                   @NotNull PsiMethod m,
                                                    @NotNull PsiParameter param) {
         PsiType paramType = param.getType();
         if (TypeUtils.isMap(paramType)) {
