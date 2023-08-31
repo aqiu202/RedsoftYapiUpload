@@ -9,10 +9,13 @@ import com.github.aqiu202.ideayapi.parser.ObjectJsonParser;
 import com.github.aqiu202.ideayapi.parser.impl.Json5ParserImpl;
 import com.github.aqiu202.ideayapi.parser.impl.JsonSchemaParserImpl;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.impl.source.PsiClassReferenceType;
 import org.jetbrains.annotations.NotNull;
 
 public class RequestBodyResolverImpl extends AbstractRequestParamResolver {
@@ -40,7 +43,11 @@ public class RequestBodyResolverImpl extends AbstractRequestParamResolver {
     @Override
     public void doResolverItem(@NotNull PsiClass targetClass, @NotNull PsiMethod m,
                                @NotNull PsiParameter param, @NotNull YApiParam target) {
-        target.setRequestBody(this.objectJsonParser.getJson(param.getType()));
+        PsiType paramType = param.getType();
+        if (!((PsiClassReferenceType) paramType).isRaw()) {
+            paramType = TypeUtils.parseType(targetClass, param);
+        }
+        target.setRequestBody(this.objectJsonParser.getJson(paramType));
         target.setReq_body_is_json_schema(this.dataMode == 0);
     }
 

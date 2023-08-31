@@ -5,9 +5,15 @@ import com.github.aqiu202.ideayapi.constant.SpringWebFluxConstants;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
 import com.github.aqiu202.ideayapi.model.Mock;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
+import com.intellij.lang.jvm.JvmTypeParameter;
+import com.intellij.lang.jvm.types.JvmReferenceType;
+import com.intellij.lang.jvm.types.JvmSubstitutor;
+import com.intellij.lang.jvm.types.JvmType;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiVariable;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -377,5 +383,24 @@ public class TypeUtils {
             default:
                 return new Mock("@string");
         }
+    }
+
+    public static PsiType parseType(PsiClass targetClass, PsiVariable variable) {
+        try {
+            JvmReferenceType superClassType = targetClass.getSuperClassType();
+            JvmSubstitutor substitutor = superClassType.resolveType().getSubstitutor();
+            for (JvmTypeParameter typeParameter : substitutor.getTypeParameters()) {
+                String canonicalText = variable.getType().getCanonicalText();
+                if (canonicalText.equals(typeParameter.getName())) {
+                    JvmType type = substitutor.substitute(typeParameter);
+                    if (type instanceof PsiType) {
+                        return ((PsiType) type);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
     }
 }
