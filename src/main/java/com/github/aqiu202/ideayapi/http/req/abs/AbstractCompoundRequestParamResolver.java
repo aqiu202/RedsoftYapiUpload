@@ -13,10 +13,7 @@ import com.intellij.psi.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * <b>解析复杂类型的参数的解析抽象类</b>
@@ -37,7 +34,9 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
     public void doResolverItem(@NotNull PsiMethod m, @NotNull PsiParameter param,
                                @NotNull YApiParam target) {
         Collection<ValueWrapper> valueWrappers = this.resolvePojo(m, param);
-        this.doSet(target, valueWrappers);
+        if (CollectionUtils.isNotEmpty(valueWrappers)) {
+            this.doSet(target, valueWrappers);
+        }
     }
 
     protected boolean isBasicType(String typePkName) {
@@ -77,8 +76,12 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
 
     protected Collection<ValueWrapper> resolvePojo(@NotNull PsiMethod m,
                                                    @NotNull PsiParameter param) {
-        String typePkName = param.getType().getCanonicalText();
-        String typeName = param.getType().getPresentableText();
+        PsiType paramType = param.getType();
+        if (TypeUtils.isMap(paramType)) {
+            return Collections.emptyList();
+        }
+        String typePkName = paramType.getCanonicalText();
+        String typeName = paramType.getPresentableText();
         List<ValueWrapper> valueWrappers = new ArrayList<>();
         if (typePkName.contains("[]")) {
             typePkName = typePkName.replace("[]", "");

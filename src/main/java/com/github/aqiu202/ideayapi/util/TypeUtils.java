@@ -196,6 +196,9 @@ public class TypeUtils {
      **/
     public static boolean isMap(PsiType psiType) {
         String typePkName = psiType.getCanonicalText();
+        if (typePkName.contains("<")) {
+            typePkName = typePkName.split("<")[0];
+        }
         if (isMapType(typePkName)) {
             return true;
         }

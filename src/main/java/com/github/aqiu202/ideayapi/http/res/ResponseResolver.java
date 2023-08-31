@@ -1,6 +1,7 @@
 package com.github.aqiu202.ideayapi.http.res;
 
 import com.github.aqiu202.ideayapi.model.YApiParam;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,5 +13,5 @@ import org.jetbrains.annotations.Nullable;
  **/
 public interface ResponseResolver {
 
-    void resolve(@Nullable PsiType returnType, @NotNull YApiParam target);
+    void resolve(PsiClass targetClass, @Nullable PsiType returnType, @NotNull YApiParam target);
 }

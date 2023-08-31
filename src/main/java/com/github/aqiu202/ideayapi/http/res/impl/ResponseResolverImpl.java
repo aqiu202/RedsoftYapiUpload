@@ -9,6 +9,7 @@ import com.github.aqiu202.ideayapi.parser.base.ContentTypeResolver;
 import com.github.aqiu202.ideayapi.parser.impl.Json5ParserImpl;
 import com.github.aqiu202.ideayapi.parser.impl.JsonSchemaParserImpl;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,7 @@ public class ResponseResolverImpl implements ResponseResolver {
     }
 
     @Override
-    public void resolve(@Nullable PsiType returnType, @NotNull YApiParam target) {
+    public void resolve(PsiClass targetClass, @Nullable PsiType returnType, @NotNull YApiParam target) {
         if (Objects.isNull(returnType)) {
             return;
         }

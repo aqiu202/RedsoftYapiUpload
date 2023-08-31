@@ -56,6 +56,6 @@ public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
         this.responseContentTypeResolver.resolve(c, m, target);
         this.docTagValueResolver.accept(target);
         this.descValueResolver.accept(target);
-        this.responseResolver.resolve(m.getReturnType(), target);
+        this.responseResolver.resolve(c, m.getReturnType(), target);
     }
 }

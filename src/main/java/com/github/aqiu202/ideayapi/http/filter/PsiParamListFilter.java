@@ -52,7 +52,7 @@ public interface PsiParamListFilter {
         String requiredVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "required");
         valueWrapper.setRequired(Objects.equals("false", requiredVal) ? "0" : "1");
         String defaultValue = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "defaultValue");
-        if (!Objects.equals("\\n\\t\\t\\n\\t\\t\\n\\uE000\\uE001\\uE002\\n\\t\\t\\t\\t\\n", defaultValue)) {
+        if (!Objects.equals("\n\t\t\n\t\t\n\uE000\uE001\uE002\n\t\t\t\t\n", defaultValue)) {
             valueWrapper.setExample(defaultValue);
             valueWrapper.setRequired("0");
         }

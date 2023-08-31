@@ -138,6 +138,8 @@ public final class PsiAnnotationUtils {
             Object result = YApiSupportHolder.evaluationHelper.computeConstantExpression(attributeValue);
             if (result != null) {
                 return resolveAnnotationValue(result.toString());
+            } else {
+                return attributeValue.getText();
             }
         }
         return null;
