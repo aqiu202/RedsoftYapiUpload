@@ -1,10 +1,10 @@
 package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
-import com.github.aqiu202.ideayapi.constant.SpringWebFluxConstants;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
 import com.github.aqiu202.ideayapi.model.Mock;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
+import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.intellij.lang.jvm.JvmTypeParameter;
 import com.intellij.lang.jvm.types.JvmReferenceType;
 import com.intellij.lang.jvm.types.JvmSubstitutor;
@@ -40,14 +40,16 @@ public class TypeUtils {
     private static final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
     @NonNls
     private static final Map<String, SchemaType> basicTypeMappings = new HashMap<>();
-    private static final Map<String, SchemaType> collectionTypeMappings = new HashMap<>();
-    private static final Map<String, SchemaType> mapTypeMappings = new HashMap<>();
 
     private static final Map<String, Object> normalTypesPackages = new HashMap<>();
     private static final Map<String, Object> dateTypesPackages = new HashMap<>();
 
     private static final Map<String, LongRange> baseRangeMappings = new HashMap<>();
     private static final Map<String, String> fileTypes = new HashMap<>();
+    private static final String mapTypeName = "java.util.Map";
+    private static final String collectionTypeName = "java.util.Collection";
+    private static PsiClassType collectionType;
+    private static PsiClassType mapType;
     /**
      * 泛型列表
      */
@@ -121,21 +123,6 @@ public class TypeUtils {
         basicTypeMappings.put("java.lang.String", SchemaType.string);
         basicTypeMappings.put("java.math.BigDecimal", SchemaType.number);
 
-        collectionTypeMappings.put("java.lang.Iterable", SchemaType.array);
-        collectionTypeMappings.put("java.util.List", SchemaType.array);
-        collectionTypeMappings.put("java.util.Collection", SchemaType.array);
-        collectionTypeMappings.put("java.util.ArrayList", SchemaType.array);
-        collectionTypeMappings.put("java.util.LinkedList", SchemaType.array);
-        collectionTypeMappings.put("java.util.Set", SchemaType.array);
-        collectionTypeMappings.put("java.util.HashSet", SchemaType.array);
-        collectionTypeMappings.put("java.util.LinkedHashSet", SchemaType.array);
-        collectionTypeMappings.put(SpringWebFluxConstants.Flux, SchemaType.array);
-
-        mapTypeMappings.put("java.util.Map", SchemaType.object);
-        mapTypeMappings.put("java.util.HashMap", SchemaType.object);
-        mapTypeMappings.put("java.util.LinkedHashMap", SchemaType.object);
-        mapTypeMappings.put("java.util.TreeMap", SchemaType.object);
-
 //        baseRangeMappings.put("boolean", new LongRange(0, 1));
 //        baseRangeMappings.put("java.lang.Boolean", new LongRange(0, 1));
         baseRangeMappings.put("byte", new LongRange(Byte.MIN_VALUE, Byte.MAX_VALUE));
@@ -162,14 +149,6 @@ public class TypeUtils {
 
     public static SchemaType getBasicSchema(String typePkName) {
         return basicTypeMappings.get(typePkName);
-    }
-
-    public static boolean isCollectionType(String typePkName) {
-        return collectionTypeMappings.containsKey(typePkName);
-    }
-
-    public static boolean isMapType(String typePkName) {
-        return mapTypeMappings.containsKey(typePkName);
     }
 
     public static boolean isGenericType(String typePkName) {
@@ -201,23 +180,41 @@ public class TypeUtils {
      * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isMap(PsiType psiType) {
-        String typePkName = psiType.getCanonicalText();
-        if (typePkName.contains("<")) {
-            typePkName = typePkName.split("<")[0];
+        if (psiType == null) {
+            return false;
         }
-        if (isMapType(typePkName)) {
-            return true;
+        return getMapType().isAssignableFrom(psiType);
+//        String typePkName = psiType.getCanonicalText();
+//        if (typePkName.contains("<")) {
+//            typePkName = typePkName.split("<")[0];
+//        }
+//        if (isMapType(typePkName)) {
+//            return true;
+//        }
+//        PsiType[] parentTypes = psiType.getSuperTypes();
+//        if (parentTypes.length > 0) {
+//            for (PsiType parentType : parentTypes) {
+//                String parentTypeName = parentType.getCanonicalText().split("<")[0];
+//                if (isMapType(parentTypeName)) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+    }
+
+    private static PsiClassType getMapType() {
+        if (mapType == null) {
+            mapType = PsiUtils.findPsiClassType(YApiSupportHolder.project, mapTypeName);
         }
-        PsiType[] parentTypes = psiType.getSuperTypes();
-        if (parentTypes.length > 0) {
-            for (PsiType parentType : parentTypes) {
-                String parentTypeName = parentType.getCanonicalText().split("<")[0];
-                if (isMapType(parentTypeName)) {
-                    return true;
-                }
-            }
+        return mapType;
+    }
+
+    private static PsiClassType getCollectionType() {
+        if (collectionType == null) {
+            collectionType = PsiUtils.findPsiClassType(YApiSupportHolder.project, collectionTypeName);
         }
-        return false;
+        return collectionType;
     }
 
     /**
@@ -229,20 +226,8 @@ public class TypeUtils {
      * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isMap(Project project, String typePkName) {
-        if (isMapType(typePkName)) {
-            return true;
-        }
         PsiClassType psiType = PsiUtils.findPsiClassType(project, typePkName);
-        PsiType[] parentTypes = psiType.getSuperTypes();
-        if (parentTypes.length > 0) {
-            for (PsiType parentType : parentTypes) {
-                String parentTypeName = parentType.getCanonicalText().split("<")[0];
-                if (isMapType(parentTypeName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return getMapType().isAssignableFrom(psiType);
     }
 
     /**
@@ -253,20 +238,7 @@ public class TypeUtils {
      * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isCollection(PsiType psiType) {
-        String typePkName = psiType.getCanonicalText();
-        if (isCollectionType(typePkName)) {
-            return true;
-        }
-        PsiType[] parentTypes = psiType.getSuperTypes();
-        if (parentTypes.length > 0) {
-            for (PsiType parentType : parentTypes) {
-                String parentTypeName = parentType.getCanonicalText().split("<")[0];
-                if (isCollectionType(parentTypeName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return getCollectionType().isAssignableFrom(psiType);
     }
 
     /**
@@ -278,20 +250,8 @@ public class TypeUtils {
      * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isCollection(Project project, String typePkName) {
-        if (isCollectionType(typePkName)) {
-            return true;
-        }
         PsiClassType psiType = PsiUtils.findPsiClassType(project, typePkName);
-        PsiType[] parentTypes = psiType.getSuperTypes();
-        if (parentTypes.length > 0) {
-            for (PsiType parentType : parentTypes) {
-                String parentTypeName = parentType.getCanonicalText().split("<")[0];
-                if (isCollectionType(parentTypeName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return getCollectionType().isAssignableFrom(psiType);
     }
 
 
