@@ -2,6 +2,7 @@ package com.github.aqiu202.ideayapi.parser;
 
 import com.github.aqiu202.ideayapi.mode.json5.Json;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
+import com.intellij.psi.PsiClass;
 
 /**
  * <b>json5解析器</b>
@@ -10,10 +11,10 @@ import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
  **/
 public interface Json5JsonParser extends ObjectJsonParser {
 
-    default Json<?> parseJson5(String typePkName) {
-        return this.parseJson5(typePkName, new LevelCounter());
+    default Json<?> parseJson5(PsiClass rootClass, String typePkName) {
+        return this.parseJson5(rootClass, typePkName, new LevelCounter());
     }
 
-    Json<?> parseJson5(String typePkName, LevelCounter counter);
+    Json<?> parseJson5(PsiClass rootClass, String typePkName, LevelCounter counter);
 
 }

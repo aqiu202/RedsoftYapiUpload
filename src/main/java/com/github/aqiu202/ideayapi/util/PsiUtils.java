@@ -3,6 +3,7 @@ package com.github.aqiu202.ideayapi.util;
 import com.github.aqiu202.ideayapi.model.EnumField;
 import com.github.aqiu202.ideayapi.model.EnumFields;
 import com.github.aqiu202.ideayapi.model.EnumResult;
+import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -20,7 +21,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -127,6 +131,10 @@ public final class PsiUtils {
                         GlobalSearchScope.allScope(project));
     }
 
+    public static PsiClass findPsiClass(String typePkName) {
+        return findPsiClass(YApiSupportHolder.project, typePkName);
+    }
+
     /**
      * 通过类完整路径获取相应的psiClassType对象
      *
@@ -139,6 +147,15 @@ public final class PsiUtils {
                 GlobalSearchScope.allScope(project));
     }
 
+    public static PsiClassType findPsiClassType(String typePkName) {
+        return findPsiClassType(YApiSupportHolder.project, typePkName);
+    }
+
+    public static PsiClassType getClassType(PsiClass psiClass) {
+        return JavaPsiFacade.getElementFactory(YApiSupportHolder.project)
+                .createType(psiClass);
+    }
+
     public static EnumResult isEnum(Project project, String typePkName) {
         if (ENUM_CLASS_TYPE == null) {
             synchronized (PsiUtils.class) {
@@ -149,6 +166,10 @@ public final class PsiUtils {
         }
         PsiClassType psiClassType = findPsiClassType(project, typePkName);
         return new EnumResult(ENUM_CLASS_TYPE.isAssignableFrom(psiClassType), psiClassType);
+    }
+
+    public static EnumResult isEnum(String typePkName) {
+        return isEnum(YApiSupportHolder.project, typePkName);
     }
 
     public static EnumFields resolveEnum(PsiClass psiClass) {

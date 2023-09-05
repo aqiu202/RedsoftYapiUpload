@@ -2,7 +2,7 @@ package com.github.aqiu202.ideayapi.parser;
 
 import com.github.aqiu202.ideayapi.http.filter.PsiFieldFilter;
 import com.github.aqiu202.ideayapi.http.filter.PsiFieldListFilter;
-import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
 
 /**
@@ -12,7 +12,7 @@ import com.intellij.psi.PsiType;
  **/
 public interface ObjectJsonParser extends BaseObjectParser {
 
-    String getJson(PsiType psiType);
+    String getJson(PsiClass rootClass, PsiType psiType);
 
     PsiFieldFilter getPsiFieldFilter();
 

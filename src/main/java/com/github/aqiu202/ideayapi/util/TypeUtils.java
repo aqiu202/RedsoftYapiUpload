@@ -5,18 +5,13 @@ import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
 import com.github.aqiu202.ideayapi.model.Mock;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
-import com.intellij.lang.jvm.JvmTypeParameter;
-import com.intellij.lang.jvm.types.JvmReferenceType;
-import com.intellij.lang.jvm.types.JvmSubstitutor;
-import com.intellij.lang.jvm.types.JvmType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiVariable;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -60,20 +55,17 @@ public class TypeUtils {
     static {
 
         dateTypesPackages.put("java.sql.Timestamp", LocalDateTime.now().format(dateTimeFormat));
-        dateTypesPackages
-                .put("java.util.Date",
-                        LocalDateTime.now().format(dateTimeFormat));
-        dateTypesPackages
-                .put("java.sql.Date", LocalDate.now().format(dateFormat));
-        dateTypesPackages
-                .put("java.sql.Time", LocalTime.now().format(timeFormat));
-        dateTypesPackages
-                .put("java.time.LocalDateTime",
-                        LocalDateTime.now().format(dateTimeFormat));
-        dateTypesPackages
-                .put("java.time.LocalDate", LocalDate.now().format(dateFormat));
-        dateTypesPackages
-                .put("java.time.LocalTime", LocalTime.now().format(timeFormat));
+        dateTypesPackages.put("java.util.Date",
+                LocalDateTime.now().format(dateTimeFormat));
+        dateTypesPackages.put("java.sql.Date", LocalDate.now().format(dateFormat));
+        dateTypesPackages.put("java.sql.Time", LocalTime.now().format(timeFormat));
+        dateTypesPackages.put("java.time.LocalDateTime", LocalDateTime.now().format(dateTimeFormat));
+        dateTypesPackages.put("java.time.LocalDate", LocalDate.now().format(dateFormat));
+        dateTypesPackages.put("java.time.LocalTime", LocalTime.now().format(timeFormat));
+        dateTypesPackages.put("org.joda.time.LocalDateTime", LocalDateTime.now().format(dateTimeFormat));
+        dateTypesPackages.put("org.joda.time.LocalDate", LocalDate.now().format(dateFormat));
+        dateTypesPackages.put("org.joda.time.LocalTime", LocalTime.now().format(timeFormat));
+        dateTypesPackages.put("org.joda.time.DateTime", LocalDateTime.now().format(dateTimeFormat));
 
         normalTypesPackages.put("int", 1);
         normalTypesPackages.put("boolean", true);
@@ -120,6 +112,10 @@ public class TypeUtils {
         basicTypeMappings.put("java.time.LocalDateTime", SchemaType.string);
         basicTypeMappings.put("java.time.LocalDate", SchemaType.string);
         basicTypeMappings.put("java.time.LocalTime", SchemaType.string);
+        basicTypeMappings.put("org.joda.time.LocalDateTime", SchemaType.string);
+        basicTypeMappings.put("org.joda.time.LocalDate", SchemaType.string);
+        basicTypeMappings.put("org.joda.time.LocalTime", SchemaType.string);
+        basicTypeMappings.put("org.joda.time.DateTime", SchemaType.string);
         basicTypeMappings.put("java.lang.String", SchemaType.string);
         basicTypeMappings.put("java.math.BigDecimal", SchemaType.number);
 
@@ -149,10 +145,6 @@ public class TypeUtils {
 
     public static SchemaType getBasicSchema(String typePkName) {
         return basicTypeMappings.get(typePkName);
-    }
-
-    public static boolean isGenericType(String typePkName) {
-        return genericList.contains(typePkName);
     }
 
     public static boolean isFile(String typePkName) {
@@ -256,21 +248,9 @@ public class TypeUtils {
 
 
     public static boolean hasGenericType(String typePkName) {
-        String[] split = typePkName.replace(">", "").split("<");
-        for (String s : split) {
-            if (isGenericType(s)) {
-                return true;
-            }
-        }
-        return false;
+        return typePkName.indexOf('<') != -1;
     }
 
-    public static String parseGenericType(@NotNull String typePkName, String genericType) {
-        if (isGenericType(typePkName)) {
-            return genericType;
-        }
-        return typePkName.replaceFirst("<[A-Z]>", "<" + genericType + ">");
-    }
 
     public static boolean hasBaseRange(String typePkName) {
         return baseRangeMappings.containsKey(typePkName);
@@ -337,6 +317,7 @@ public class TypeUtils {
             case "Date":
             case "Timestamp":
             case "LocalDateTime":
+            case "DateTime":
             case "LocalTime":
             case "LocalDate":
                 return new Mock("@timestamp");
@@ -345,22 +326,20 @@ public class TypeUtils {
         }
     }
 
-    public static PsiType parseType(PsiClass targetClass, PsiVariable variable) {
-        try {
-            JvmReferenceType superClassType = targetClass.getSuperClassType();
-            JvmSubstitutor substitutor = superClassType.resolveType().getSubstitutor();
-            for (JvmTypeParameter typeParameter : substitutor.getTypeParameters()) {
-                String canonicalText = variable.getType().getCanonicalText();
-                if (canonicalText.equals(typeParameter.getName())) {
-                    JvmType type = substitutor.substitute(typeParameter);
-                    if (type instanceof PsiType) {
-                        return ((PsiType) type);
-                    }
-                }
+    public static PsiType resolveGenericType(PsiClass targetClass, PsiType psiType) {
+        PsiClassType[] superTypes = targetClass.getSuperTypes();
+        for (PsiClassType superType : superTypes) {
+            PsiType type = resolveGenericType(superType, psiType);
+            if (!StringUtils.equals(type.getCanonicalText(), psiType.getCanonicalText())) {
+                return type;
             }
-        } catch (Exception e) {
-            return null;
         }
-        return null;
+        return psiType;
     }
+
+    public static PsiType resolveGenericType(PsiClassType classType, PsiType psiType) {
+        PsiSubstitutor substitutor = classType.resolveGenerics().getSubstitutor();
+        return substitutor.substitute(psiType);
+    }
+
 }

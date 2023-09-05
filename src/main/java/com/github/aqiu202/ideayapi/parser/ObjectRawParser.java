@@ -1,5 +1,6 @@
 package com.github.aqiu202.ideayapi.parser;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
 
 /**
@@ -9,5 +10,5 @@ import com.intellij.psi.PsiType;
  **/
 public interface ObjectRawParser extends BaseObjectParser {
 
-    String getRawResponse(PsiType psiType);
+    String getRawResponse(PsiClass rootClass, PsiType psiType);
 }

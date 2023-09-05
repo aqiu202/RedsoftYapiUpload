@@ -13,6 +13,7 @@ import com.github.aqiu202.ideayapi.parser.abs.AbstractJsonParser;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
 import org.apache.commons.lang3.StringUtils;
 
@@ -45,8 +46,8 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
     }
 
     @Override
-    public Json<?> parseJson5(String typePkName, LevelCounter counter) {
-        return (Json<?>) super.parse(typePkName, counter);
+    public Json<?> parseJson5(PsiClass rootClass, String typePkName, LevelCounter counter) {
+        return (Json<?>) super.parse(rootClass, typePkName, counter);
     }
 
     @Override
@@ -60,16 +61,16 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
     }
 
     @Override
-    public JsonArray<?> parseCollection(String typePkName, LevelCounter counter) {
+    public JsonArray<?> parseCollection(PsiClass rootClass, String typePkName, LevelCounter counter) {
         if (StringUtils.isBlank(typePkName)) {
             return new JsonArray<>();
         }
-        return new JsonArray<>(this.parseJson5(typePkName, counter));
+        return new JsonArray<>(this.parseJson5(rootClass, typePkName, counter));
     }
 
     @Override
-    public String getRawResponse(PsiType psiType) {
-        return this.parse(psiType.getCanonicalText(), new LevelCounter()).toJson();
+    public String getRawResponse(PsiClass rootClass, PsiType psiType) {
+        return this.parse(rootClass, psiType.getCanonicalText(), new LevelCounter()).toJson();
     }
 
     @Override

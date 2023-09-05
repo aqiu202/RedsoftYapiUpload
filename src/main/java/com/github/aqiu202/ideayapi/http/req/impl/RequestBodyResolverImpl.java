@@ -43,14 +43,8 @@ public class RequestBodyResolverImpl extends AbstractRequestParamResolver {
     @Override
     public void doResolverItem(@NotNull PsiClass targetClass, @NotNull PsiMethod m,
                                @NotNull PsiParameter param, @NotNull YApiParam target) {
-        PsiType paramType = param.getType();
-        if (!((PsiClassReferenceType) paramType).isRaw()) {
-            paramType = TypeUtils.parseType(targetClass, param);
-            if (paramType == null) {
-                paramType = param.getType();
-            }
-        }
-        target.setRequestBody(this.objectJsonParser.getJson(paramType));
+        PsiType paramType = TypeUtils.resolveGenericType(targetClass, param.getType());
+        target.setRequestBody(this.objectJsonParser.getJson(targetClass, paramType));
         target.setReq_body_is_json_schema(this.dataMode == 0);
     }
 

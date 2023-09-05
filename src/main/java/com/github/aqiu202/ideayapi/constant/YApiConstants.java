@@ -51,5 +51,5 @@ public interface YApiConstants {
 
     String $schema = "http://json-schema.org/draft-04/schema#";
 
-    int maxLevel = 5;
+    int maxLevel = 8;
 }

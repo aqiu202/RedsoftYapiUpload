@@ -2,8 +2,9 @@ package com.github.aqiu202.ideayapi.parser;
 
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
+import com.github.aqiu202.ideayapi.parser.type.PsiFieldWrapper;
 import com.github.aqiu202.ideayapi.util.DesUtils;
-import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
  **/
 public interface BaseObjectParser {
 
-    Jsonable parse(String typePkName, LevelCounter counter);
+    Jsonable parse(PsiClass rootClass, String typePkName, LevelCounter counter);
 
     Jsonable parseBasic(String typePkName);
 
@@ -26,22 +27,22 @@ public interface BaseObjectParser {
 
     Jsonable parseMap(String typePkName, String description);
 
-    default Jsonable parseCollection(@Nullable String typePkName) {
-        return this.parseCollection(typePkName, new LevelCounter());
+    default Jsonable parseCollection(PsiClass rootClass, @Nullable String typePkName) {
+        return this.parseCollection(rootClass, typePkName, new LevelCounter());
     }
 
-    Jsonable parseCollection(@Nullable String typePkName, LevelCounter counter);
+    Jsonable parseCollection(PsiClass rootClass, @Nullable String typePkName, LevelCounter counter);
 
     //仅支持解析一种泛型
-    default Jsonable parsePojo(String typePkName, String genericType) {
-        return this.parsePojo(typePkName, genericType, new LevelCounter());
+    default Jsonable parsePojo(PsiClass rootClass, String typePkName) {
+        return this.parsePojo(rootClass, typePkName, new LevelCounter());
     }
 
-    Jsonable parsePojo(String typePkName, String genericType, LevelCounter counter);
+    Jsonable parsePojo(PsiClass rootClass, String typePkName, LevelCounter counter);
 
-    default ValueWrapper parseField(PsiField field, String genericType) {
-        return parseField(field, genericType, new LevelCounter());
+    default ValueWrapper parseField(PsiClass targetClass, PsiFieldWrapper field) {
+        return parseField(targetClass, field, new LevelCounter());
     }
 
-    ValueWrapper parseField(PsiField field, String genericType, LevelCounter counter);
+    ValueWrapper parseField(PsiClass targetClass, PsiFieldWrapper field, LevelCounter counter);
 }

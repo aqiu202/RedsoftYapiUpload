@@ -13,6 +13,7 @@ import com.github.aqiu202.ideayapi.model.range.LongRange;
 import com.github.aqiu202.ideayapi.parser.JsonSchemaJsonParser;
 import com.github.aqiu202.ideayapi.parser.abs.AbstractJsonParser;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
+import com.github.aqiu202.ideayapi.parser.type.PsiFieldWrapper;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.github.aqiu202.ideayapi.util.ValidUtils;
@@ -43,8 +44,8 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
 
 
     @Override
-    public ItemJsonSchema parseJsonSchema(String typePkName, LevelCounter counter) {
-        return (ItemJsonSchema) super.parse(typePkName, counter);
+    public ItemJsonSchema parseJsonSchema(PsiClass rootClass, String typePkName, LevelCounter counter) {
+        return (ItemJsonSchema) super.parse(rootClass, typePkName, counter);
     }
 
     @Override
@@ -65,12 +66,12 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ArraySchema parseCollection(String typePkName, LevelCounter counter) {
+    public ArraySchema parseCollection(PsiClass rootClass, String typePkName, LevelCounter counter) {
         ArraySchema result = new ArraySchema();
         if (StringUtils.isBlank(typePkName)) {
             return result.setItems(new ObjectSchema());
         }
-        return result.setItems(this.parseJsonSchema(typePkName, counter));
+        return result.setItems(this.parseJsonSchema(rootClass, typePkName, counter));
     }
 
     @Override
@@ -100,8 +101,9 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ItemJsonSchema parseFieldValue(PsiField psiField, LevelCounter counter) {
-        PsiType type = psiField.getType();
+    public ItemJsonSchema parseFieldValue(PsiClass rootClass, PsiFieldWrapper fieldWrapper, LevelCounter counter) {
+        PsiField psiField = fieldWrapper.getField();
+        PsiType type = fieldWrapper.resolveFieldType();
         String typePkName = type.getCanonicalText();
         EnumResult enumResult = PsiUtils.isEnum(this.project, typePkName);
         ItemJsonSchema itemJsonSchema;
@@ -115,7 +117,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         } else if (TypeUtils.isBasicType(typePkName)) {
             itemJsonSchema = this.parseBasicField(psiField);
         } else {
-            itemJsonSchema = this.parseCompoundField(psiField, counter);
+            itemJsonSchema = this.parseCompoundField(rootClass, fieldWrapper, counter);
         }
         return itemJsonSchema;
     }
@@ -198,11 +200,12 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         return result;
     }
 
-    private ItemJsonSchema parseCompoundField(PsiField psiField, LevelCounter counter) {
-        PsiType psiType = psiField.getType();
+    private ItemJsonSchema parseCompoundField(PsiClass rootClass, PsiFieldWrapper fieldWrapper, LevelCounter counter) {
+        PsiField psiField = fieldWrapper.getField();
+        PsiType psiType = fieldWrapper.resolveFieldType();
         String typeName = psiType.getPresentableText();
         boolean wrapArray = typeName.endsWith("[]");
-        ItemJsonSchema result = this.parseJsonSchema(psiType.getCanonicalText(), counter);
+        ItemJsonSchema result = this.parseJsonSchema(rootClass, psiType.getCanonicalText(), counter);
         if (result instanceof ArraySchema) {
             ArraySchema a = (ArraySchema) result;
             if (typeName.contains("Set") && !wrapArray) {

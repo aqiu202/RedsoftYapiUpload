@@ -8,6 +8,7 @@ import com.github.aqiu202.ideayapi.parser.ObjectRawParser;
 import com.github.aqiu202.ideayapi.parser.base.ContentTypeResolver;
 import com.github.aqiu202.ideayapi.parser.impl.Json5ParserImpl;
 import com.github.aqiu202.ideayapi.parser.impl.JsonSchemaParserImpl;
+import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
@@ -37,13 +38,16 @@ public class ResponseResolverImpl implements ResponseResolver {
         if (Objects.isNull(returnType)) {
             return;
         }
+        if (TypeUtils.hasGenericType(returnType.getCanonicalText())) {
+            returnType = TypeUtils.resolveGenericType(targetClass, returnType);
+        }
         int dataMode = this.property.getDataMode();
         boolean isJsonSchema = dataMode == 0;
         target.setRes_body_is_json_schema(isJsonSchema);
         if (ContentTypeResolver.RAW_VALUE.equals(target.getRes_body_type())) {
-            target.setResponse(this.objectRawParser.getRawResponse(returnType));
+            target.setResponse(this.objectRawParser.getRawResponse(targetClass, returnType));
         } else {
-            target.setResponse(this.objectJsonParser.getJson(returnType));
+            target.setResponse(this.objectJsonParser.getJson(targetClass, returnType));
         }
     }
 }
