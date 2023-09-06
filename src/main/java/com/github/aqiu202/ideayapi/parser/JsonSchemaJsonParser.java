@@ -3,9 +3,7 @@ package com.github.aqiu202.ideayapi.parser;
 import com.github.aqiu202.ideayapi.mode.schema.base.ItemJsonSchema;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 import com.intellij.psi.PsiClass;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.intellij.psi.PsiType;
 
 /**
  * <b>json-schema解析器</b>
@@ -14,10 +12,10 @@ import java.util.List;
  **/
 public interface JsonSchemaJsonParser extends ObjectJsonParser {
 
-    ItemJsonSchema parseJsonSchema(PsiClass rootClass, String typePkName, LevelCounter counter);
+    ItemJsonSchema parseJsonSchema(PsiClass rootClass, PsiType type, LevelCounter counter);
 
-    default ItemJsonSchema parseJsonSchema(PsiClass rootClass, String typePkName) {
-        return this.parseJsonSchema(rootClass, typePkName, new LevelCounter());
+    default ItemJsonSchema parseJsonSchema(PsiClass rootClass, PsiType type) {
+        return this.parseJsonSchema(rootClass, type, new LevelCounter());
     }
 
 }

@@ -15,7 +15,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.impl.source.PsiClassReferenceType;
 import org.jetbrains.annotations.NotNull;
 
 public class RequestBodyResolverImpl extends AbstractRequestParamResolver {

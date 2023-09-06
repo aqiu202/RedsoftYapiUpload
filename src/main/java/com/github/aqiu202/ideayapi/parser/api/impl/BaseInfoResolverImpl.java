@@ -18,9 +18,11 @@ import static com.github.aqiu202.ideayapi.constant.DocCommentConstants.TAG_DESCR
 public class BaseInfoResolverImpl implements BaseInfoResolver {
 
     private final YApiProjectProperty property;
+
     public BaseInfoResolverImpl(YApiProjectProperty property) {
         this.property = property;
     }
+
     @Override
     public void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
         if (this.property.isUseMethodDefineAsRemark()) {

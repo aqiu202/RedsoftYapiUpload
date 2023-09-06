@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -44,8 +43,8 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
 
 
     @Override
-    public ItemJsonSchema parseJsonSchema(PsiClass rootClass, String typePkName, LevelCounter counter) {
-        return (ItemJsonSchema) super.parse(rootClass, typePkName, counter);
+    public ItemJsonSchema parseJsonSchema(PsiClass rootClass, PsiType type, LevelCounter counter) {
+        return (ItemJsonSchema) super.parse(rootClass, type, counter);
     }
 
     @Override
@@ -71,7 +70,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         if (StringUtils.isBlank(typePkName)) {
             return result.setItems(new ObjectSchema());
         }
-        return result.setItems(this.parseJsonSchema(rootClass, typePkName, counter));
+        return result.setItems(this.parseJsonSchema(rootClass, PsiUtils.findPsiClassType(typePkName), counter));
     }
 
     @Override
@@ -205,7 +204,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         PsiType psiType = fieldWrapper.resolveFieldType();
         String typeName = psiType.getPresentableText();
         boolean wrapArray = typeName.endsWith("[]");
-        ItemJsonSchema result = this.parseJsonSchema(rootClass, psiType.getCanonicalText(), counter);
+        ItemJsonSchema result = this.parseJsonSchema(rootClass, psiType, counter);
         if (result instanceof ArraySchema) {
             ArraySchema a = (ArraySchema) result;
             if (typeName.contains("Set") && !wrapArray) {

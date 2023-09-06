@@ -7,6 +7,8 @@ import com.intellij.psi.PsiType;
 public interface PsiFieldWrapper {
     PsiField getField();
 
+    PsiType getDefinedType();
+
     PsiClass getParentClass();
 
     PsiType resolveFieldType();

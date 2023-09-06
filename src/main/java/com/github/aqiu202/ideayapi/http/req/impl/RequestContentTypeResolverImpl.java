@@ -1,6 +1,5 @@
 package com.github.aqiu202.ideayapi.http.req.impl;
 
-import com.github.aqiu202.ideayapi.constant.HttpMethodConstants;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.base.ContentTypeResolver;
 import com.github.aqiu202.ideayapi.util.CollectionUtils;

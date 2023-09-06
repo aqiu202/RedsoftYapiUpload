@@ -5,10 +5,8 @@ import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 import com.github.aqiu202.ideayapi.parser.type.PsiFieldWrapper;
 import com.github.aqiu202.ideayapi.util.DesUtils;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <b>接口响应数据解析的抽象提取</b>
@@ -17,7 +15,7 @@ import java.util.List;
  **/
 public interface BaseObjectParser {
 
-    Jsonable parse(PsiClass rootClass, String typePkName, LevelCounter counter);
+    Jsonable parse(PsiClass rootClass, PsiType type, LevelCounter counter);
 
     Jsonable parseBasic(String typePkName);
 
@@ -33,12 +31,12 @@ public interface BaseObjectParser {
 
     Jsonable parseCollection(PsiClass rootClass, @Nullable String typePkName, LevelCounter counter);
 
-    //仅支持解析一种泛型
-    default Jsonable parsePojo(PsiClass rootClass, String typePkName) {
-        return this.parsePojo(rootClass, typePkName, new LevelCounter());
+    //支持解析泛型
+    default Jsonable parsePojo(PsiClass rootClass, PsiType psiType) {
+        return this.parsePojo(rootClass, psiType, new LevelCounter());
     }
 
-    Jsonable parsePojo(PsiClass rootClass, String typePkName, LevelCounter counter);
+    Jsonable parsePojo(PsiClass rootClass, PsiType psiType, LevelCounter counter);
 
     default ValueWrapper parseField(PsiClass targetClass, PsiFieldWrapper field) {
         return parseField(targetClass, field, new LevelCounter());

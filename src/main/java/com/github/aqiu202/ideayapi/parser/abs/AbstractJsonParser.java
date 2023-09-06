@@ -22,10 +22,7 @@ import com.github.aqiu202.ideayapi.util.PropertyNamingUtils;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,18 +46,9 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         this(property, project, false);
     }
 
-    private String handleTypePkName(@NotNull String typePkName) {
-        //兼容WebFlux
-        if (typePkName.startsWith(SpringWebFluxConstants.Mono)) {
-            typePkName = typePkName.substring(SpringWebFluxConstants.Mono.length() + 1);
-            typePkName = typePkName.substring(0, typePkName.length() - 1);
-        }
-        return typePkName.replace("? extends ", "")
-                .replace("? super ", "").replace(" ", "");
-    }
-
     @Override
-    public Jsonable parse(PsiClass rootClass, String typePkName, LevelCounter counter) {
+    public Jsonable parse(PsiClass rootClass, PsiType psiType, LevelCounter counter) {
+        String typePkName = psiType.getCanonicalText();
         //是否是数组
         boolean isArray = typePkName.endsWith("[]");
         if (isArray) {
@@ -77,7 +65,9 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         if (s != -1) {
             type = typePkName.substring(0, s);
             //截取子类型
-            genericType = typePkName.substring(s + 1, typePkName.lastIndexOf(">"));
+            genericType = typePkName.substring(s + 1, typePkName.lastIndexOf(">"))
+                    .replace("? extends ", "")
+                    .replace("? super ", "").replace(" ", "");
         } else {
             type = typePkName;
         }
@@ -89,11 +79,18 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
             //对Map及其子类进行处理
             result = this.parseMap(type);
         } else if (TypeUtils.isCollection(this.project, type)) {
+            //截取子类型
             //如果是集合类型（List Set）
             result = this.parseCollection(rootClass, genericType, counter);
         } else {
+            PsiType targetType;
+            if (StringUtils.equals(SpringWebFluxConstants.Mono, type)) {
+                targetType = PsiUtils.findPsiClassType(genericType);
+            } else {
+                targetType = psiType;
+            }
             //其他情况 pojo
-            result = this.parsePojo(rootClass, type, counter);
+            result = this.parsePojo(rootClass, targetType, counter);
         }
         return result;
     }
@@ -110,8 +107,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     @Override
     public String getJson(PsiClass rootClass, PsiType psiType) {
-        String typePkName = psiType.getCanonicalText();
-        Jsonable jsonable = this.parse(rootClass, this.handleTypePkName(typePkName), new LevelCounter());
+        Jsonable jsonable = this.parse(rootClass, psiType, new LevelCounter());
         if (jsonable instanceof ItemJsonSchema) {
             ((ItemJsonSchema) jsonable).set$schema(YApiConstants.$schema);
         }
@@ -130,12 +126,18 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
     }
 
     @Override
-    public Jsonable parsePojo(PsiClass rootClass, String typePkName, LevelCounter counter) {
+    public Jsonable parsePojo(PsiClass rootClass, PsiType psiType, LevelCounter counter) {
+        String typePkName = psiType.getCanonicalText();
         if (counter.getLevel() >= YApiConstants.maxLevel) {
             return this.parseMap(typePkName, DesUtils.getTypeDesc(String.format("超出最大解析层数:%d，不再展示详细字段信息", YApiConstants.maxLevel)));
         }
         counter.incrementLevel();
-        PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
+        PsiClass psiClass;
+        if (psiType instanceof PsiClassType) {
+            psiClass = ((PsiClassType) psiType).resolve();
+        } else {
+            psiClass = PsiUtils.findPsiClass(this.project, typePkName);
+        }
         List<ValueWrapper> wrapperList = new ArrayList<>();
         if (Objects.nonNull(psiClass)) {
             for (PsiField field : this.getPsiFieldListFilter().apply(psiClass)) {
@@ -147,7 +149,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
                 if (this.property.getIgnoredResFieldList().contains(fieldName)) {
                     continue;
                 }
-                ValueWrapper valueWrapper = this.parseField(rootClass, new SimpleFieldWrapper(psiClass, field), counter);
+                ValueWrapper valueWrapper = this.parseField(rootClass, new SimpleFieldWrapper(psiType, psiClass, field), counter);
                 YApiSupportHolder.supports.handleField(valueWrapper);
                 DesUtils.handleTypeDesc(valueWrapper);
                 wrapperList.add(valueWrapper);
@@ -190,7 +192,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
      * @author aqiu 2020/7/23 3:14 下午
      **/
     protected Jsonable parseFieldValue(PsiClass rootClass, PsiFieldWrapper fieldWrapper, LevelCounter counter) {
-        return this.parse(rootClass, fieldWrapper.resolveFieldType().getCanonicalText(), counter);
+        return this.parse(rootClass, fieldWrapper.resolveFieldType(), counter);
     }
 
     /**

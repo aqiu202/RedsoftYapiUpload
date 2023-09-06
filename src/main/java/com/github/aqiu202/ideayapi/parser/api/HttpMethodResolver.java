@@ -3,7 +3,6 @@ package com.github.aqiu202.ideayapi.parser.api;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 
 /**

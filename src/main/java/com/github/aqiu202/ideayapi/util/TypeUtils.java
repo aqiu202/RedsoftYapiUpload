@@ -1,6 +1,7 @@
 package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
+import com.github.aqiu202.ideayapi.constant.SpringWebFluxConstants;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
 import com.github.aqiu202.ideayapi.model.Mock;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
@@ -243,7 +244,8 @@ public class TypeUtils {
      **/
     public static boolean isCollection(Project project, String typePkName) {
         PsiClassType psiType = PsiUtils.findPsiClassType(project, typePkName);
-        return getCollectionType().isAssignableFrom(psiType);
+        return getCollectionType().isAssignableFrom(psiType)
+                || StringUtils.equals(typePkName, SpringWebFluxConstants.Flux);
     }
 
 

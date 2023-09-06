@@ -144,6 +144,7 @@ public final class PsiAnnotationUtils {
         }
         return null;
     }
+
     @Nullable
     public static String getPsiAnnotationAttributeValue(PsiAnnotation annotation) {
         return getPsiAnnotationAttributeValue(annotation, PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME);

@@ -3,10 +3,12 @@ package com.github.aqiu202.ideayapi.parser.api.abs;
 import com.github.aqiu202.ideayapi.parser.api.BasePathResolver;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * <b>根据SpringMVC注解解析路由</b>
