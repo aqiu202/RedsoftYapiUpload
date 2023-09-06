@@ -8,9 +8,9 @@ public final class SchemaHelper {
     public static ItemJsonSchema parseBasic(SchemaType type) {
         switch (type) {
             case integer:
-                return new NumberSchema();
-            case number:
                 return new IntegerSchema();
+            case number:
+                return new NumberSchema();
             case object:
                 return new ObjectSchema();
             case array:

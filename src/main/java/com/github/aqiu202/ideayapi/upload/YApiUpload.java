@@ -4,6 +4,7 @@ import com.github.aqiu202.ideayapi.config.xml.YApiProjectProperty;
 import com.github.aqiu202.ideayapi.constant.YApiConstants;
 import com.github.aqiu202.ideayapi.model.*;
 import com.github.aqiu202.ideayapi.parser.base.ContentTypeResolver;
+import com.github.aqiu202.ideayapi.util.DesUtils;
 import com.github.aqiu202.ideayapi.util.HttpClientUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -23,10 +24,9 @@ import java.util.*;
  */
 public class YApiUpload {
 
-
     private final Gson gson = new Gson();
 
-    public static Map<String, Map<String, Integer>> catMap = new HashMap<>();
+    private static final Map<String, Integer> MENUS = new HashMap<>();
 
     /**
      * <p>调用保存接口</p>
@@ -94,18 +94,13 @@ public class YApiUpload {
                                          YApiSaveParam yapiSaveParam) {
         String projectId = Integer.toString(property.getProjectId());
         String yApiUrl = property.getUrl();
-        Map<String, Integer> catMenuMap = catMap.get(projectId);
-        if (catMenuMap != null) {
-            if (!StringUtils.isEmpty(yapiSaveParam.getMenu())) {
-                if (Objects.nonNull(catMenuMap.get(yapiSaveParam.getMenu()))) {
-                    return new YApiResponse(catMenuMap.get(yapiSaveParam.getMenu()));
-                }
-            } else {
-                if (Objects.nonNull(catMenuMap.get(YApiConstants.menu))) {
-                    return new YApiResponse(catMenuMap.get(YApiConstants.menu));
-                }
-                yapiSaveParam.setMenu(YApiConstants.menu);
-            }
+        String menu = yapiSaveParam.getMenu();
+        if (StringUtils.isBlank(menu)) {
+            yapiSaveParam.setMenu(YApiConstants.menu);
+        }
+        Integer menuId = findMenuByName(menu);
+        if (Objects.nonNull(menuId)) {
+            return new YApiResponse(menuId);
         }
         String response;
         try {
@@ -114,7 +109,6 @@ public class YApiUpload {
                                     + projectId + "&token=" + yapiSaveParam.getToken())),
                     "utf-8");
             YApiResponse yapiResponse = gson.fromJson(response, YApiResponse.class);
-            Map<String, Integer> catMenuMapSub = catMap.get(projectId);
             if (yapiResponse.getErrcode() == 0) {
                 @SuppressWarnings("unchecked")
                 List<YApiCatResponse> list = (List<YApiCatResponse>) yapiResponse.getData();
@@ -122,7 +116,7 @@ public class YApiUpload {
                 }.getType());
                 for (YApiCatResponse yapiCatResponse : list) {
                     if (yapiCatResponse.getName().equals(yapiSaveParam.getMenu())) {
-                        this.addMenu(property.getProjectId(), catMenuMapSub, yapiCatResponse);
+                        this.addMenu(yapiCatResponse);
                         return new YApiResponse(yapiCatResponse.get_id());
                     }
                 }
@@ -142,24 +136,28 @@ public class YApiUpload {
             YApiCatResponse yapiCatResponse = gson
                     .fromJson(Objects.requireNonNull(data).toString(),
                             YApiCatResponse.class);
-            this.addMenu(property.getProjectId(), catMenuMapSub, yapiCatResponse);
+            this.addMenu(yapiCatResponse);
             return new YApiResponse(yapiCatResponse.get_id());
         } catch (Exception e) {
-            e.printStackTrace();
             return new YApiResponse(0, e.toString());
         }
     }
 
-    private void addMenu(int projectId, Map<String, Integer> catMenuMapSub,
-                         YApiCatResponse yapiCatResponse) {
-        if (catMenuMapSub != null) {
-            catMenuMapSub.put(yapiCatResponse.getName(), yapiCatResponse.get_id());
-        } else {
-            catMenuMapSub = new HashMap<>();
-            catMenuMapSub.put(yapiCatResponse.getName(), yapiCatResponse.get_id());
-            catMap.put(Integer.toString(projectId), catMenuMapSub);
-        }
+    private void addMenu(YApiCatResponse yapiCatResponse) {
+        MENUS.put(yapiCatResponse.getName(), yapiCatResponse.get_id());
     }
 
+    public static Map<String, Integer> getMenus() {
+        return MENUS;
+    }
+
+    public static Integer findMenuByName(String menuName) {
+        return MENUS.get(menuName);
+    }
+
+    public static void clearCache() {
+        MENUS.clear();
+        DesUtils.clearCache();
+    }
 
 }
