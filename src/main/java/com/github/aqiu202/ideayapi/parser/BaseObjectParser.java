@@ -2,11 +2,10 @@ package com.github.aqiu202.ideayapi.parser;
 
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
-import com.github.aqiu202.ideayapi.parser.type.PsiFieldWrapper;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptorWrapper;
 import com.github.aqiu202.ideayapi.util.DesUtils;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * <b>接口响应数据解析的抽象提取</b>
@@ -17,19 +16,19 @@ public interface BaseObjectParser {
 
     Jsonable parse(PsiClass rootClass, PsiType type, LevelCounter counter);
 
-    Jsonable parseBasic(String typePkName);
+    Jsonable parseBasic(PsiType psiType);
 
-    default Jsonable parseMap(String typePkName) {
-        return this.parseMap(typePkName, DesUtils.getTypeDesc("map"));
+    default Jsonable parseMap(PsiType type) {
+        return this.parseMap(type, DesUtils.getTypeDesc("map"));
     }
 
-    Jsonable parseMap(String typePkName, String description);
+    Jsonable parseMap(PsiType type, String description);
 
-    default Jsonable parseCollection(PsiClass rootClass, @Nullable String typePkName) {
-        return this.parseCollection(rootClass, typePkName, new LevelCounter());
+    default Jsonable parseCollection(PsiClass rootClass, PsiType type) {
+        return this.parseCollection(rootClass, type, new LevelCounter());
     }
 
-    Jsonable parseCollection(PsiClass rootClass, @Nullable String typePkName, LevelCounter counter);
+    Jsonable parseCollection(PsiClass rootClass, PsiType type, LevelCounter counter);
 
     //支持解析泛型
     default Jsonable parsePojo(PsiClass rootClass, PsiType psiType) {
@@ -38,9 +37,9 @@ public interface BaseObjectParser {
 
     Jsonable parsePojo(PsiClass rootClass, PsiType psiType, LevelCounter counter);
 
-    default ValueWrapper parseField(PsiClass targetClass, PsiFieldWrapper field) {
-        return parseField(targetClass, field, new LevelCounter());
+    default ValueWrapper parseProperty(PsiClass targetClass, PsiDescriptorWrapper field) {
+        return parseProperty(targetClass, field, new LevelCounter());
     }
 
-    ValueWrapper parseField(PsiClass targetClass, PsiFieldWrapper field, LevelCounter counter);
+    ValueWrapper parseProperty(PsiClass targetClass, PsiDescriptorWrapper field, LevelCounter counter);
 }

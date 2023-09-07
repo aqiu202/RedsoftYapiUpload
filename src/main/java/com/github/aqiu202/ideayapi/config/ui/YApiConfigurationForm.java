@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Enumeration;
+import java.util.StringJoiner;
 
 /**
  * 配置面板
@@ -31,6 +32,7 @@ public class YApiConfigurationForm {
     private ComboBox<String> dataModeComboBox;
     private JCheckBox enableTypeDescCheckBox;
     private JCheckBox useMethodDefineAsRemarkCheckBox;
+    private JCheckBox passPageUrlCheckBox;
     private JList<String> ignoredReqFields;
     private JPanel ignoredReqFieldsPanel;
     private JList<String> ignoredResFields;
@@ -74,6 +76,10 @@ public class YApiConfigurationForm {
         return useMethodDefineAsRemarkCheckBox;
     }
 
+    public JCheckBox getPassPageUrlCheckBox() {
+        return passPageUrlCheckBox;
+    }
+
     public String getIgnoredReqFields() {
         return this.readListModelValue(this.ignoredReqFieldsModel);
     }
@@ -84,15 +90,12 @@ public class YApiConfigurationForm {
 
     private String readListModelValue(DefaultListModel<String> listModel) {
         Enumeration<String> elements = listModel.elements();
-        StringBuilder sb = new StringBuilder();
+        StringJoiner joiner = new StringJoiner(",");
         while (elements.hasMoreElements()) {
             String element = elements.nextElement();
-            sb.append(element).append(",");
+            joiner.add(element);
         }
-        if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-        return sb.toString();
+        return joiner.toString();
     }
 
     public void setIgnoredReqFields(java.util.List<String> fields) {

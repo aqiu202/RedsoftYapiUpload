@@ -9,9 +9,13 @@ import com.github.aqiu202.ideayapi.model.YApiForm;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.github.aqiu202.ideayapi.util.PsiParamUtils;
+import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiVariable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -48,8 +52,9 @@ public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolve
         Set<YApiForm> forms = wrappers.stream().map(wrapper -> {
             YApiForm form = new YApiForm();
             form.full(wrapper);
-            String type = wrapper.getSource().getType().getCanonicalText();
-            if (this.isFile(type)) {
+            PsiModifierListOwner source = wrapper.getSource();
+            PsiType type = PsiUtils.resolveValidType(source);
+            if (type != null && this.isFile(type)) {
                 form.setType("file");
             }
             return form;
@@ -63,12 +68,12 @@ public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolve
     }
 
     @Override
-    protected boolean isBasicType(String typePkName) {
-        return super.isBasicType(typePkName) || this.isFile(typePkName);
+    protected boolean isBasicType(PsiType psiType) {
+        return super.isBasicType(psiType) || this.isFile(psiType);
     }
 
-    private boolean isFile(String typePkName) {
-        return TypeUtils.isFile(typePkName);
+    private boolean isFile(PsiType psiType) {
+        return TypeUtils.isFile(psiType);
     }
 
 }

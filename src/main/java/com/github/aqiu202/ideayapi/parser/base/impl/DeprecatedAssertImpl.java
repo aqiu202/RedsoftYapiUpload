@@ -6,6 +6,7 @@ import com.github.aqiu202.ideayapi.util.PsiDocUtils;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.javadoc.PsiDocComment;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,21 @@ import java.util.Objects;
 import static com.github.aqiu202.ideayapi.constant.DocCommentConstants.TAG_DEPRECATED;
 
 public class DeprecatedAssertImpl implements DeprecatedAssert {
+
+    @Override
+    public boolean isDeprecated(@NotNull PsiModifierListOwner c) {
+        if (c instanceof PsiClass) {
+            return isDeprecated(((PsiClass) c));
+        }
+        if (c instanceof PsiMethod) {
+            return isDeprecated(((PsiMethod) c));
+        }
+        if (c instanceof PsiField) {
+            return isDeprecated(((PsiField) c));
+        }
+        return PsiAnnotationUtils.hasDeprecated(c);
+    }
+
     @Override
     public boolean isDeprecated(@NotNull PsiField c) {
         PsiDocComment classDoc;

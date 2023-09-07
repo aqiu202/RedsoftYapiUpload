@@ -2,7 +2,6 @@ package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.doc.JavaDocument;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocComment;
 import org.apache.commons.lang3.StringUtils;
@@ -30,12 +29,12 @@ public final class DesUtils {
      *
      * @author aqiu 2019/5/22
      */
-    public static String getParamDesc(PsiMethod psiMethodTarget, String paramName) {
-        PsiDocComment docComment = psiMethodTarget.getDocComment();
+    public static String getParamDesc(PsiJavaDocumentedElement documentedElement, String paramName) {
+        PsiDocComment docComment = documentedElement.getDocComment();
         if (docComment != null) {
-            return DOCUMENTS.compute(elementToString(psiMethodTarget), (k, v) -> {
+            return DOCUMENTS.compute(elementToString(documentedElement), (k, v) -> {
                 if (v == null) {
-                    v = new JavaDocument(psiMethodTarget);
+                    v = new JavaDocument(documentedElement);
                 }
                 return v;
             }).getParamValue(paramName);
@@ -48,12 +47,12 @@ public final class DesUtils {
      *
      * @author aqiu 2019/4/27
      */
-    public static String getFiledDesc(PsiField psiField) {
-        PsiDocComment psiDocComment = psiField.getDocComment();
+    public static String getDocumentDesc(PsiJavaDocumentedElement element) {
+        PsiDocComment psiDocComment = element.getDocComment();
         if (Objects.nonNull(psiDocComment)) {
-            return DOCUMENTS.compute(elementToString(psiField), (k, v) -> {
+            return DOCUMENTS.compute(elementToString(element), (k, v) -> {
                 if (v == null) {
-                    v = new JavaDocument(psiField);
+                    v = new JavaDocument(element);
                 }
                 return v;
             }).getText();
@@ -67,11 +66,15 @@ public final class DesUtils {
      *
      * @author aqiu 2019/5/18
      */
-    public static String getLinkRemark(PsiField field, Project project) {
-        PsiDocComment docComment = field.getDocComment();
+    public static String getLinkRemark(PsiModifierListOwner owner) {
+        if (!(owner instanceof PsiJavaDocumentedElement)) {
+            return "";
+        }
+        PsiJavaDocumentedElement docElement = (PsiJavaDocumentedElement) owner;
+        PsiDocComment docComment = docElement.getDocComment();
         // 尝试获得@link 的常量定义
         if (Objects.nonNull(docComment)) {
-            String desc = DesUtils.getFiledDesc(field);
+            String desc = DesUtils.getDocumentDesc(docElement);
             if (StringUtils.isNotBlank(desc)) {
                 return desc;
             }
@@ -80,17 +83,17 @@ public final class DesUtils {
             if (linkString.length > 1) {
                 //说明有link
                 String linkAddress = linkString[1].split("}")[0].trim();
-                PsiClass psiClassLink = PsiUtils.findPsiClass(project, linkAddress);
+                PsiClass psiClassLink = PsiUtils.findPsiClass(linkAddress);
                 if (Objects.isNull(psiClassLink)) {
                     //可能没有获得全路径，尝试获得全路径
-                    String[] importPaths = Objects.requireNonNull(field.getParent().getContext())
+                    String[] importPaths = Objects.requireNonNull(owner.getParent().getContext())
                             .getText().split("import");
                     if (importPaths.length > 1) {
                         for (String importPath : importPaths) {
                             if (importPath.contains(linkAddress.split("\\.")[0])) {
                                 linkAddress =
                                         importPath.split(linkAddress.split("\\.")[0])[0] + linkAddress;
-                                psiClassLink = PsiUtils.findPsiClass(project, linkAddress.trim());
+                                psiClassLink = PsiUtils.findPsiClass(linkAddress.trim());
                                 break;
                             }
                         }
@@ -115,7 +118,7 @@ public final class DesUtils {
                                 String value = splitValue[1].split(";")[0];
                                 remark.append(":").append(value);
                             }
-                            String filedValue = DesUtils.getFiledDesc(psiField);
+                            String filedValue = DesUtils.getDocumentDesc(psiField);
                             if (!StringUtils.isEmpty(filedValue)) {
                                 remark.append("(").append(filedValue).append(")");
                             }
@@ -139,7 +142,7 @@ public final class DesUtils {
         valueWrapper.setDesc(desc);
     }
 
-    public static String elementToString(PsiNamedElement element) {
+    public static String elementToString(PsiElement element) {
         PsiElement parent = element.getParent();
         String className;
         if (parent instanceof PsiClass) {
@@ -147,14 +150,20 @@ public final class DesUtils {
         } else {
             className = parent.toString();
         }
-        String elementString = className + "." + element.getName();
+        String name;
+        if (element instanceof PsiNamedElement) {
+            name = ((PsiNamedElement) element).getName();
+        } else {
+            name = element.getText();
+        }
+        String elementString = className + "." + name;
         if (element instanceof PsiMethod) {
             PsiMethod method = (PsiMethod) element;
             PsiParameterList parameterList = method.getParameterList();
             PsiParameter[] parameters = parameterList.getParameters();
             StringJoiner joiner = new StringJoiner(",", "(", ")");
             for (PsiParameter parameter : parameters) {
-                String typeText = parameter.getType().getPresentableText();
+                String typeText = TypeUtils.getTypeName(parameter.getType());
                 joiner.add(typeText);
             }
             elementString += joiner;

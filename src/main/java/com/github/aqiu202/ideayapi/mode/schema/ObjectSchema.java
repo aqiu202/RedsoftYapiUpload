@@ -3,10 +3,7 @@ package com.github.aqiu202.ideayapi.mode.schema;
 import com.github.aqiu202.ideayapi.mode.schema.base.ItemJsonSchema;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class ObjectSchema extends ItemJsonSchema {
@@ -15,7 +12,7 @@ public class ObjectSchema extends ItemJsonSchema {
         super(SchemaType.object);
     }
 
-    private Map<String, ItemJsonSchema> properties = new HashMap<>();
+    private Map<String, ItemJsonSchema> properties = new LinkedHashMap<>();
 
     private List<String> required;
 

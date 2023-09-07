@@ -8,6 +8,7 @@ import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.model.YApiPathVariable;
 import com.github.aqiu202.ideayapi.util.DesUtils;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
@@ -44,7 +45,7 @@ public class RequestPathVariableResolverImpl extends AbstractRequestParamResolve
             pathVariable.full(this.handleParamAnnotation(param, annotation));
             pathVariable.setDesc(DesUtils.getParamDesc(m, param.getName()));
             if (property.isEnableTypeDesc()) {
-                pathVariable.setTypeDesc(param.getType().getPresentableText());
+                pathVariable.setTypeDesc(TypeUtils.getTypeName(param.getType()));
             }
             Set<YApiPathVariable> pathVariables = target.getReq_params();
             if (Objects.isNull(pathVariables)) {

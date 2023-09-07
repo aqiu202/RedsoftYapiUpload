@@ -5,12 +5,14 @@ import com.github.aqiu202.ideayapi.http.res.ResponseResolver;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.ObjectJsonParser;
 import com.github.aqiu202.ideayapi.parser.ObjectRawParser;
+import com.github.aqiu202.ideayapi.parser.abs.Source;
 import com.github.aqiu202.ideayapi.parser.base.ContentTypeResolver;
 import com.github.aqiu202.ideayapi.parser.impl.Json5ParserImpl;
 import com.github.aqiu202.ideayapi.parser.impl.JsonSchemaParserImpl;
-import com.github.aqiu202.ideayapi.util.TypeUtils;
+import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,9 +28,9 @@ public class ResponseResolverImpl implements ResponseResolver {
     public ResponseResolverImpl(YApiProjectProperty property, Project project) {
         this.property = property;
         if (property.getDataMode() == 0) {
-            this.objectJsonParser = new JsonSchemaParserImpl(property, project);
+            this.objectJsonParser = new JsonSchemaParserImpl(property, project).setSource(Source.RESPONSE);
         } else {
-            this.objectJsonParser = new Json5ParserImpl(property, project);
+            this.objectJsonParser = new Json5ParserImpl(property, project).setSource(Source.RESPONSE);
         }
         this.objectRawParser = new Json5ParserImpl(property, project, false, true);
     }
@@ -38,8 +40,8 @@ public class ResponseResolverImpl implements ResponseResolver {
         if (Objects.isNull(returnType)) {
             return;
         }
-        if (TypeUtils.hasGenericType(returnType.getCanonicalText())) {
-            returnType = TypeUtils.resolveGenericType(targetClass, returnType);
+        if (returnType instanceof PsiClassType && ((PsiClassType) returnType).hasParameters()) {
+            returnType = PsiUtils.resolveGenericType(targetClass, returnType);
         }
         int dataMode = this.property.getDataMode();
         boolean isJsonSchema = dataMode == 0;

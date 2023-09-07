@@ -33,14 +33,14 @@ public class RequestQueryResolverImpl extends AbstractCompoundRequestParamResolv
                                             @NotNull YApiParam target) {
         //没有body的方法，除去文件类型的参数和被@PathVariable注解标注的参数
         if (PsiParamUtils.noBody(target.getMethods())) {
-            return p -> !TypeUtils.isFile(p.getType().getCanonicalText()) && PsiAnnotationUtils
+            return p -> !TypeUtils.isFile(p.getType()) && PsiAnnotationUtils
                     .isNotAnnotatedWith(p, SpringMVCConstants.PathVariable);
         }
         //有body的方法，含有@RequestBody注解的参数以外的其他参数，也除去文件类型的参数和被@PathVariable注解标注的参数
         PsiParameter[] parameters = m.getParameterList().getParameters();
         return PsiParamUtils.hasRequestBody(parameters) ? (p -> PsiAnnotationUtils
                 .isNotAnnotatedWith(p, SpringMVCConstants.RequestBody) && !TypeUtils
-                .isFile(p.getType().getCanonicalText()) && PsiAnnotationUtils
+                .isFile(p.getType()) && PsiAnnotationUtils
                 .isNotAnnotatedWith(p, SpringMVCConstants.PathVariable))
                 //有body的方法且参数中没有@RequestBody注解，当做Form而不是Query参数
                 : (p -> false);

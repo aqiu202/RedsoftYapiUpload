@@ -2,7 +2,6 @@ package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.model.EnumField;
 import com.github.aqiu202.ideayapi.model.EnumFields;
-import com.github.aqiu202.ideayapi.model.EnumResult;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -14,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,11 +31,6 @@ import java.util.stream.Collectors;
  * Psi基础工具类
  */
 public final class PsiUtils {
-
-    private PsiUtils() {
-    }
-
-    private static volatile PsiClassType ENUM_CLASS_TYPE = null;
 
     public static PsiMethod getSelectMethod(AnActionEvent e) {
         return findThenGet(e, PsiMethod.class);
@@ -76,7 +71,7 @@ public final class PsiUtils {
 
     public static Set<PsiClass> getClassesFormVirtualFile(VirtualFile virtualFile, Project project) {
         Set<PsiClass> results = new HashSet<>();
-        VfsUtilCore.visitChildrenRecursively(virtualFile, new VirtualFileVisitor() {
+        VfsUtilCore.visitChildrenRecursively(virtualFile, new VirtualFileVisitor<>() {
             @Override
             public boolean visitFile(@NotNull VirtualFile file) {
                 if (file.getFileType() instanceof JavaFileType) {
@@ -101,7 +96,7 @@ public final class PsiUtils {
         while ((rc = inputStream.read(buff, 0, bufferSize)) > 0) {
             baos.write(buff, 0, rc);
         }
-        return baos.toString(StandardCharsets.UTF_8.name());
+        return baos.toString(StandardCharsets.UTF_8);
     }
 
     @Nullable
@@ -156,26 +151,44 @@ public final class PsiUtils {
                 .createType(psiClass);
     }
 
-    public static EnumResult isEnum(Project project, String typePkName) {
-        if (ENUM_CLASS_TYPE == null) {
-            synchronized (PsiUtils.class) {
-                if (ENUM_CLASS_TYPE == null) {
-                    ENUM_CLASS_TYPE = findPsiClassType(project, "java.lang.Enum");
-                }
+    public static PsiClass convertToClass(PsiType type) {
+        if (type instanceof PsiClassType) {
+            return ((PsiClassType) type).resolve();
+        }
+        return null;
+    }
+
+
+    public static EnumFields resolveEnumFields(PsiClass psiClass) {
+        return new EnumFields(Arrays.stream(psiClass.getFields()).map(
+                filed -> new EnumField(filed.getName(), DesUtils.getDocumentDesc(filed))
+        ).collect(Collectors.toList()));
+    }
+
+    public static PsiType resolveGenericType(PsiClass targetClass, PsiType psiType) {
+        PsiClassType[] superTypes = targetClass.getSuperTypes();
+        for (PsiClassType superType : superTypes) {
+            PsiType type = resolveGenericType(superType, psiType);
+            if (!StringUtils.equals(type.getCanonicalText(), psiType.getCanonicalText())) {
+                return type;
             }
         }
-        PsiClassType psiClassType = findPsiClassType(project, typePkName);
-        return new EnumResult(ENUM_CLASS_TYPE.isAssignableFrom(psiClassType), psiClassType);
+        return psiType;
     }
 
-    public static EnumResult isEnum(String typePkName) {
-        return isEnum(YApiSupportHolder.project, typePkName);
+    public static PsiType resolveGenericType(PsiClassType classType, PsiType psiType) {
+        PsiSubstitutor substitutor = classType.resolveGenerics().getSubstitutor();
+        return substitutor.substitute(psiType);
     }
 
-    public static EnumFields resolveEnum(PsiClass psiClass) {
-        return new EnumFields(Arrays.stream(psiClass.getFields()).map(
-                filed -> new EnumField(filed.getName(), DesUtils.getFiledDesc(filed))
-        ).collect(Collectors.toList()));
+    public static PsiType resolveValidType(PsiModifierListOwner owner) {
+        PsiType type = null;
+        if (owner instanceof PsiVariable) {
+            type = ((PsiVariable) owner).getType();
+        } else if (owner instanceof PsiMethod) {
+            type = ((PsiMethod) owner).getReturnType();
+        }
+        return type;
     }
 
 }

@@ -11,6 +11,7 @@ import com.github.aqiu202.ideayapi.parser.YApiParser;
 import com.github.aqiu202.ideayapi.parser.impl.PsiMethodParserImpl;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.github.aqiu202.ideayapi.upload.YApiUpload;
+import com.github.aqiu202.ideayapi.util.CollectionUtils;
 import com.github.aqiu202.ideayapi.util.NotificationUtils;
 import com.intellij.notification.NotificationListener.UrlOpeningListener;
 import com.intellij.notification.NotificationType;
@@ -55,7 +56,7 @@ public class YApiUploadAction extends AnAction {
             PsiMethodParser methodParser = new PsiMethodParserImpl(property, project);
             //获得api 需上传的接口列表 参数对象
             Set<YApiParam> yApiParams = new YApiParser(project, methodParser).parse(e);
-            if (yApiParams != null) {
+            if (CollectionUtils.isNotEmpty(yApiParams)) {
                 Set<YApiSaveParam> allSaveParams = new HashSet<>();
                 for (YApiParam yApiParam : yApiParams) {
                     allSaveParams.addAll(yApiParam.convert());
@@ -91,6 +92,10 @@ public class YApiUploadAction extends AnAction {
                                     NotificationType.INFORMATION).setListener(new UrlOpeningListener(false))
                             .notify(project);
                 }
+            } else {
+                NotificationUtils.createNotification("上传提示", "未发现符合条件的接口信息",
+                                NotificationType.INFORMATION)
+                        .notify(project);
             }
         } finally {
             YApiUpload.clearCache();

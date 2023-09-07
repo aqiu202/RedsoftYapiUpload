@@ -1,15 +1,12 @@
 package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
-import com.github.aqiu202.ideayapi.constant.SpringWebFluxConstants;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
 import com.github.aqiu202.ideayapi.model.Mock;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiArrayType;
 import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.PsiType;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NonNls;
@@ -18,9 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,14 +39,13 @@ public class TypeUtils {
     private static final Map<String, String> fileTypes = new HashMap<>();
     private static final String mapTypeName = "java.util.Map";
     private static final String collectionTypeName = "java.util.Collection";
+    private static final String setTypeName = "java.util.Set";
+    private static final String enumTypeName = "java.lang.Enum";
+
     private static PsiClassType collectionType;
     private static PsiClassType mapType;
-    /**
-     * 泛型列表
-     */
-    private static final List<String> genericList = Arrays
-            .asList("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""));
-
+    private static PsiClassType setType;
+    private static PsiClassType enumType;
 
     static {
 
@@ -140,60 +134,35 @@ public class TypeUtils {
 
     }
 
-    public static boolean isBasicType(String typePkName) {
-        return basicTypeMappings.containsKey(typePkName);
-    }
-
-    public static SchemaType getBasicSchema(String typePkName) {
-        return basicTypeMappings.get(typePkName);
-    }
-
-    public static boolean isFile(String typePkName) {
-        return fileTypes.containsKey(typePkName);
-    }
-
-    public static Object getDefaultValueByPackageName(String typePkName) {
-        return getListableValue(typePkName, normalTypesPackages);
-    }
-
-    private static Object getListableValue(String typePkName, Map<String, Object> source) {
-        boolean isArray = typePkName.endsWith("[]");
-        if (isArray) {
-            typePkName = typePkName.substring(0, typePkName.length() - 2);
-        }
-        Object result = source.get(typePkName);
-        return isArray ? result + "[]" : result;
-    }
-
-    /**
-     * 是否是Map类型或者是Map的封装类型
-     *
-     * @param psiType: 类型
-     * @return {@link boolean}
-     * @author aqiu 2019-07-03 09:43
-     **/
-    public static boolean isMap(PsiType psiType) {
-        if (psiType == null) {
+    public static boolean isBasicType(PsiType type) {
+        if (type == null) {
             return false;
         }
-        return getMapType().isAssignableFrom(psiType);
-//        String typePkName = psiType.getCanonicalText();
-//        if (typePkName.contains("<")) {
-//            typePkName = typePkName.split("<")[0];
-//        }
-//        if (isMapType(typePkName)) {
-//            return true;
-//        }
-//        PsiType[] parentTypes = psiType.getSuperTypes();
-//        if (parentTypes.length > 0) {
-//            for (PsiType parentType : parentTypes) {
-//                String parentTypeName = parentType.getCanonicalText().split("<")[0];
-//                if (isMapType(parentTypeName)) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
+        return basicTypeMappings.containsKey(getTypePkName(type));
+    }
+
+    public static SchemaType getBasicSchema(PsiType type) {
+        return basicTypeMappings.get(getTypePkName(type));
+    }
+
+    public static boolean isFile(PsiType psiType) {
+        return fileTypes.containsKey(getTypePkName(psiType));
+    }
+
+    public static String getDefaultValueByPackageName(PsiType psiType) {
+        return getListableValue(psiType, normalTypesPackages);
+    }
+
+    private static String getListableValue(PsiType psiType, Map<String, Object> source) {
+        boolean isArray = psiType instanceof PsiArrayType;
+        if (isArray) {
+            psiType = ((PsiArrayType) psiType).getComponentType();
+        }
+        Object result = source.get(getTypePkName(psiType));
+        if (result == null) {
+            return "";
+        }
+        return isArray ? result + "[]" : String.valueOf(result);
     }
 
     private static PsiClassType getMapType() {
@@ -210,16 +179,31 @@ public class TypeUtils {
         return collectionType;
     }
 
+    private static PsiClassType getSetType() {
+        if (setType == null) {
+            setType = PsiUtils.findPsiClassType(YApiSupportHolder.project, setTypeName);
+        }
+        return setType;
+    }
+
+    private static PsiClassType getEnumType() {
+        if (enumType == null) {
+            enumType = PsiUtils.findPsiClassType(YApiSupportHolder.project, enumTypeName);
+        }
+        return enumType;
+    }
+
     /**
      * 是否是Map类型或者是Map的封装类型
      *
-     * @param project:    项目
-     * @param typePkName: 类完整包名
+     * @param psiType: 类型
      * @return {@link boolean}
      * @author aqiu 2019-07-03 09:43
      **/
-    public static boolean isMap(Project project, String typePkName) {
-        PsiClassType psiType = PsiUtils.findPsiClassType(project, typePkName);
+    public static boolean isMap(PsiType psiType) {
+        if (psiType == null) {
+            return false;
+        }
         return getMapType().isAssignableFrom(psiType);
     }
 
@@ -235,39 +219,52 @@ public class TypeUtils {
     }
 
     /**
-     * 是否是集合类型或者是集合的封装类型
+     * 是否是Set类型或者是Set的封装类型
      *
-     * @param project:    项目
-     * @param typePkName: 类完整包名
+     * @param psiType: 类型
      * @return {@link boolean}
      * @author aqiu 2019-07-03 09:43
      **/
-    public static boolean isCollection(Project project, String typePkName) {
-        PsiClassType psiType = PsiUtils.findPsiClassType(project, typePkName);
-        return getCollectionType().isAssignableFrom(psiType)
-                || StringUtils.equals(typePkName, SpringWebFluxConstants.Flux);
+    public static boolean isSet(PsiType psiType) {
+        return getSetType().isAssignableFrom(psiType);
     }
 
-
-    public static boolean hasGenericType(String typePkName) {
-        return typePkName.indexOf('<') != -1;
+    /**
+     * 是否是Set类型或者是Set的封装类型
+     *
+     * @param psiType: 类型
+     * @return {@link boolean}
+     * @author aqiu 2019-07-03 09:43
+     **/
+    public static boolean isEnum(PsiType psiType) {
+        return getEnumType().isAssignableFrom(psiType);
     }
 
-
-    public static boolean hasBaseRange(String typePkName) {
-        return baseRangeMappings.containsKey(typePkName);
+    public static boolean hasBaseRange(PsiType psiType) {
+        return baseRangeMappings.containsKey(getTypePkName(psiType));
     }
 
-    public static boolean isDate(String typePkName) {
-        return dateTypesPackages.containsKey(typePkName);
+    public static boolean isDate(PsiType psiType) {
+        return dateTypesPackages.containsKey(getTypePkName(psiType));
     }
 
-    public static LongRange getBaseRange(String typePkName) {
-        return baseRangeMappings.get(typePkName);
+    public static LongRange getBaseRange(PsiType psiType) {
+        return baseRangeMappings.get(getTypePkName(psiType));
     }
 
-    public static Mock formatMockType(String type) {
-        return formatMockType(type, null);
+    public static Mock formatMockType(PsiType psiType) {
+        return formatMockType(getTypePkName(psiType), null);
+    }
+
+    public static String getTypePkName(PsiType psiType) {
+        if (psiType == null) {
+            return null;
+        }
+        return psiType.getCanonicalText();
+    }
+
+    public static String getTypeName(PsiType psiType) {
+        return psiType.getPresentableText();
     }
 
     /**
@@ -281,67 +278,44 @@ public class TypeUtils {
             return new Mock(exampleMock);
         }
         switch (type) {
-            case "int":
-//            case "java.lang.Long":
-//            case "java.lang.Integer":
-//            case "java.lang.Short":
-            case "Short":
-            case "Integer":
-            case "BigInteger":
-            case "Long":
             case "short":
+            case "int":
             case "long":
+            case "java.lang.Short":
+            case "java.lang.Integer":
+            case "java.lang.Long":
+            case "java.math.BigInteger":
                 return new Mock("@integer");
             case "boolean":
-//            case "java.lang.Boolean":
-            case "Boolean":
+            case "java.lang.Boolean":
                 return new Mock("@boolean");
             case "byte":
-//            case "java.lang.Byte":
-            case "Byte":
+            case "java.lang.Byte":
                 return new Mock("@byte");
             case "float":
-//            case "java.math.BigDecimal":
-//            case "java.lang.Double":
-//            case "java.lang.Float":
-            case "BigDecimal":
-            case "Double":
-            case "Float":
             case "double":
+            case "java.math.BigDecimal":
+            case "java.lang.Double":
+            case "java.lang.Float":
                 return new Mock("@float");
             case "char":
+            case "java.lang.Character":
                 return new Mock("@char");
-//            case "java.time.LocalDateTime":
-//            case "java.time.LocalTime":
-//            case "java.time.LocalDate":
-//            case "java.util.Date":
-//            case "java.sql.Timestamp":
-            case "Date":
-            case "Timestamp":
-            case "LocalDateTime":
-            case "DateTime":
-            case "LocalTime":
-            case "LocalDate":
+            case "java.time.LocalDateTime":
+            case "java.time.LocalTime":
+            case "java.time.LocalDate":
+            case "org.joda.time.LocalTime":
+            case "org.joda.time.LocalDate":
+            case "org.joda.time.LocalDateTime":
+            case "org.joda.time.DateTime":
+            case "java.util.Date":
+            case "java.sql.Date":
+            case "java.sql.Time":
+            case "java.sql.Timestamp":
                 return new Mock("@timestamp");
             default:
                 return new Mock("@string");
         }
-    }
-
-    public static PsiType resolveGenericType(PsiClass targetClass, PsiType psiType) {
-        PsiClassType[] superTypes = targetClass.getSuperTypes();
-        for (PsiClassType superType : superTypes) {
-            PsiType type = resolveGenericType(superType, psiType);
-            if (!StringUtils.equals(type.getCanonicalText(), psiType.getCanonicalText())) {
-                return type;
-            }
-        }
-        return psiType;
-    }
-
-    public static PsiType resolveGenericType(PsiClassType classType, PsiType psiType) {
-        PsiSubstitutor substitutor = classType.resolveGenerics().getSubstitutor();
-        return substitutor.substitute(psiType);
     }
 
 }

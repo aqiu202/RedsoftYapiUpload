@@ -7,10 +7,9 @@ import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.Jsonable;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupport;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiVariable;
+import com.intellij.psi.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
@@ -23,16 +22,17 @@ public class YApiJacksonSupport implements YApiSupport {
 
     @Override
     public void handleField(ValueWrapper wrapper) {
-        PsiVariable field = wrapper.getSource();
-        if (PsiAnnotationUtils.isAnnotatedWith(field, JacksonConstants.JSON_PROPERTY)) {
-            String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(field, JacksonConstants.JSON_PROPERTY);
+        PsiModifierListOwner source = wrapper.getSource();
+        if (PsiAnnotationUtils.isAnnotatedWith(source, JacksonConstants.JSON_PROPERTY)) {
+            String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(source, JacksonConstants.JSON_PROPERTY);
             if (StringUtils.isNotBlank(value)) {
                 wrapper.setName(value);
             }
         }
-        if (TypeUtils.isDate(field.getType().getCanonicalText())
-                && PsiAnnotationUtils.isAnnotatedWith(field, JacksonConstants.JSON_FORMAT)) {
-            String pattern = PsiAnnotationUtils.getPsiAnnotationAttributeValue(field, JacksonConstants.JSON_FORMAT, "pattern");
+        PsiType type = PsiUtils.resolveValidType(source);
+        if (type != null && TypeUtils.isDate(type)
+                && PsiAnnotationUtils.isAnnotatedWith(source, JacksonConstants.JSON_FORMAT)) {
+            String pattern = PsiAnnotationUtils.getPsiAnnotationAttributeValue(source, JacksonConstants.JSON_FORMAT, "pattern");
             if (StringUtils.isNotBlank(pattern)) {
                 try {
                     String format = LocalDateTime.now().format(DateTimeFormatter

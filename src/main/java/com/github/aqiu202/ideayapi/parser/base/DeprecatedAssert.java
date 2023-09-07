@@ -4,6 +4,7 @@ import com.github.aqiu202.ideayapi.parser.base.impl.DeprecatedAssertImpl;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 public interface DeprecatedAssert {
 
     DeprecatedAssert instance = new DeprecatedAssertImpl();
+
+    boolean isDeprecated(@NotNull PsiModifierListOwner c);
 
     boolean isDeprecated(@NotNull PsiField c);
 

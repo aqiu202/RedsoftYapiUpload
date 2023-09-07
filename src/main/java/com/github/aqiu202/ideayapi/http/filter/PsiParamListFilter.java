@@ -29,11 +29,11 @@ public interface PsiParamListFilter {
                         this.getPsiParamFilter(m, target).test(p) &&
                                 !TypeUtils.isMap(p.getType()) &&
                                 !(ServletConstants.HttpServletRequest
-                                        .equals(p.getType().getCanonicalText())
+                                        .equals(TypeUtils.getTypePkName(p.getType()))
                                         || ServletConstants.HttpServletResponse
-                                        .equals(p.getType().getCanonicalText())
+                                        .equals(TypeUtils.getTypePkName(p.getType()))
                                         || ServletConstants.HttpSession
-                                        .equals(p.getType().getCanonicalText()))
+                                        .equals(TypeUtils.getTypePkName(p.getType())))
                 )
                 .collect(Collectors.toList());
     }
@@ -60,11 +60,8 @@ public interface PsiParamListFilter {
             valueWrapper.setName(psiParameter.getName());
         }
         if (StringUtils.isBlank(valueWrapper.getExample())) {
-            Object o;
-            if (Objects.nonNull(o = TypeUtils
-                    .getDefaultValueByPackageName((psiParameter.getType().getCanonicalText())))) {
-                valueWrapper.setExample(o.toString());
-            }
+            valueWrapper.setExample(TypeUtils
+                    .getDefaultValueByPackageName((psiParameter.getType())));
         }
         return valueWrapper;
     }

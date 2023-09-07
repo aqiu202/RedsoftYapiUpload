@@ -27,6 +27,7 @@ public class YApiProjectProperty {
 
     private boolean enableTypeDesc;
     private boolean useMethodDefineAsRemark;
+    private boolean passPageUrl;
     private String ignoredReqFields;
     private String ignoredResFields;
 
@@ -105,6 +106,14 @@ public class YApiProjectProperty {
         this.enableTypeDesc = enableTypeDesc;
     }
 
+    public boolean isPassPageUrl() {
+        return passPageUrl;
+    }
+
+    public void setPassPageUrl(boolean passPageUrl) {
+        this.passPageUrl = passPageUrl;
+    }
+
     public boolean isUseMethodDefineAsRemark() {
         return useMethodDefineAsRemark;
     }
@@ -166,6 +175,7 @@ public class YApiProjectProperty {
                 Objects.equals(enableBasicScope, that.enableBasicScope) &&
                 Objects.equals(useMethodDefineAsRemark, that.useMethodDefineAsRemark) &&
                 Objects.equals(enableTypeDesc, that.enableTypeDesc) &&
+                Objects.equals(passPageUrl, that.passPageUrl) &&
                 Objects.equals(ignoredReqFields, that.ignoredReqFields) &&
                 Objects.equals(ignoredResFields, that.ignoredResFields);
     }

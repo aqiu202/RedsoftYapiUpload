@@ -18,10 +18,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.javadoc.PsiDocComment;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
+public class ApiResolverImpl implements ApiParser, DocTagValueHandler {
 
+    private final YApiProjectProperty property;
     private final PathResolver pathResolver = new PathResolverImpl();
     private final MenuResolver menuResolver = new MenuResolverImpl();
     private final StatusResolver statusResolver = new StatusResolverImpl();
@@ -37,13 +39,20 @@ public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
     private final YApiParamResolver descValueResolver = new TypeDescValueResolver();
 
     public ApiResolverImpl(YApiProjectProperty property, Project project) {
+        this.property = property;
         this.baseInfoResolver = new BaseInfoResolverImpl(property);
         this.requestResolver = new RequestResolverImpl(property, project);
         this.responseResolver = new ResponseResolverImpl(property, project);
     }
 
     @Override
-    public void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
+    public YApiParam parse(@NotNull PsiClass c, @NotNull PsiMethod m) {
+        YApiParam target = new YApiParam();
+        this.responseContentTypeResolver.resolve(c, m, target);
+        if (this.property.isPassPageUrl()
+                && StringUtils.equals(ContentTypeResolver.RAW_VALUE, target.getRes_body_type())) {
+            return null;
+        }
         this.pathResolver.resolve(c, m, target);
         this.baseInfoResolver.resolve(c, m, target);
         this.httpMethodResolver.resolve(c, m, target);
@@ -53,9 +62,9 @@ public class ApiResolverImpl implements ApiResolver, DocTagValueHandler {
         this.menuResolver.set(c, target);
         this.requestResolver.resolve(c, m, target);
         this.requestContentTypeResolver.resolve(c, m, target);
-        this.responseContentTypeResolver.resolve(c, m, target);
         this.docTagValueResolver.accept(target);
         this.descValueResolver.accept(target);
         this.responseResolver.resolve(c, m.getReturnType(), target);
+        return target;
     }
 }

@@ -24,7 +24,7 @@ public final class PsiAnnotationUtils {
             if (psiModifierListOwner instanceof PsiField) {
                 PsiField field = (PsiField) psiModifierListOwner;
                 String name = PropertyNamingUtils.upperCamel(field.getName());
-                String prefix = "boolean".equals(field.getType().getCanonicalText()) ? "is" : "get";
+                String prefix = "boolean".equals(TypeUtils.getTypePkName(field.getType())) ? "is" : "get";
                 PsiMethod[] methods = ((PsiClass) field.getParent()).findMethodsByName(prefix + name, true);
                 if (methods.length > 0) {
                     result = findAnnotation(methods[0], annotationFQN);

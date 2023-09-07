@@ -3,7 +3,6 @@ package com.github.aqiu202.ideayapi.http.req.abs;
 import com.github.aqiu202.ideayapi.config.xml.YApiProjectProperty;
 import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
 import com.github.aqiu202.ideayapi.model.EnumFields;
-import com.github.aqiu202.ideayapi.model.EnumResult;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
- * <b>解析复杂类型的参数的解析抽象类</b>
+ * <b>解析复杂类型的参数的解析抽象类(Form和Query类型，不支持多层级解析)</b>
  *
  * @author aqiu 2020/7/24 1:40 下午
  **/
@@ -39,15 +38,14 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         }
     }
 
-    protected boolean isBasicType(String typePkName) {
-        return TypeUtils.isBasicType(typePkName);
+    protected boolean isBasicType(PsiType psiType) {
+        return TypeUtils.isBasicType(psiType);
     }
 
     protected ValueWrapper resolveBasic(@NotNull PsiParameter param) {
         ValueWrapper valueWrapper = this.resolveParameter(param);
         valueWrapper.setExample(
-                TypeUtils.getDefaultValueByPackageName(param.getType().getCanonicalText())
-                        .toString());
+                TypeUtils.getDefaultValueByPackageName(param.getType()));
         return valueWrapper;
     }
 
@@ -63,14 +61,11 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         ValueWrapper valueWrapper = new ValueWrapper();
         valueWrapper.setRequired(ValidUtils.getRequired(field));
         valueWrapper.setName(field.getName());
-        valueWrapper.setDesc(DesUtils.getLinkRemark(field, project));
+        valueWrapper.setDesc(DesUtils.getLinkRemark(field));
         if (property.isEnableTypeDesc()) {
-            valueWrapper.setTypeDesc(fType.getPresentableText());
+            valueWrapper.setTypeDesc(TypeUtils.getTypeName(fType));
         }
-        Object obj = TypeUtils.getDefaultValueByPackageName(fType.getCanonicalText());
-        if (Objects.nonNull(obj)) {
-            valueWrapper.setExample(obj.toString());
-        }
+        valueWrapper.setExample(TypeUtils.getDefaultValueByPackageName(fType));
         return valueWrapper;
     }
 
@@ -81,21 +76,13 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         if (TypeUtils.isMap(paramType)) {
             return Collections.emptyList();
         }
-        String typePkName = paramType.getCanonicalText();
-        String typeName = paramType.getPresentableText();
+        // 数据类型进行拆解，非json参数暂不支持多层级和数组格式
+        if (paramType instanceof PsiArrayType) {
+            paramType = ((PsiArrayType) paramType).getComponentType();
+        }
         List<ValueWrapper> valueWrappers = new ArrayList<>();
-        if (typePkName.contains("[]")) {
-            typePkName = typePkName.replace("[]", "");
-        }
-        int index;
-        while ((index = typePkName.indexOf("<")) != -1) {
-            typePkName = typePkName.substring(index + 1);
-        }
-        if (typePkName.contains(">")) {
-            typePkName = typePkName.replace(">", "");
-        }
         //如果是基本类型
-        if (this.isBasicType(typePkName)) {
+        if (this.isBasicType(paramType)) {
             ValueWrapper valueWrapper;
             PsiAnnotation psiAnnotation = PsiAnnotationUtils
                     .findAnnotation(param, SpringMVCConstants.RequestParam);
@@ -108,22 +95,24 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
                 String desc = DesUtils.getParamDesc(m, param.getName());
                 valueWrapper.setDesc(desc);
                 if (property.isEnableTypeDesc()) {
-                    valueWrapper.setTypeDesc(typeName);
+                    valueWrapper.setTypeDesc(TypeUtils.getTypeName(paramType));
                 }
             }
             valueWrapper.setSource(param);
             YApiSupportHolder.supports.handleParam(valueWrapper);
             valueWrappers.add(valueWrapper);
         } else {
-            PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
-            EnumResult enumResult = PsiUtils.isEnum(this.project, typePkName);
-            if (enumResult.isValid()) {
+            PsiClass psiClass = PsiUtils.convertToClass(paramType);
+            if (psiClass == null) {
+                return Collections.emptyList();
+            }
+            if (TypeUtils.isEnum(paramType)) {
                 ValueWrapper valueWrapper = this.resolveParameter(param);
-                EnumFields enumFields = PsiUtils.resolveEnum(psiClass);
+                EnumFields enumFields = PsiUtils.resolveEnumFields(psiClass);
                 valueWrapper.setDesc(enumFields.getDescriptionString());
                 valueWrappers.add(valueWrapper);
             } else {
-                for (PsiField field : Objects.requireNonNull(psiClass).getAllFields()) {
+                for (PsiField field : psiClass.getAllFields()) {
                     if (Objects.requireNonNull(field.getModifierList())
                             .hasModifierProperty(PsiModifier.STATIC)) {
                         continue;

@@ -5,7 +5,6 @@ import com.github.aqiu202.ideayapi.mode.schema.*;
 import com.github.aqiu202.ideayapi.mode.schema.base.ItemJsonSchema;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
 import com.github.aqiu202.ideayapi.model.EnumFields;
-import com.github.aqiu202.ideayapi.model.EnumResult;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.range.DecimalRange;
 import com.github.aqiu202.ideayapi.model.range.IntegerRange;
@@ -13,14 +12,13 @@ import com.github.aqiu202.ideayapi.model.range.LongRange;
 import com.github.aqiu202.ideayapi.parser.JsonSchemaJsonParser;
 import com.github.aqiu202.ideayapi.parser.abs.AbstractJsonParser;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
-import com.github.aqiu202.ideayapi.parser.type.PsiFieldWrapper;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptorWrapper;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.github.aqiu202.ideayapi.util.ValidUtils;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
@@ -48,29 +46,25 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ItemJsonSchema parseBasic(String typePkName) {
+    public ItemJsonSchema parseBasic(PsiType psiType) {
         ItemJsonSchema result = SchemaHelper
-                .parseBasic(TypeUtils.getBasicSchema(typePkName));
-        result.setDefault(TypeUtils.getDefaultValueByPackageName(typePkName).toString());
-        result.setMock(TypeUtils
-                .formatMockType(typePkName.substring(typePkName.lastIndexOf(".") + 1)));
+                .parseBasic(TypeUtils.getBasicSchema(psiType));
+        result.setDefault(TypeUtils.getDefaultValueByPackageName(psiType));
+        result.setMock(TypeUtils.formatMockType(psiType));
         return result;
     }
 
     @Override
-    public ObjectSchema parseMap(String typePkName, String description) {
+    public ObjectSchema parseMap(PsiType psiType, String description) {
         ObjectSchema objectSchema = new ObjectSchema();
         objectSchema.setDescription(description);
         return objectSchema;
     }
 
     @Override
-    public ArraySchema parseCollection(PsiClass rootClass, String typePkName, LevelCounter counter) {
+    public ArraySchema parseCollection(PsiClass rootClass, PsiType psiType, LevelCounter counter) {
         ArraySchema result = new ArraySchema();
-        if (StringUtils.isBlank(typePkName)) {
-            return result.setItems(new ObjectSchema());
-        }
-        return result.setItems(this.parseJsonSchema(rootClass, PsiUtils.findPsiClassType(typePkName), counter));
+        return result.setItems(this.parseJsonSchema(rootClass, psiType, counter));
     }
 
     @Override
@@ -100,78 +94,78 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ItemJsonSchema parseFieldValue(PsiClass rootClass, PsiFieldWrapper fieldWrapper, LevelCounter counter) {
-        PsiField psiField = fieldWrapper.getField();
+    public ItemJsonSchema parseFieldValue(PsiClass rootClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
+        PsiDescriptor descriptor = fieldWrapper.getDescriptor();
         PsiType type = fieldWrapper.resolveFieldType();
-        String typePkName = type.getCanonicalText();
-        EnumResult enumResult = PsiUtils.isEnum(this.project, typePkName);
         ItemJsonSchema itemJsonSchema;
-        if (enumResult.isValid()) {
+        if (TypeUtils.isEnum(type)) {
             itemJsonSchema = new StringSchema();
             StringSchema stringSchema = (StringSchema) itemJsonSchema;
-            PsiClass psiClass = PsiUtils.findPsiClass(this.project, typePkName);
-            EnumFields enumFields = PsiUtils.resolveEnum(psiClass);
-            stringSchema.setEnum(enumFields.getFieldNames());
-            stringSchema.setEnumDesc(enumFields.getFieldsDescription());
-        } else if (TypeUtils.isBasicType(typePkName)) {
-            itemJsonSchema = this.parseBasicField(psiField);
+            PsiClass psiClass = PsiUtils.convertToClass(type);
+            if (psiClass != null) {
+                EnumFields enumFields = PsiUtils.resolveEnumFields(psiClass);
+                stringSchema.setEnum(enumFields.getFieldNames());
+                stringSchema.setEnumDesc(enumFields.getFieldsDescription());
+            }
+        } else if (TypeUtils.isBasicType(type)) {
+            itemJsonSchema = this.parseBasicField(descriptor);
         } else {
             itemJsonSchema = this.parseCompoundField(rootClass, fieldWrapper, counter);
         }
         return itemJsonSchema;
     }
 
-    private ItemJsonSchema parseBasicField(PsiField psiField) {
-        PsiType psiType = psiField.getType();
-        String typePkName = psiType.getCanonicalText();
+    private ItemJsonSchema parseBasicField(PsiDescriptor descriptor) {
+        PsiType psiType = descriptor.getType();
         ItemJsonSchema result;
-        SchemaType schemaType = TypeUtils.getBasicSchema(typePkName);
+        SchemaType schemaType = TypeUtils.getBasicSchema(psiType);
+        PsiModifierListOwner owner = descriptor.getOrigin();
         switch (schemaType) {
             case number:
                 NumberSchema numberSchema = new NumberSchema();
-                DecimalRange decimalRange = ValidUtils.rangeDecimal(psiField);
+                DecimalRange decimalRange = ValidUtils.rangeDecimal(owner);
                 if (Objects.nonNull(decimalRange)) {
                     numberSchema.setRange(decimalRange);
                 }
-                if (ValidUtils.isPositive(psiField)) {
+                if (ValidUtils.isPositive(owner)) {
                     numberSchema.setMinimum(new BigDecimal("0"));
                     numberSchema.setExclusiveMinimum(true);
                 }
-                if (ValidUtils.isPositiveOrZero(psiField)) {
+                if (ValidUtils.isPositiveOrZero(owner)) {
                     numberSchema.setMinimum(new BigDecimal("0"));
                 }
-                if (ValidUtils.isNegative(psiField)) {
+                if (ValidUtils.isNegative(owner)) {
                     numberSchema.setMaximum(new BigDecimal("0"));
                     numberSchema.setExclusiveMaximum(true);
                 }
-                if (ValidUtils.isNegativeOrZero(psiField)) {
+                if (ValidUtils.isNegativeOrZero(owner)) {
                     numberSchema.setMaximum(new BigDecimal("0"));
                 }
                 result = numberSchema;
                 break;
             case integer:
                 IntegerSchema integerSchema = new IntegerSchema();
-                if (TypeUtils.hasBaseRange(typePkName)) {
+                if (TypeUtils.hasBaseRange(psiType)) {
                     if (this.enableBasicScope) {
-                        integerSchema.setRange(TypeUtils.getBaseRange(typePkName));
+                        integerSchema.setRange(TypeUtils.getBaseRange(psiType));
                     }
                 }
-                LongRange longRange = ValidUtils.range(psiField, this.enableBasicScope);
+                LongRange longRange = ValidUtils.range(owner, this.enableBasicScope);
                 if (Objects.nonNull(longRange)) {
                     integerSchema.setRange(longRange);
                 }
-                if (ValidUtils.isPositive(psiField)) {
+                if (ValidUtils.isPositive(owner)) {
                     integerSchema.setMinimum(0L);
                     integerSchema.setExclusiveMinimum(true);
                 }
-                if (ValidUtils.isPositiveOrZero(psiField)) {
+                if (ValidUtils.isPositiveOrZero(owner)) {
                     integerSchema.setMinimum(0L);
                 }
-                if (ValidUtils.isNegative(psiField)) {
+                if (ValidUtils.isNegative(owner)) {
                     integerSchema.setMinimum(0L);
                     integerSchema.setExclusiveMaximum(true);
                 }
-                if (ValidUtils.isNegativeOrZero(psiField)) {
+                if (ValidUtils.isNegativeOrZero(owner)) {
                     integerSchema.setMinimum(0L);
                 }
                 result = integerSchema;
@@ -179,10 +173,10 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
             case string:
                 StringSchema stringSchema = new StringSchema();
                 IntegerRange integerRange = ValidUtils
-                        .rangeLength(psiField, this.enableBasicScope);
+                        .rangeLength(owner, this.enableBasicScope);
                 stringSchema.setMinLength(integerRange.getMin());
                 stringSchema.setMaxLength(integerRange.getMax());
-                String pattern = ValidUtils.getPattern(psiField);
+                String pattern = ValidUtils.getPattern(owner);
                 if (!StringUtils.isEmpty(pattern)) {
                     stringSchema.setPattern(pattern);
                 }
@@ -194,27 +188,27 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
             default:
                 return new StringSchema();
         }
-        result.setDefault(TypeUtils.getDefaultValueByPackageName(typePkName).toString());
-        result.setMock(TypeUtils.formatMockType(psiType.getPresentableText()));
+        result.setDefault(TypeUtils.getDefaultValueByPackageName(psiType));
+        result.setMock(TypeUtils.formatMockType(psiType));
         return result;
     }
 
-    private ItemJsonSchema parseCompoundField(PsiClass rootClass, PsiFieldWrapper fieldWrapper, LevelCounter counter) {
-        PsiField psiField = fieldWrapper.getField();
+    private ItemJsonSchema parseCompoundField(PsiClass rootClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
+        PsiDescriptor descriptor = fieldWrapper.getDescriptor();
         PsiType psiType = fieldWrapper.resolveFieldType();
-        String typeName = psiType.getPresentableText();
-        boolean wrapArray = typeName.endsWith("[]");
+        PsiModifierListOwner origin = descriptor.getOrigin();
+        boolean wrapArray = descriptor instanceof PsiArrayType;
         ItemJsonSchema result = this.parseJsonSchema(rootClass, psiType, counter);
         if (result instanceof ArraySchema) {
             ArraySchema a = (ArraySchema) result;
-            if (typeName.contains("Set") && !wrapArray) {
+            if (TypeUtils.isSet(psiType) && !wrapArray) {
                 a.setUniqueItems(true);
             }
-            if (ValidUtils.notEmpty(psiField)) {
+            if (ValidUtils.notEmpty(origin)) {
                 a.setMinItems(1);
             }
             IntegerRange integerRange = ValidUtils
-                    .rangeSize(psiField, this.enableBasicScope);
+                    .rangeSize(origin, this.enableBasicScope);
             a.setMinItems(integerRange.getMin(), this.enableBasicScope);
             a.setMaxItems(integerRange.getMax(), this.enableBasicScope);
         }

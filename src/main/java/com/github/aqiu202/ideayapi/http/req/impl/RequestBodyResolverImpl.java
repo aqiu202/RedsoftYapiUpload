@@ -6,9 +6,11 @@ import com.github.aqiu202.ideayapi.http.filter.PsiParamFilter;
 import com.github.aqiu202.ideayapi.http.req.abs.AbstractRequestParamResolver;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.ObjectJsonParser;
+import com.github.aqiu202.ideayapi.parser.abs.Source;
 import com.github.aqiu202.ideayapi.parser.impl.Json5ParserImpl;
 import com.github.aqiu202.ideayapi.parser.impl.JsonSchemaParserImpl;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -26,9 +28,9 @@ public class RequestBodyResolverImpl extends AbstractRequestParamResolver {
     public RequestBodyResolverImpl(YApiProjectProperty property, Project project) {
         this.dataMode = property.getDataMode();
         if (this.dataMode == 0) {
-            this.objectJsonParser = new JsonSchemaParserImpl(property, project);
+            this.objectJsonParser = new JsonSchemaParserImpl(property, project).setSource(Source.REQUEST);
         } else {
-            this.objectJsonParser = new Json5ParserImpl(property, project);
+            this.objectJsonParser = new Json5ParserImpl(property, project).setSource(Source.REQUEST);
         }
     }
 
@@ -42,7 +44,7 @@ public class RequestBodyResolverImpl extends AbstractRequestParamResolver {
     @Override
     public void doResolverItem(@NotNull PsiClass targetClass, @NotNull PsiMethod m,
                                @NotNull PsiParameter param, @NotNull YApiParam target) {
-        PsiType paramType = TypeUtils.resolveGenericType(targetClass, param.getType());
+        PsiType paramType = PsiUtils.resolveGenericType(targetClass, param.getType());
         target.setRequestBody(this.objectJsonParser.getJson(targetClass, paramType));
         target.setReq_body_is_json_schema(this.dataMode == 0);
     }

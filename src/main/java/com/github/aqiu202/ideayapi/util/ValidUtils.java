@@ -16,9 +16,6 @@ import java.util.Objects;
  */
 public final class ValidUtils {
 
-    private ValidUtils() {
-    }
-
     public static boolean hasAnnotation(PsiModifierListOwner psiModifierListOwner,
                                         String annotationName) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils.findAnnotation(psiModifierListOwner,

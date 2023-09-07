@@ -1,11 +1,10 @@
 package com.github.aqiu202.ideayapi.parser.type;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiType;
 
-public interface PsiFieldWrapper {
-    PsiField getField();
+public interface PsiDescriptorWrapper {
+    PsiDescriptor getDescriptor();
 
     PsiType getDefinedType();
 

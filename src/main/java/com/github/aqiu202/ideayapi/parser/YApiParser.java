@@ -58,7 +58,9 @@ public class YApiParser {
                 return null;
             }
             YApiParam param = this.methodParser.parse(currentClass, selectMethod);
-            yApiParams.add(param);
+            if (param != null) {
+                yApiParams.add(param);
+            }
         } else if ((selectedClass = PsiUtils.getSelectClass(e)) != null) {// 如果选取的是类
             //获取该类是否已经过时
             if (DeprecatedAssert.instance.isDeprecated(selectedClass)) {
