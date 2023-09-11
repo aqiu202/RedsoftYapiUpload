@@ -33,6 +33,7 @@ public class YApiConfigurationForm {
     private JCheckBox enableTypeDescCheckBox;
     private JCheckBox useMethodDefineAsRemarkCheckBox;
     private JCheckBox passPageUrlCheckBox;
+    private JCheckBox useLombokCheckBox;
     private JList<String> ignoredReqFields;
     private JPanel ignoredReqFieldsPanel;
     private JList<String> ignoredResFields;
@@ -78,6 +79,10 @@ public class YApiConfigurationForm {
 
     public JCheckBox getPassPageUrlCheckBox() {
         return passPageUrlCheckBox;
+    }
+
+    public JCheckBox getUseLombokCheckBox() {
+        return useLombokCheckBox;
     }
 
     public String getIgnoredReqFields() {

@@ -3,9 +3,10 @@ package com.github.aqiu202.ideayapi.parser.support.spring;
 import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupport;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
-import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiAnnotation;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
@@ -17,10 +18,11 @@ public class YApiSpringSupport implements YApiSupport {
 
     @Override
     public void handleParam(ValueWrapper wrapper) {
-        PsiParameter param = (PsiParameter) wrapper.getSource();
-        if (TypeUtils.isDate(param.getType())
-                && PsiAnnotationUtils.isAnnotatedWith(param, SpringMVCConstants.DateTimeFormat)) {
-            String pattern = PsiAnnotationUtils.getPsiAnnotationAttributeValue(param, SpringMVCConstants.DateTimeFormat, "pattern");
+        PsiDescriptor descriptor = wrapper.getSource();
+        if (TypeUtils.isDate(descriptor.getType())
+                && descriptor.hasAnnotation(SpringMVCConstants.DateTimeFormat)) {
+            PsiAnnotation annotation = descriptor.findFirstAnnotation(SpringMVCConstants.DateTimeFormat);
+            String pattern = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation, "pattern");
             if (StringUtils.isNotBlank(pattern)) {
                 try {
                     wrapper.setExample(LocalDateTime.now().format(DateTimeFormatter

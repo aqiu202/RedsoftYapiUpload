@@ -18,6 +18,7 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert<YAp
     private static final String KEY_ENABLE_TYPE_DESC = "enable-type-desc";
     private static final String KEY_USE_METHOD_DEFINE_AS_DESC = "use-method-define-as-desc";
     private static final String KEY_PASS_PAGE_URL = "pass-page-url";
+    private static final String KEY_USE_LOMBOK = "use-lombok";
     private static final String KEY_IGNORED_REQ_FIELDS = "ignored-req-fields";
     private static final String KEY_IGNORED_RES_FIELDS = "ignored-res-fields";
 
@@ -32,6 +33,7 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert<YAp
         boolean typeDesc = property.isEnableTypeDesc();
         boolean useMethodDefineAsRemark = property.isUseMethodDefineAsRemark();
         boolean passPageUrl = property.isPassPageUrl();
+        boolean useLombok = property.isUseLombok();
         Element element = new Element("redsoft");
         if (StringUtils.isNotBlank(url)) {
             element.setAttribute(KEY_URL, url);
@@ -46,6 +48,7 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert<YAp
         element.setAttribute(KEY_ENABLE_TYPE_DESC, Boolean.toString(typeDesc));
         element.setAttribute(KEY_USE_METHOD_DEFINE_AS_DESC, Boolean.toString(useMethodDefineAsRemark));
         element.setAttribute(KEY_PASS_PAGE_URL, Boolean.toString(passPageUrl));
+        element.setAttribute(KEY_USE_LOMBOK, Boolean.toString(useLombok));
         String ignoredReqFields = property.getIgnoredReqFields();
         if (StringUtils.isBlank(ignoredReqFields)) {
             ignoredReqFields = "";
@@ -96,6 +99,8 @@ public class DefaultYApiPropertyXmlConvert implements YApiPropertyXmlConvert<YAp
         property.setUseMethodDefineAsRemark(Boolean.parseBoolean(useMethodDefineAsRemark));
         String passPageUrl = element.getAttributeValue(KEY_PASS_PAGE_URL);
         property.setPassPageUrl(Boolean.parseBoolean(passPageUrl));
+        String useLombok = element.getAttributeValue(KEY_USE_LOMBOK);
+        property.setUseLombok(Boolean.parseBoolean(useLombok));
         property.setIgnoredReqFields(element.getAttributeValue(KEY_IGNORED_REQ_FIELDS));
         property.setIgnoredResFields(element.getAttributeValue(KEY_IGNORED_RES_FIELDS));
         return property;

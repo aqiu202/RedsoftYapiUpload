@@ -44,8 +44,8 @@ public class YApiSupports implements YApiSupport {
     }
 
     @Override
-    public void handleField(ValueWrapper wrapper) {
-        this.supportList.forEach((i) -> i.handleField(wrapper));
+    public void handleProperty(ValueWrapper wrapper) {
+        this.supportList.forEach((i) -> i.handleProperty(wrapper));
     }
 
     @Override

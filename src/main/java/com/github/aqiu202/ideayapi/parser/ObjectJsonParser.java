@@ -1,7 +1,6 @@
 package com.github.aqiu202.ideayapi.parser;
 
-import com.github.aqiu202.ideayapi.http.filter.PsiDescriptorFilter;
-import com.github.aqiu202.ideayapi.http.filter.PsiDescriptorListFilter;
+import com.github.aqiu202.ideayapi.parser.type.DescriptorResolver;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
 
@@ -14,8 +13,6 @@ public interface ObjectJsonParser extends BaseObjectParser {
 
     String getJson(PsiClass rootClass, PsiType psiType);
 
-    PsiDescriptorFilter getPsiDescriptorFilter();
-
-    PsiDescriptorListFilter getPsiDescriptorsFilter();
+    DescriptorResolver getDescriptorResolver();
 
 }

@@ -5,14 +5,19 @@ import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
 import com.github.aqiu202.ideayapi.model.EnumFields;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiParam;
+import com.github.aqiu202.ideayapi.parser.abs.Source;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
+import com.github.aqiu202.ideayapi.parser.type.*;
 import com.github.aqiu202.ideayapi.util.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <b>解析复杂类型的参数的解析抽象类(Form和Query类型，不支持多层级解析)</b>
@@ -23,6 +28,9 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
 
     protected final Project project;
     protected final YApiProjectProperty property;
+
+    protected final DescriptorResolver simpleDescriptorResolver = new SimpleDescriptorResolver();
+    protected final DescriptorResolver lombokDescriptorResolver = new LombokDescriptorResolver();
 
     public AbstractCompoundRequestParamResolver(YApiProjectProperty property, Project project) {
         this.property = property;
@@ -56,12 +64,12 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         return valueWrapper;
     }
 
-    protected ValueWrapper resolveField(@NotNull PsiField field) {
-        PsiType fType = field.getType();
+    protected ValueWrapper resolveProperty(@NotNull PsiDescriptor descriptor) {
+        PsiType fType = descriptor.getType();
         ValueWrapper valueWrapper = new ValueWrapper();
-        valueWrapper.setRequired(ValidUtils.getRequired(field));
-        valueWrapper.setName(field.getName());
-        valueWrapper.setDesc(DesUtils.getLinkRemark(field));
+        valueWrapper.setRequired(ValidUtils.getRequired(descriptor.getFirstElement()));
+        valueWrapper.setName(descriptor.getName());
+        valueWrapper.setDesc(descriptor.getDescription());
         if (property.isEnableTypeDesc()) {
             valueWrapper.setTypeDesc(TypeUtils.getTypeName(fType));
         }
@@ -92,13 +100,13 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
                 valueWrapper = this.resolveBasic(param);
             }
             if (StringUtils.isBlank(valueWrapper.getDesc())) {
-                String desc = DesUtils.getParamDesc(m, param.getName());
+                String desc = PsiDocUtils.getParamComment(m, param.getName());
                 valueWrapper.setDesc(desc);
                 if (property.isEnableTypeDesc()) {
                     valueWrapper.setTypeDesc(TypeUtils.getTypeName(paramType));
                 }
             }
-            valueWrapper.setSource(param);
+            valueWrapper.setSource(new SimplePsiDescriptor(param));
             YApiSupportHolder.supports.handleParam(valueWrapper);
             valueWrappers.add(valueWrapper);
         } else {
@@ -112,22 +120,24 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
                 valueWrapper.setDesc(enumFields.getDescriptionString());
                 valueWrappers.add(valueWrapper);
             } else {
-                for (PsiField field : psiClass.getAllFields()) {
-                    if (Objects.requireNonNull(field.getModifierList())
-                            .hasModifierProperty(PsiModifier.STATIC)) {
+                DescriptorResolver descriptorResolver = this.getDescriptorResolver();
+                Collection<PsiDescriptor> descriptors = descriptorResolver.resolveDescriptors(psiClass, Source.REQUEST);
+                for (PsiDescriptor descriptor : descriptors) {
+                    if (this.property.getIgnoredReqFieldList().contains(descriptor.getName())) {
                         continue;
                     }
-                    if (this.property.getIgnoredReqFieldList().contains(field.getName())) {
-                        continue;
-                    }
-                    ValueWrapper valueWrapper = this.resolveField(field);
-                    valueWrapper.setSource(field);
-                    YApiSupportHolder.supports.handleField(valueWrapper);
+                    ValueWrapper valueWrapper = this.resolveProperty(descriptor);
+                    valueWrapper.setSource(descriptor);
+                    YApiSupportHolder.supports.handleProperty(valueWrapper);
                     valueWrappers.add(valueWrapper);
                 }
             }
         }
         return valueWrappers;
+    }
+
+    protected DescriptorResolver getDescriptorResolver() {
+        return this.property.isUseLombok() ? this.lombokDescriptorResolver : this.simpleDescriptorResolver;
     }
 
     /**

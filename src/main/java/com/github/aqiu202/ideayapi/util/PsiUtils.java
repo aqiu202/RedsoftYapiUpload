@@ -161,7 +161,7 @@ public final class PsiUtils {
 
     public static EnumFields resolveEnumFields(PsiClass psiClass) {
         return new EnumFields(Arrays.stream(psiClass.getFields()).map(
-                filed -> new EnumField(filed.getName(), DesUtils.getDocumentDesc(filed))
+                filed -> new EnumField(filed.getName(), PsiDocUtils.getComment(filed))
         ).collect(Collectors.toList()));
     }
 

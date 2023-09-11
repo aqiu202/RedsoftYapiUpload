@@ -6,10 +6,13 @@ import com.github.aqiu202.ideayapi.mode.schema.base.ItemJsonSchema;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.Jsonable;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupport;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
-import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
@@ -21,18 +24,20 @@ public class YApiJacksonSupport implements YApiSupport {
     public static final YApiJacksonSupport INSTANCE = new YApiJacksonSupport();
 
     @Override
-    public void handleField(ValueWrapper wrapper) {
-        PsiModifierListOwner source = wrapper.getSource();
-        if (PsiAnnotationUtils.isAnnotatedWith(source, JacksonConstants.JSON_PROPERTY)) {
-            String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(source, JacksonConstants.JSON_PROPERTY);
+    public void handleProperty(ValueWrapper wrapper) {
+        PsiDescriptor descriptor = wrapper.getSource();
+        if (descriptor.hasAnnotation(JacksonConstants.JSON_PROPERTY)) {
+            PsiAnnotation annotation = descriptor.findFirstAnnotation(JacksonConstants.JSON_PROPERTY);
+            String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation);
             if (StringUtils.isNotBlank(value)) {
                 wrapper.setName(value);
             }
         }
-        PsiType type = PsiUtils.resolveValidType(source);
+        PsiType type = descriptor.getType();
         if (type != null && TypeUtils.isDate(type)
-                && PsiAnnotationUtils.isAnnotatedWith(source, JacksonConstants.JSON_FORMAT)) {
-            String pattern = PsiAnnotationUtils.getPsiAnnotationAttributeValue(source, JacksonConstants.JSON_FORMAT, "pattern");
+                && descriptor.hasAnnotation(JacksonConstants.JSON_FORMAT)) {
+            PsiAnnotation annotation = descriptor.findFirstAnnotation(JacksonConstants.JSON_FORMAT);
+            String pattern = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation, "pattern");
             if (StringUtils.isNotBlank(pattern)) {
                 try {
                     String format = LocalDateTime.now().format(DateTimeFormatter
@@ -54,7 +59,7 @@ public class YApiJacksonSupport implements YApiSupport {
                 }
             }
         }
-        YApiSupport.super.handleField(wrapper);
+        YApiSupport.super.handleProperty(wrapper);
     }
 
     @Override

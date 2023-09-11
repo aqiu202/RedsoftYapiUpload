@@ -6,8 +6,8 @@ import com.github.aqiu202.ideayapi.http.filter.PsiParamFilter;
 import com.github.aqiu202.ideayapi.http.req.abs.AbstractRequestParamResolver;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.model.YApiPathVariable;
-import com.github.aqiu202.ideayapi.util.DesUtils;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.PsiDocUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
@@ -43,7 +43,7 @@ public class RequestPathVariableResolverImpl extends AbstractRequestParamResolve
         if (Objects.nonNull(annotation)) {
             YApiPathVariable pathVariable = new YApiPathVariable();
             pathVariable.full(this.handleParamAnnotation(param, annotation));
-            pathVariable.setDesc(DesUtils.getParamDesc(m, param.getName()));
+            pathVariable.setDesc(PsiDocUtils.getParamComment(m, param.getName()));
             if (property.isEnableTypeDesc()) {
                 pathVariable.setTypeDesc(TypeUtils.getTypeName(param.getType()));
             }

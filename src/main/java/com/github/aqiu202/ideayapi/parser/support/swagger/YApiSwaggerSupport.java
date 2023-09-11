@@ -51,7 +51,7 @@ public class YApiSwaggerSupport implements YApiSupport {
 
     @Override
     public void handleParam(@NonNls ValueWrapper wrapper) {
-        PsiAnnotation annotation = PsiAnnotationUtils.findAnnotation(wrapper.getSource(), SwaggerConstants.API_PARAM);
+        PsiAnnotation annotation = wrapper.getSource().findFirstAnnotation(SwaggerConstants.API_PARAM);
         if (annotation != null) {
             String desc = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation);
             if (StringUtils.isNotBlank(desc)) {
@@ -65,8 +65,8 @@ public class YApiSwaggerSupport implements YApiSupport {
     }
 
     @Override
-    public void handleField(@NonNls ValueWrapper wrapper) {
-        PsiAnnotation annotation = PsiAnnotationUtils.findAnnotation(wrapper.getSource(), SwaggerConstants.API_MODEL_PROPERTY);
+    public void handleProperty(@NonNls ValueWrapper wrapper) {
+        PsiAnnotation annotation = wrapper.getSource().findFirstAnnotation(SwaggerConstants.API_MODEL_PROPERTY);
         if (annotation != null) {
             String desc = PsiAnnotationUtils
                     .getPsiAnnotationAttributeValue(annotation);

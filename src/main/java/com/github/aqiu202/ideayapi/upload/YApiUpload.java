@@ -4,8 +4,8 @@ import com.github.aqiu202.ideayapi.config.xml.YApiProjectProperty;
 import com.github.aqiu202.ideayapi.constant.YApiConstants;
 import com.github.aqiu202.ideayapi.model.*;
 import com.github.aqiu202.ideayapi.parser.base.ContentTypeResolver;
-import com.github.aqiu202.ideayapi.util.DesUtils;
 import com.github.aqiu202.ideayapi.util.HttpClientUtils;
+import com.github.aqiu202.ideayapi.util.PsiDocUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
@@ -157,7 +157,7 @@ public class YApiUpload {
 
     public static void clearCache() {
         MENUS.clear();
-        DesUtils.clearCache();
+        PsiDocUtils.clearCache();
     }
 
 }

@@ -3,6 +3,7 @@ package com.github.aqiu202.ideayapi.util;
 import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
 import com.github.aqiu202.ideayapi.model.Mock;
+import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.intellij.psi.PsiArrayType;
@@ -265,6 +266,16 @@ public class TypeUtils {
 
     public static String getTypeName(PsiType psiType) {
         return psiType.getPresentableText();
+    }
+
+    public static String getTypeDesc(String desc) {
+        return org.apache.commons.lang3.StringUtils.isBlank(desc) ? "" : ("(" + desc + ")");
+    }
+
+    public static void handleTypeDesc(ValueWrapper valueWrapper) {
+        String desc = valueWrapper.getDesc();
+        desc = (org.apache.commons.lang3.StringUtils.isBlank(desc) ? "" : desc) + getTypeDesc(valueWrapper.getTypeDesc());
+        valueWrapper.setDesc(desc);
     }
 
     /**

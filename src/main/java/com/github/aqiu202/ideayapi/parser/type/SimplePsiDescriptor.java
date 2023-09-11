@@ -1,21 +1,26 @@
 package com.github.aqiu202.ideayapi.parser.type;
 
+import com.github.aqiu202.ideayapi.parser.base.DeprecatedAssert;
+import com.github.aqiu202.ideayapi.util.CollectionUtils;
+import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.PsiDocUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.psi.*;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Objects;
+import java.util.*;
 
 public class SimplePsiDescriptor implements PsiDescriptor {
-    private final PsiClass parent;
-    private final PsiModifierListOwner origin;
+
+    private final List<PsiModifierListOwner> elements;
     private final String name;
     private final PsiType type;
     private final boolean valid;
+    private String description;
+    private final Map<String, List<PsiAnnotation>> annotationsMap = new HashMap<>();
 
-    public SimplePsiDescriptor(PsiModifierListOwner origin) {
-        this.origin = origin;
-        this.parent = null;
+    public SimplePsiDescriptor(PsiModifierListOwner elements) {
+        this.elements = new ArrayList<>(Collections.singletonList(elements));
         this.name = null;
         this.type = null;
         this.valid = false;
@@ -31,33 +36,45 @@ public class SimplePsiDescriptor implements PsiDescriptor {
         return new SimplePsiDescriptor(origin);
     }
 
-    public SimplePsiDescriptor(PsiField origin) {
-        this.origin = origin;
-        this.parent = ((PsiClass) origin.getParent());
-        this.name = origin.getName();
-        this.type = origin.getType();
+    public SimplePsiDescriptor(PsiField element) {
+        this.elements = new ArrayList<>(Collections.singletonList(element));
+        this.name = element.getName();
+        this.type = element.getType();
         this.valid = true;
     }
 
-    public SimplePsiDescriptor(PsiMethod origin) {
-        this.origin = origin;
-        this.parent = ((PsiClass) origin.getParent());
-        this.type = origin.getReturnType();
-        String prefix = StringUtils.equals("boolean", TypeUtils.getTypePkName(type)) ? "is" : "get";
-        String name = origin.getName();
-        this.valid = !StringUtils.equals("getClass", name)
-                && name.startsWith(prefix) && origin.getParameterList().isEmpty();
-        if (this.valid) {
-            name = name.substring(prefix.length());
-            this.name = name.substring(0,1).toLowerCase() + name.substring(1);
+    public SimplePsiDescriptor(PsiMethod element) {
+        this.elements = new ArrayList<>(Collections.singletonList(element));
+        String methodName = element.getName();
+        String prefix;
+        if (methodName.startsWith("set")) {
+            prefix = "set";
+            PsiParameter firstParameter = element.getParameterList().getParameter(0);
+            this.type = firstParameter == null ? null : firstParameter.getType();
+            this.valid = type != null && element.getParameterList().getParametersCount() == 1;
         } else {
-            this.name = name;
+            this.type = element.getReturnType();
+            prefix = StringUtils.equals("boolean", TypeUtils.getTypePkName(type)) ? "is" : "get";
+            this.valid = methodName.startsWith(prefix) && element.getParameterList().isEmpty();
+        }
+        if (this.valid) {
+            methodName = methodName.substring(prefix.length());
+            this.name = methodName.substring(0, 1).toLowerCase() + methodName.substring(1);
+        } else {
+            this.name = methodName;
         }
     }
 
     @Override
-    public PsiModifierListOwner getOrigin() {
-        return origin;
+    public List<PsiModifierListOwner> getElements() {
+        return elements;
+    }
+
+    @Override
+    public void addElement(PsiModifierListOwner element) {
+        this.elements.add(element);
+        this.description = null;
+        this.annotationsMap.clear();
     }
 
     @Override
@@ -71,13 +88,75 @@ public class SimplePsiDescriptor implements PsiDescriptor {
     }
 
     @Override
-    public PsiClass getParent() {
-        return parent;
+    public boolean isValid() {
+        return valid;
     }
 
     @Override
-    public boolean isValid() {
-        return valid;
+    public String getDescription() {
+        if (this.description == null) {
+            this.description = resolveDescription();
+        }
+        return this.description;
+    }
+
+    protected String resolveDescription() {
+        List<PsiModifierListOwner> elements = this.getElements();
+        for (PsiModifierListOwner element : elements) {
+            String result = null;
+            if (element instanceof PsiMethod) {
+                result = this.getDescription(((PsiMethod) element));
+            } else if (element instanceof PsiField) {
+                result = this.getDescription(((PsiField) element));
+            }
+            if (StringUtils.isNotBlank(result)) {
+                return result;
+            }
+        }
+        return "";
+    }
+
+    @Override
+    public boolean isDeprecated() {
+        return this.elements.stream().anyMatch(DeprecatedAssert.instance::isDeprecated);
+    }
+
+    @Override
+    public boolean hasAnnotation(String annotationName) {
+        return this.findFirstAnnotation(annotationName) != null;
+    }
+
+    @Override
+    public PsiAnnotation findFirstAnnotation(String annotationName) {
+        List<PsiAnnotation> annotations = this.findAnnotations(annotationName);
+        if (CollectionUtils.isEmpty(annotations)) {
+            return null;
+        }
+        return annotations.get(0);
+    }
+
+    @Override
+    public List<PsiAnnotation> findAnnotations(String annotationName) {
+        return this.annotationsMap.compute(annotationName, (k, v) -> {
+            if (v == null) {
+                v = new ArrayList<>();
+                for (PsiModifierListOwner element : this.elements) {
+                    PsiAnnotation annotation = PsiAnnotationUtils.findAnnotation(element, annotationName);
+                    if (annotation != null) {
+                        v.add(annotation);
+                    }
+                }
+            }
+            return v;
+        });
+    }
+
+    protected String getDescription(PsiField field) {
+        return PsiDocUtils.getComment(field);
+    }
+
+    protected String getDescription(PsiMethod method) {
+        return PsiDocUtils.getParamComment(method, 0);
     }
 
     @Override

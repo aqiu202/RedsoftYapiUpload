@@ -7,6 +7,7 @@ import com.github.aqiu202.ideayapi.http.req.abs.AbstractCompoundRequestParamReso
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiForm;
 import com.github.aqiu202.ideayapi.model.YApiParam;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.github.aqiu202.ideayapi.util.PsiParamUtils;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
@@ -52,8 +53,8 @@ public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolve
         Set<YApiForm> forms = wrappers.stream().map(wrapper -> {
             YApiForm form = new YApiForm();
             form.full(wrapper);
-            PsiModifierListOwner source = wrapper.getSource();
-            PsiType type = PsiUtils.resolveValidType(source);
+            PsiDescriptor source = wrapper.getSource();
+            PsiType type = source.getType();
             if (type != null && this.isFile(type)) {
                 form.setType("file");
             }

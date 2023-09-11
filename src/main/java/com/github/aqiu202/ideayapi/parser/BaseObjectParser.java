@@ -3,7 +3,7 @@ package com.github.aqiu202.ideayapi.parser;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 import com.github.aqiu202.ideayapi.parser.type.PsiDescriptorWrapper;
-import com.github.aqiu202.ideayapi.util.DesUtils;
+import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
 
@@ -19,7 +19,7 @@ public interface BaseObjectParser {
     Jsonable parseBasic(PsiType psiType);
 
     default Jsonable parseMap(PsiType type) {
-        return this.parseMap(type, DesUtils.getTypeDesc("map"));
+        return this.parseMap(type, TypeUtils.getTypeDesc("map"));
     }
 
     Jsonable parseMap(PsiType type, String description);

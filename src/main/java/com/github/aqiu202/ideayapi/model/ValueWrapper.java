@@ -1,6 +1,7 @@
 package com.github.aqiu202.ideayapi.model;
 
 import com.github.aqiu202.ideayapi.parser.Jsonable;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiVariable;
 import org.apache.commons.lang3.StringUtils;
@@ -33,15 +34,15 @@ public class ValueWrapper {
      */
     protected String name;
 
-    private PsiModifierListOwner source;
+    private PsiDescriptor source;
 
     private Jsonable json;
 
-    public PsiModifierListOwner getSource() {
+    public PsiDescriptor getSource() {
         return source;
     }
 
-    public void setSource(PsiModifierListOwner source) {
+    public void setSource(PsiDescriptor source) {
         this.source = source;
     }
 

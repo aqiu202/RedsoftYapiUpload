@@ -4,7 +4,7 @@ import com.github.aqiu202.ideayapi.http.req.YApiParamResolver;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.util.CollectionUtils;
-import com.github.aqiu202.ideayapi.util.DesUtils;
+import com.github.aqiu202.ideayapi.util.TypeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -28,6 +28,6 @@ public class TypeDescValueResolver implements YApiParamResolver {
     }
 
     private void handleDescWithType(ValueWrapper valueWrapper) {
-        DesUtils.handleTypeDesc(valueWrapper);
+        TypeUtils.handleTypeDesc(valueWrapper);
     }
 }

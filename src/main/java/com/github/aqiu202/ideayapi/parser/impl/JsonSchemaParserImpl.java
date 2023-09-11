@@ -86,7 +86,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
                 }
                 objectSchema.addProperty(fieldName, value.setDescription(desc));
             }
-            if (ValidUtils.notNullOrBlank(wrapper.getSource())) {
+            if (ValidUtils.notNullOrBlank(wrapper.getSource().getFirstElement())) {
                 objectSchema.addRequired(fieldName);
             }
         }
@@ -94,7 +94,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ItemJsonSchema parseFieldValue(PsiClass rootClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
+    public ItemJsonSchema parsePropertyValue(PsiClass rootClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
         PsiDescriptor descriptor = fieldWrapper.getDescriptor();
         PsiType type = fieldWrapper.resolveFieldType();
         ItemJsonSchema itemJsonSchema;
@@ -119,7 +119,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         PsiType psiType = descriptor.getType();
         ItemJsonSchema result;
         SchemaType schemaType = TypeUtils.getBasicSchema(psiType);
-        PsiModifierListOwner owner = descriptor.getOrigin();
+        PsiModifierListOwner owner = descriptor.getFirstElement();
         switch (schemaType) {
             case number:
                 NumberSchema numberSchema = new NumberSchema();
@@ -196,7 +196,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     private ItemJsonSchema parseCompoundField(PsiClass rootClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
         PsiDescriptor descriptor = fieldWrapper.getDescriptor();
         PsiType psiType = fieldWrapper.resolveFieldType();
-        PsiModifierListOwner origin = descriptor.getOrigin();
+        PsiModifierListOwner origin = descriptor.getFirstElement();
         boolean wrapArray = descriptor instanceof PsiArrayType;
         ItemJsonSchema result = this.parseJsonSchema(rootClass, psiType, counter);
         if (result instanceof ArraySchema) {
