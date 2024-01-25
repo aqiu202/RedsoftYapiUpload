@@ -122,7 +122,7 @@
               <text value="是否将接口定义信息设置为接口备注"/>
             </properties>
           </component>
-          <component id="7d6d" class="javax.swing.JCheckBox" binding="passPageUrlCheckBox">
+          <component id="7d6d" class="javax.swing.JCheckBox" binding="ignoreViewUrlCheckBox">
             <constraints>
               <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

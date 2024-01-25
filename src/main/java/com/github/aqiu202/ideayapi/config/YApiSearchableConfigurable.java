@@ -69,7 +69,7 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
         this.yApiProjectProperty.setUseMethodDefineAsRemark(
                 yApiConfigurationForm.getUseMethodDefineAsRemarkCheckBox().isSelected());
         this.yApiProjectProperty.setIgnoreViewUrl(
-                yApiConfigurationForm.getPassPageUrlCheckBox().isSelected());
+                yApiConfigurationForm.getIgnoreViewUrlCheckBox().isSelected());
         this.yApiProjectProperty.setUseLombok(
                 yApiConfigurationForm.getUseLombokCheckBox().isSelected());
         this.yApiProjectProperty.setIgnoredReqFields(yApiConfigurationForm.getIgnoredReqFields());
@@ -107,7 +107,7 @@ public class YApiSearchableConfigurable implements SearchableConfigurable {
         yApiConfigurationForm.getEnableBasicScopeCheckBox().setSelected(property.isEnableBasicScope());
         yApiConfigurationForm.getEnableTypeDescCheckBox().setSelected(property.isEnableTypeDesc());
         yApiConfigurationForm.getUseMethodDefineAsRemarkCheckBox().setSelected(property.isUseMethodDefineAsRemark());
-        yApiConfigurationForm.getPassPageUrlCheckBox().setSelected(property.isIgnoreViewUrl());
+        yApiConfigurationForm.getIgnoreViewUrlCheckBox().setSelected(property.isIgnoreViewUrl());
         yApiConfigurationForm.getUseLombokCheckBox().setSelected(property.isUseLombok());
         yApiConfigurationForm.setIgnoredReqFields(property.getIgnoredReqFieldList());
         yApiConfigurationForm.setIgnoredResFields(property.getIgnoredResFieldList());

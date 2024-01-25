@@ -32,7 +32,7 @@ public class YApiConfigurationForm {
     private ComboBox<String> dataModeComboBox;
     private JCheckBox enableTypeDescCheckBox;
     private JCheckBox useMethodDefineAsRemarkCheckBox;
-    private JCheckBox passPageUrlCheckBox;
+    private JCheckBox ignoreViewUrlCheckBox;
     private JCheckBox useLombokCheckBox;
     private JList<String> ignoredReqFields;
     private JPanel ignoredReqFieldsPanel;
@@ -77,8 +77,8 @@ public class YApiConfigurationForm {
         return useMethodDefineAsRemarkCheckBox;
     }
 
-    public JCheckBox getPassPageUrlCheckBox() {
-        return passPageUrlCheckBox;
+    public JCheckBox getIgnoreViewUrlCheckBox() {
+        return ignoreViewUrlCheckBox;
     }
 
     public JCheckBox getUseLombokCheckBox() {
@@ -123,7 +123,7 @@ public class YApiConfigurationForm {
             public void keyReleased(KeyEvent evt) {
                 String old = projectIdField.getText();
                 JFormattedTextField.AbstractFormatter formatter = projectIdField.getFormatter();
-                if (!old.equals("")) {
+                if (!old.isEmpty()) {
                     if (formatter != null) {
                         String str = projectIdField.getText();
                         try {
@@ -165,7 +165,7 @@ public class YApiConfigurationForm {
             }
         });
 //        jbList.setFixedCellWidth(400);
-        jbList.setDragEnabled(true);
+//        jbList.setDragEnabled(true);
         jbList.setDropMode(DropMode.INSERT);
         return jbList;
     }
