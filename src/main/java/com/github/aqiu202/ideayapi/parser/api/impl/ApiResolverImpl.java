@@ -21,6 +21,9 @@ import com.intellij.psi.javadoc.PsiDocComment;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class ApiResolverImpl implements ApiParser, DocTagValueHandler {
 
     private final YApiProjectProperty property;
@@ -46,25 +49,25 @@ public class ApiResolverImpl implements ApiParser, DocTagValueHandler {
     }
 
     @Override
-    public YApiParam parse(@NotNull PsiClass c, @NotNull PsiMethod m) {
+    public List<YApiParam> parse(@NotNull PsiClass c, @NotNull PsiMethod m) {
         YApiParam target = new YApiParam();
         this.responseContentTypeResolver.resolve(c, m, target);
-        if (this.property.isPassPageUrl()
+        if (this.property.isIgnoreViewUrl()
                 && StringUtils.equals(ContentTypeResolver.RAW_VALUE, target.getRes_body_type())) {
             return null;
         }
         this.pathResolver.resolve(c, m, target);
         this.baseInfoResolver.resolve(c, m, target);
-        this.httpMethodResolver.resolve(c, m, target);
-        PsiDocComment classDoc = c.getDocComment();
-        PsiDocComment methodDoc = m.getDocComment();
-        this.statusResolver.resolve(classDoc, methodDoc, target);
+        this.statusResolver.resolve(c.getDocComment(), m.getDocComment(), target);
         this.menuResolver.set(c, target);
-        this.requestResolver.resolve(c, m, target);
-        this.requestContentTypeResolver.resolve(c, m, target);
-        this.docTagValueResolver.accept(target);
-        this.descValueResolver.accept(target);
-        this.responseResolver.resolve(c, m.getReturnType(), target);
-        return target;
+        List<String> methods = this.httpMethodResolver.resolve(c, m, target);
+        return methods.stream().map(method -> new YApiParam(method, target))
+                .peek(p -> {
+                    this.requestResolver.resolve(c, m, p);
+                    this.requestContentTypeResolver.resolve(c, m, p);
+                    this.docTagValueResolver.accept(p);
+                    this.descValueResolver.accept(p);
+                    this.responseResolver.resolve(c, m.getReturnType(), p);
+                }).collect(Collectors.toList());
     }
 }

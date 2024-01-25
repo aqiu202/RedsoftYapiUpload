@@ -14,9 +14,9 @@ public class RequestContentTypeResolverImpl implements ContentTypeResolver {
 
     @Override
     public void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
-        Set<String> methods = target.getMethods();
+        String method = target.getMethod();
         //YApi默认Delete方法有body，但是设置contentType为form会报错，这里为Delete方法保持默认的json的contentType
-        if (PsiParamUtils.noBody(methods)) {
+        if (PsiParamUtils.noBody(method)) {
             return;
         }
         //有body但是没有@RequestBody注解并且form参数为空，设置为form

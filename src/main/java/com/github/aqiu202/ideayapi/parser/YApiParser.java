@@ -57,9 +57,9 @@ public class YApiParser {
                         .notify(this.project);
                 return null;
             }
-            YApiParam param = this.methodParser.parse(currentClass, selectMethod);
-            if (param != null) {
-                yApiParams.add(param);
+            List<YApiParam> params = this.methodParser.parse(currentClass, selectMethod);
+            if (CollectionUtils.isNotEmpty(params)) {
+                yApiParams.addAll(params);
             }
         } else if ((selectedClass = PsiUtils.getSelectClass(e)) != null) {// 如果选取的是类
             //获取该类是否已经过时

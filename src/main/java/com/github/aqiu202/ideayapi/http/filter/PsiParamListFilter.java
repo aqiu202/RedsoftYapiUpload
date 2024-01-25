@@ -26,16 +26,16 @@ public interface PsiParamListFilter {
     default List<PsiParameter> filter(@NotNull PsiMethod m, @NotNull YApiParam target) {
         return Stream.of(m.getParameterList().getParameters())
                 .filter(p ->
-                        this.getPsiParamFilter(m, target).test(p) &&
+                        !this.isInnerParameterType(p) &&
                                 !TypeUtils.isMap(p.getType()) &&
-                                !(ServletConstants.HttpServletRequest
-                                        .equals(TypeUtils.getTypePkName(p.getType()))
-                                        || ServletConstants.HttpServletResponse
-                                        .equals(TypeUtils.getTypePkName(p.getType()))
-                                        || ServletConstants.HttpSession
-                                        .equals(TypeUtils.getTypePkName(p.getType())))
-                )
+                                this.getPsiParamFilter(m, target).test(p))
                 .collect(Collectors.toList());
+    }
+
+    default boolean isInnerParameterType(PsiParameter p) {
+        String typePkName = TypeUtils.getTypePkName(p.getType());
+        return StringUtils.equalsAny(typePkName, ServletConstants.HttpServletRequest,
+                ServletConstants.HttpServletResponse, ServletConstants.HttpSession);
     }
 
     @NotNull

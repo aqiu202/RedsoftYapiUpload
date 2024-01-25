@@ -5,6 +5,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * <b>接口信息解析</b>
  *
@@ -12,5 +14,5 @@ import org.jetbrains.annotations.NotNull;
  **/
 public interface ApiParser {
 
-    YApiParam parse(@NotNull PsiClass c, @NotNull PsiMethod m);
+    List<YApiParam> parse(@NotNull PsiClass c, @NotNull PsiMethod m);
 }

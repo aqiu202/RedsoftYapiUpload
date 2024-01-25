@@ -16,6 +16,30 @@ import java.util.Set;
  */
 public class YApiParam implements Serializable, ResultConvert<Collection<YApiSaveParam>> {
 
+    public YApiParam(){}
+
+    public YApiParam(String method, YApiParam source) {
+        this.method = method;
+        this.paths = source.paths;
+        this.headers = source.headers;
+        this.params = source.params;
+        this.req_body_form = source.req_body_form;
+        this.title = source.title;
+        this.response = source.response;
+        this.requestBody = source.requestBody;
+        this.req_body_type = source.req_body_type;
+        this.res_body_type = source.res_body_type;
+        this.desc = source.desc;
+        this.menu = source.menu;
+        this.menuDesc = source.menuDesc;
+        this.req_params = source.req_params;
+        this.status = source.status;
+        this.req_body_is_json_schema = source.req_body_is_json_schema;
+        this.res_body_is_json_schema = source.res_body_is_json_schema;
+        this.hasFile = source.hasFile;
+        this.consumes = source.consumes;
+    }
+    private String method;
     /**
      * 路径
      */
@@ -44,11 +68,6 @@ public class YApiParam implements Serializable, ResultConvert<Collection<YApiSav
      * 请求体
      */
     private String requestBody;
-
-    /**
-     * 请求方法
-     */
-    private Set<String> methods;
 
     /**
      * 原始类型 raw,form,json
@@ -94,6 +113,14 @@ public class YApiParam implements Serializable, ResultConvert<Collection<YApiSav
     private boolean hasFile = false;
 
     private String consumes;
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
     public Set<YApiQuery> getParams() {
         return params;
@@ -240,42 +267,33 @@ public class YApiParam implements Serializable, ResultConvert<Collection<YApiSav
         this.paths = paths;
     }
 
-    public Set<String> getMethods() {
-        return methods;
-    }
-
-    public void setMethods(Set<String> methods) {
-        this.methods = methods;
-    }
 
     @Override
     public Set<YApiSaveParam> convert() {
         Set<YApiSaveParam> result = new LinkedHashSet<>();
-        for (String method : this.methods) {
-            for (String path : this.paths) {
-                result.add(Builders.of(YApiSaveParam::new)
-                        .with(YApiSaveParam::setPath, path)
-                        .with(YApiSaveParam::setMethod, method)
-                        .with(YApiSaveParam::setMenu, this.menu)
-                        .with(YApiSaveParam::setMenuDesc, this.menuDesc)
-                        .with(YApiSaveParam::setTitle, this.title)
-                        .with(YApiSaveParam::setDesc, this.desc)
-                        .with(YApiSaveParam::setStatus, this.status)
-                        .with(YApiSaveParam::setReq_query, this.params)
-                        .with(YApiSaveParam::setReq_params, this.req_params)
-                        .with(YApiSaveParam::setRes_body, this.response)
-                        .with(YApiSaveParam::setReq_headers, this.headers)
-                        .with(YApiSaveParam::setRes_body_type, this.res_body_type)
-                        .with(YApiSaveParam::setReq_body_type, this.req_body_type)
-                        .with(YApiSaveParam::setReq_body_form, this.req_body_form)
-                        .with(YApiSaveParam::setReq_body_other, this.requestBody)
-                        .with(YApiSaveParam::setReq_body_is_json_schema,
-                                this.req_body_is_json_schema)
-                        .with(YApiSaveParam::setRes_body_is_json_schema,
-                                this.res_body_is_json_schema)
-                        .with(YApiSaveParam::setReq_headers, this.headers)
-                        .build());
-            }
+        for (String path : this.paths) {
+            result.add(Builders.of(YApiSaveParam::new)
+                    .with(YApiSaveParam::setMethod, this.method)
+                    .with(YApiSaveParam::setPath, path)
+                    .with(YApiSaveParam::setMenu, this.menu)
+                    .with(YApiSaveParam::setMenuDesc, this.menuDesc)
+                    .with(YApiSaveParam::setTitle, this.title)
+                    .with(YApiSaveParam::setDesc, this.desc)
+                    .with(YApiSaveParam::setStatus, this.status)
+                    .with(YApiSaveParam::setReq_query, this.params)
+                    .with(YApiSaveParam::setReq_params, this.req_params)
+                    .with(YApiSaveParam::setRes_body, this.response)
+                    .with(YApiSaveParam::setReq_headers, this.headers)
+                    .with(YApiSaveParam::setRes_body_type, this.res_body_type)
+                    .with(YApiSaveParam::setReq_body_type, this.req_body_type)
+                    .with(YApiSaveParam::setReq_body_form, this.req_body_form)
+                    .with(YApiSaveParam::setReq_body_other, this.requestBody)
+                    .with(YApiSaveParam::setReq_body_is_json_schema,
+                            this.req_body_is_json_schema)
+                    .with(YApiSaveParam::setRes_body_is_json_schema,
+                            this.res_body_is_json_schema)
+                    .with(YApiSaveParam::setReq_headers, this.headers)
+                    .build());
         }
         return result;
     }
@@ -291,25 +309,29 @@ public class YApiParam implements Serializable, ResultConvert<Collection<YApiSav
         YApiParam yApiParam = (YApiParam) o;
         return req_body_is_json_schema == yApiParam.req_body_is_json_schema
                 && res_body_is_json_schema == yApiParam.res_body_is_json_schema
-                && hasFile == yApiParam.hasFile && Objects.equals(paths, yApiParam.paths)
-                && Objects.equals(headers, yApiParam.headers) && Objects.equals(
-                params, yApiParam.params) && Objects.equals(req_body_form,
-                yApiParam.req_body_form) && Objects.equals(title, yApiParam.title)
-                && Objects.equals(response, yApiParam.response) && Objects.equals(
-                requestBody, yApiParam.requestBody) && Objects.equals(methods,
-                yApiParam.methods) && Objects.equals(req_body_type, yApiParam.req_body_type)
+                && hasFile == yApiParam.hasFile
+                && Objects.equals(method, yApiParam.method)
+                && Objects.equals(paths, yApiParam.paths)
+                && Objects.equals(headers, yApiParam.headers)
+                && Objects.equals(params, yApiParam.params)
+                && Objects.equals(req_body_form, yApiParam.req_body_form)
+                && Objects.equals(title, yApiParam.title)
+                && Objects.equals(response, yApiParam.response)
+                && Objects.equals(requestBody, yApiParam.requestBody)
+                && Objects.equals(req_body_type, yApiParam.req_body_type)
                 && Objects.equals(res_body_type, yApiParam.res_body_type)
-                && Objects.equals(desc, yApiParam.desc) && Objects.equals(menu,
-                yApiParam.menu) && Objects.equals(menuDesc, yApiParam.menuDesc)
+                && Objects.equals(desc, yApiParam.desc)
+                && Objects.equals(menu, yApiParam.menu)
+                && Objects.equals(menuDesc, yApiParam.menuDesc)
                 && Objects.equals(req_params, yApiParam.req_params)
-                && Objects.equals(status, yApiParam.status) && Objects.equals(
-                consumes, yApiParam.consumes);
+                && Objects.equals(status, yApiParam.status)
+                && Objects.equals(consumes, yApiParam.consumes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(paths, headers, params, req_body_form, title, response, requestBody,
-                methods, req_body_type, res_body_type, desc, menu, menuDesc, req_params, status,
-                req_body_is_json_schema, res_body_is_json_schema, hasFile, consumes);
+        return Objects.hash(method, paths, headers, params, req_body_form, title, response,
+                requestBody, req_body_type, res_body_type, desc, menu, menuDesc, req_params,
+                status, req_body_is_json_schema, res_body_is_json_schema, hasFile, consumes);
     }
 }

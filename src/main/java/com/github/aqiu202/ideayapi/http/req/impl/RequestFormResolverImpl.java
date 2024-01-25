@@ -10,13 +10,10 @@ import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.github.aqiu202.ideayapi.util.PsiParamUtils;
-import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiVariable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -40,7 +37,7 @@ public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolve
     @Override
     public PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m,
                                             @NotNull YApiParam target) {
-        if (PsiParamUtils.noBody(target.getMethods()) || PsiParamUtils
+        if (PsiParamUtils.noBody(target.getMethod()) || PsiParamUtils
                 .hasRequestBody(m.getParameterList().getParameters())) {
             return p -> false;
         }

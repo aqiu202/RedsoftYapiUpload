@@ -4,8 +4,6 @@ import com.github.aqiu202.ideayapi.constant.HttpMethodConstants;
 import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
 import com.intellij.psi.PsiParameter;
 
-import java.util.Collection;
-
 /**
  * Psi参数解析工具类
  */
@@ -31,14 +29,7 @@ public final class PsiParamUtils {
 
     public static boolean noBody(String method) {
         return HttpMethodConstants.GET.equals(method)
-//                || HttpMethodConstants.DELETE.equals(method) //YApi默认Delete方法有body
-                ;
-    }
-
-    public static boolean noBody(Collection<String> methods) {
-        return methods.stream().anyMatch(PsiParamUtils::noBody)
-//        return HttpMethodConstants.GET.equals(method)
-//                || HttpMethodConstants.DELETE.equals(method) //YApi默认Delete方法有body
+                || HttpMethodConstants.DELETE.equals(method) //YApi默认Delete方法有body
                 ;
     }
 

@@ -8,14 +8,20 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiConstantEvaluationHelper;
 
 /**
- * 当前支持的所有扩展
+ * 当前插件的全局变量持有者
  */
 public abstract class YApiSupportHolder {
 
     public static Project project;
 
+    /**
+     * 当前支持的所有扩展
+     */
     public static YApiSupport supports;
 
+    /**
+     * 常量计算器
+     */
     public static PsiConstantEvaluationHelper evaluationHelper;
 
     public static void init(Project project) {

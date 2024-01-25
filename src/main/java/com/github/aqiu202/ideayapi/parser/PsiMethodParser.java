@@ -5,6 +5,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * <b>方法解析</b>
  *
@@ -12,6 +14,6 @@ import org.jetbrains.annotations.NotNull;
  **/
 public interface PsiMethodParser {
 
-    YApiParam parse(@NotNull PsiClass c, @NotNull PsiMethod m);
+    List<YApiParam> parse(@NotNull PsiClass c, @NotNull PsiMethod m);
 
 }

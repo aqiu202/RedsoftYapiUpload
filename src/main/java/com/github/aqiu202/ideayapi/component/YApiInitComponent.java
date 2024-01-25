@@ -24,11 +24,11 @@ public class YApiInitComponent implements ProjectComponent {
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
-            String changeLogTitle = "<h4>2.2.1版本，优化解析策略防止类型嵌套导致内存溢出</h4>";
-            String changeLogContent = "<ol>\n"
-                    + "        <li>优化解析策略防止类型嵌套导致内存溢出</li>\n"
-                    + "        <li>修复已知问题#25,#26</li>\n"
-                    + "     </ol>";
+            String changeLogTitle = "<h4>2.2.2版本，添加对Lombok的支持，修复已知致命BUG</h4>";
+            String changeLogContent = "<ol>\n" +
+                    "        <li>添加对Lombok的支持</li>\n" +
+                    "        <li>修复已知问题#27,#29</li>\n" +
+                    "     </ol>";
             NotificationUtils.createNotification("更新内容",
                             changeLogTitle + "\n" + changeLogContent
                                     + "<p>更多信息请查看<a href=\"https://github.com/aqiu202/RedsoftYApiUpload/wiki/使用指南\">使用文档</a>||"

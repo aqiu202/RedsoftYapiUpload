@@ -35,7 +35,7 @@ public class PsiClassParserImpl implements PsiClassParser {
 
     @Override
     public List<YApiParam> parse(@NotNull PsiClass c) {
-        return this.getApiMethods(c).stream().map(m -> methodParser.parse(c, m))
+        return this.getApiMethods(c).stream().flatMap(m -> methodParser.parse(c, m).stream())
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

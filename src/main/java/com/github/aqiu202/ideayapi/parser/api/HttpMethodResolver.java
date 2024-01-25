@@ -5,6 +5,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * <b>HttpMethod解析</b>
  *
@@ -12,6 +14,6 @@ import org.jetbrains.annotations.NotNull;
  **/
 public interface HttpMethodResolver {
 
-    void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target);
+    List<String> resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target);
 
 }

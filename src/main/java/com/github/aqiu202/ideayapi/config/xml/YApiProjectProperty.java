@@ -27,7 +27,7 @@ public class YApiProjectProperty {
 
     private boolean enableTypeDesc;
     private boolean useMethodDefineAsRemark;
-    private boolean passPageUrl;
+    private boolean ignoreViewUrl;
     private boolean useLombok;
     private String ignoredReqFields;
     private String ignoredResFields;
@@ -107,12 +107,12 @@ public class YApiProjectProperty {
         this.enableTypeDesc = enableTypeDesc;
     }
 
-    public boolean isPassPageUrl() {
-        return passPageUrl;
+    public boolean isIgnoreViewUrl() {
+        return ignoreViewUrl;
     }
 
-    public void setPassPageUrl(boolean passPageUrl) {
-        this.passPageUrl = passPageUrl;
+    public void setIgnoreViewUrl(boolean ignoreViewUrl) {
+        this.ignoreViewUrl = ignoreViewUrl;
     }
 
     public boolean isUseLombok() {
@@ -185,7 +185,7 @@ public class YApiProjectProperty {
                 Objects.equals(enableBasicScope, that.enableBasicScope) &&
                 Objects.equals(useMethodDefineAsRemark, that.useMethodDefineAsRemark) &&
                 Objects.equals(enableTypeDesc, that.enableTypeDesc) &&
-                Objects.equals(passPageUrl, that.passPageUrl) &&
+                Objects.equals(ignoreViewUrl, that.ignoreViewUrl) &&
                 Objects.equals(useLombok, that.useLombok) &&
                 Objects.equals(ignoredReqFields, that.ignoredReqFields) &&
                 Objects.equals(ignoredResFields, that.ignoredResFields);

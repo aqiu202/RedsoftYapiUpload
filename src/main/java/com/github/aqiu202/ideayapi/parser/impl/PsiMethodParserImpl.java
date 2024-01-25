@@ -10,6 +10,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class PsiMethodParserImpl implements PsiMethodParser {
 
     private final ApiParser apiResolver;
@@ -23,7 +25,7 @@ public class PsiMethodParserImpl implements PsiMethodParser {
     }
 
     @Override
-    public YApiParam parse(@NotNull PsiClass c, @NotNull PsiMethod m) {
+    public List<YApiParam> parse(@NotNull PsiClass c, @NotNull PsiMethod m) {
         return this.apiResolver.parse(c, m);
     }
 }

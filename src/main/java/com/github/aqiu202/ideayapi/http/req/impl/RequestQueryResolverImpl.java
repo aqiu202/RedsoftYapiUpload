@@ -32,7 +32,7 @@ public class RequestQueryResolverImpl extends AbstractCompoundRequestParamResolv
     public PsiParamFilter getPsiParamFilter(@NotNull PsiMethod m,
                                             @NotNull YApiParam target) {
         //没有body的方法，除去文件类型的参数和被@PathVariable注解标注的参数
-        if (PsiParamUtils.noBody(target.getMethods())) {
+        if (PsiParamUtils.noBody(target.getMethod())) {
             return p -> !TypeUtils.isFile(p.getType()) && PsiAnnotationUtils
                     .isNotAnnotatedWith(p, SpringMVCConstants.PathVariable);
         }

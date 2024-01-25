@@ -11,81 +11,56 @@ import com.intellij.psi.PsiMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class HttpMethodResolverImpl implements HttpMethodResolver {
 
     @Override
-    public void resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
-        this.resolveWithClass(c, target);
-        this.resolveWithMethod(m, target);
+    public List<String> resolve(@NotNull PsiClass c, @NotNull PsiMethod m, @NotNull YApiParam target) {
+        List<String> results = new ArrayList<>();
+        this.resolveWithClass(c, target, results);
+        this.resolveWithMethod(m, target, results);
+        return results;
     }
 
-    protected void resolveWithClass(PsiClass c, YApiParam target) {
-        Set<String> methods = target.getMethods();
-        if (methods == null) {
-            methods = new LinkedHashSet<>();
-            if (PsiAnnotationUtils
-                    .isAnnotatedWith(c, SpringMVCConstants.GetMapping)) {
-                methods.add(HttpMethodConstants.GET);
-            } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(c, SpringMVCConstants.PostMapping)) {
-                methods.add(HttpMethodConstants.POST);
-            } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(c, SpringMVCConstants.PutMapping)) {
-                methods.add(HttpMethodConstants.PUT);
-            } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(c, SpringMVCConstants.DeleteMapping)) {
-                methods.add(HttpMethodConstants.DELETE);
-            } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(c, SpringMVCConstants.PatchMapping)) {
-                methods.add(HttpMethodConstants.PATCH);
-            }
-            if (!methods.isEmpty()) {
-                target.setMethods(methods);
-            }
+    protected void resolveWithClass(PsiClass c, YApiParam target, List<String> methods) {
+        if (PsiAnnotationUtils.isAnnotatedWith(c, SpringMVCConstants.GetMapping)) {
+            methods.add(HttpMethodConstants.GET);
+        } else if (PsiAnnotationUtils.isAnnotatedWith(c, SpringMVCConstants.PostMapping)) {
+            methods.add(HttpMethodConstants.POST);
+        } else if (PsiAnnotationUtils.isAnnotatedWith(c, SpringMVCConstants.PutMapping)) {
+            methods.add(HttpMethodConstants.PUT);
+        } else if (PsiAnnotationUtils.isAnnotatedWith(c, SpringMVCConstants.DeleteMapping)) {
+            methods.add(HttpMethodConstants.DELETE);
+        } else if (PsiAnnotationUtils.isAnnotatedWith(c, SpringMVCConstants.PatchMapping)) {
+            methods.add(HttpMethodConstants.PATCH);
         }
     }
 
-    protected void resolveWithMethod(PsiMethod m, YApiParam target) {
-        Set<String> methods = target.getMethods();
-        if (methods == null) {
-            methods = new LinkedHashSet<>();
-            //获取方法上的RequestMapping注解
-            PsiAnnotation annotation = PsiAnnotationUtils
-                    .findAnnotation(m, SpringMVCConstants.RequestMapping);
-            if (annotation != null) {
-                String methodVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation, "method");
-                if (StringUtils.isNotBlank(methodVal)) {
-                    methods.addAll(this.processMethod(methodVal.toUpperCase()));
-                }
-            } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(m, SpringMVCConstants.GetMapping)) {
-                methods.add(HttpMethodConstants.GET);
-            } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(m, SpringMVCConstants.PostMapping)) {
-                methods.add(HttpMethodConstants.POST);
-            } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(m, SpringMVCConstants.PutMapping)) {
-                methods.add(HttpMethodConstants.PUT);
-            } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(m, SpringMVCConstants.DeleteMapping)) {
-                methods.add(HttpMethodConstants.DELETE);
-            } else if (PsiAnnotationUtils
-                    .isAnnotatedWith(m, SpringMVCConstants.PatchMapping)) {
-                methods.add(HttpMethodConstants.PATCH);
+    protected void resolveWithMethod(PsiMethod m, YApiParam target, List<String> methods) {
+        //获取方法上的RequestMapping注解
+        PsiAnnotation annotation = PsiAnnotationUtils.findAnnotation(m, SpringMVCConstants.RequestMapping);
+        if (annotation != null) {
+            String methodVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation, "method");
+            if (StringUtils.isNotBlank(methodVal)) {
+                methods.addAll(this.processMethod(methodVal.toUpperCase()));
             }
-            if (methods.isEmpty()) {
-                target.setMethods(new LinkedHashSet<>(Arrays.asList(HttpMethodConstants.GET,
-                        HttpMethodConstants.POST, HttpMethodConstants.PUT,
-                        HttpMethodConstants.PATCH, HttpMethodConstants.DELETE)));
-            } else {
-                target.setMethods(methods);
-            }
+        } else if (PsiAnnotationUtils.isAnnotatedWith(m, SpringMVCConstants.GetMapping)) {
+            methods.add(HttpMethodConstants.GET);
+        } else if (PsiAnnotationUtils.isAnnotatedWith(m, SpringMVCConstants.PostMapping)) {
+            methods.add(HttpMethodConstants.POST);
+        } else if (PsiAnnotationUtils.isAnnotatedWith(m, SpringMVCConstants.PutMapping)) {
+            methods.add(HttpMethodConstants.PUT);
+        } else if (PsiAnnotationUtils.isAnnotatedWith(m, SpringMVCConstants.DeleteMapping)) {
+            methods.add(HttpMethodConstants.DELETE);
+        } else if (PsiAnnotationUtils.isAnnotatedWith(m, SpringMVCConstants.PatchMapping)) {
+            methods.add(HttpMethodConstants.PATCH);
+        }
+        if (methods.isEmpty()) {
+            methods.addAll(Arrays.asList(HttpMethodConstants.GET,
+                    HttpMethodConstants.POST, HttpMethodConstants.PUT,
+                    HttpMethodConstants.PATCH, HttpMethodConstants.DELETE));
         }
     }
 
