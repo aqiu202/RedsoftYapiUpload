@@ -1,6 +1,6 @@
 package com.github.aqiu202.ideayapi.config.xml;
 
-import org.apache.commons.lang3.StringUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 

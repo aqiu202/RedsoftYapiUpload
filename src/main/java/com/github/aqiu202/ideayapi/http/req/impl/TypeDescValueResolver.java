@@ -4,8 +4,8 @@ import com.github.aqiu202.ideayapi.http.req.YApiParamResolver;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.util.CollectionUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 处理请求参数类型信息添加

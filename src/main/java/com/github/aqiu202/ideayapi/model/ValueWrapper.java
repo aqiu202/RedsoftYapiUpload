@@ -2,9 +2,7 @@ package com.github.aqiu202.ideayapi.model;
 
 import com.github.aqiu202.ideayapi.parser.Jsonable;
 import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
-import com.intellij.psi.PsiModifierListOwner;
-import com.intellij.psi.PsiVariable;
-import org.apache.commons.lang3.StringUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;

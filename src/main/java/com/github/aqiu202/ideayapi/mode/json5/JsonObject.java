@@ -1,6 +1,6 @@
 package com.github.aqiu202.ideayapi.mode.json5;
 
-import org.apache.commons.lang3.StringUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

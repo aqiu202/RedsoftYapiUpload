@@ -2,9 +2,9 @@ package com.github.aqiu202.ideayapi.parser.type;
 
 import com.github.aqiu202.ideayapi.parser.abs.Source;
 import com.github.aqiu202.ideayapi.util.CollectionUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.psi.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collection;

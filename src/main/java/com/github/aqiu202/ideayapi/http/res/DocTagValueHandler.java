@@ -1,6 +1,6 @@
 package com.github.aqiu202.ideayapi.http.res;
 
-import org.apache.commons.lang3.StringUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 
 /**
  * <b>注释值的处理</b>

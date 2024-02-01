@@ -3,8 +3,8 @@ package com.github.aqiu202.ideayapi.parser.api.impl;
 import com.github.aqiu202.ideayapi.parser.api.PathPrefixResolver;
 import com.github.aqiu202.ideayapi.util.PathUtils;
 import com.github.aqiu202.ideayapi.util.PsiDocUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.intellij.psi.javadoc.PsiDocComment;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;

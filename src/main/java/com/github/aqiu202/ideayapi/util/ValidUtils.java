@@ -6,7 +6,6 @@ import com.github.aqiu202.ideayapi.model.range.IntegerRange;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifierListOwner;
-import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Objects;

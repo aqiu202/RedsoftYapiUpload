@@ -1,12 +1,8 @@
 package com.github.aqiu202.ideayapi.parser.type;
 
 import com.github.aqiu202.ideayapi.parser.base.DeprecatedAssert;
-import com.github.aqiu202.ideayapi.util.CollectionUtils;
-import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
-import com.github.aqiu202.ideayapi.util.PsiDocUtils;
-import com.github.aqiu202.ideayapi.util.TypeUtils;
+import com.github.aqiu202.ideayapi.util.*;
 import com.intellij.psi.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -49,7 +45,7 @@ public class SimplePsiDescriptor implements PsiDescriptor {
         String prefix;
         if (methodName.startsWith("set")) {
             prefix = "set";
-            PsiParameter firstParameter = element.getParameterList().getParameter(0);
+            PsiParameter firstParameter = element.getParameterList().getParameters()[0];
             this.type = firstParameter == null ? null : firstParameter.getType();
             this.valid = type != null && element.getParameterList().getParametersCount() == 1;
         } else {

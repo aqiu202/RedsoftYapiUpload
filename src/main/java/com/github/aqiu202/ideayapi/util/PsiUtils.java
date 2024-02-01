@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -71,7 +72,7 @@ public final class PsiUtils {
 
     public static Set<PsiClass> getClassesFormVirtualFile(VirtualFile virtualFile, Project project) {
         Set<PsiClass> results = new HashSet<>();
-        VfsUtilCore.visitChildrenRecursively(virtualFile, new VirtualFileVisitor<>() {
+        VfsUtilCore.visitChildrenRecursively(virtualFile, new VirtualFileVisitor<Object>() {
             @Override
             public boolean visitFile(@NotNull VirtualFile file) {
                 if (file.getFileType() instanceof JavaFileType) {
@@ -96,7 +97,7 @@ public final class PsiUtils {
         while ((rc = inputStream.read(buff, 0, bufferSize)) > 0) {
             baos.write(buff, 0, rc);
         }
-        return baos.toString(StandardCharsets.UTF_8);
+        return baos.toString(StandardCharsets.UTF_8.name());
     }
 
     @Nullable

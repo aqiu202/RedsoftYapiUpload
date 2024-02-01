@@ -5,9 +5,9 @@ import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.api.abs.AbstractPathResolver;
 import com.github.aqiu202.ideayapi.util.PathUtils;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifierListOwner;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;

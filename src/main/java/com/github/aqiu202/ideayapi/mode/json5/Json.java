@@ -1,7 +1,7 @@
 package com.github.aqiu202.ideayapi.mode.json5;
 
 import com.github.aqiu202.ideayapi.parser.Jsonable;
-import org.apache.commons.lang3.StringUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 
 public class Json<T> implements Jsonable {
 

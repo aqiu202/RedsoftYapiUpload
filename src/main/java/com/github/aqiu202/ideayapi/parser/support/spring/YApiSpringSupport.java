@@ -5,9 +5,9 @@ import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupport;
 import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.psi.PsiAnnotation;
-import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

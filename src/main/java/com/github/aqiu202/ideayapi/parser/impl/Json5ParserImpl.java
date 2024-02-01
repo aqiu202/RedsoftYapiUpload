@@ -11,11 +11,11 @@ import com.github.aqiu202.ideayapi.parser.Jsonable;
 import com.github.aqiu202.ideayapi.parser.ObjectRawParser;
 import com.github.aqiu202.ideayapi.parser.abs.AbstractJsonParser;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 

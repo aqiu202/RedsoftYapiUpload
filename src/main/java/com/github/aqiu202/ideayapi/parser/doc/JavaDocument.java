@@ -1,11 +1,11 @@
 package com.github.aqiu202.ideayapi.parser.doc;
 
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiJavaDocumentedElement;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.javadoc.PsiDocTagValue;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -14,11 +14,10 @@ import com.github.aqiu202.ideayapi.http.res.impl.ResponseResolverImpl;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.api.*;
 import com.github.aqiu202.ideayapi.parser.base.ContentTypeResolver;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.javadoc.PsiDocComment;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

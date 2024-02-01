@@ -1,7 +1,6 @@
 package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.constant.PropertyNamingStrategy;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**

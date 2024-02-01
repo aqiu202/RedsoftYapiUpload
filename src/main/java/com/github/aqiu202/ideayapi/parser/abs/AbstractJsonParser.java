@@ -15,12 +15,12 @@ import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.github.aqiu202.ideayapi.parser.type.*;
 import com.github.aqiu202.ideayapi.util.PropertyNamingUtils;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiArrayType;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package com.github.aqiu202.ideayapi.model;
 
-import org.apache.commons.lang3.StringUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

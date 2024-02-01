@@ -1,12 +1,12 @@
 package com.github.aqiu202.ideayapi.config.ui;
 
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import com.intellij.uiDesigner.core.GridConstraints;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -183,7 +183,7 @@ public class YApiConfigurationForm {
                 .setAddAction(button -> {
                     FieldEditor fieldEditor = new FieldEditor();
                     String text;
-                    if (fieldEditor.showAndGet() && StringUtils.isNoneBlank(text = fieldEditor.getText())) {
+                    if (fieldEditor.showAndGet() && StringUtils.isNotBlank(text = fieldEditor.getText())) {
                         if (!listModel.contains(text)) {
                             listModel.addElement(text);
                         }

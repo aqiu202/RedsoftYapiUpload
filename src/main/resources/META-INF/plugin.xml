@@ -137,7 +137,8 @@
     </change-notes>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="172.0"/>
+    <idea-version since-build="192.0"/>
+<!--    <idea-version since-build="201.0"/>-->
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
@@ -151,10 +152,12 @@
         <applicationService
                 serviceImplementation="com.github.aqiu202.ideayapi.config.YApiApplicationPersistentState"/>
         <projectConfigurable
-                instance="com.github.aqiu202.ideayapi.config.YApiSearchableConfigurable"/>
+                instance="com.github.aqiu202.ideayapi.config.YApiSearchableConfigurable" displayName="Redsoft YApi Upload"/>
         <projectService
                 serviceImplementation="com.github.aqiu202.ideayapi.config.YApiProjectPersistentState"/>
         <defaultLiveTemplates file="liveTemplates/yapi-template"/>
+        <defaultLiveTemplatesProvider
+                implementation="com.github.aqiu202.ideayapi.template.YApiTemplateProvider"/>
         <liveTemplateContext
                 implementation="com.github.aqiu202.ideayapi.template.YApiTemplateContextType"/>
     </extensions>

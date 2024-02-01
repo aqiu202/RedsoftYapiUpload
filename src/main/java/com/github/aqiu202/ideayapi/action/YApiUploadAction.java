@@ -13,13 +13,13 @@ import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.github.aqiu202.ideayapi.upload.YApiUpload;
 import com.github.aqiu202.ideayapi.util.CollectionUtils;
 import com.github.aqiu202.ideayapi.util.NotificationUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.intellij.notification.NotificationListener.UrlOpeningListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

@@ -15,11 +15,11 @@ import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
 import com.github.aqiu202.ideayapi.parser.type.PsiDescriptorWrapper;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.github.aqiu202.ideayapi.util.ValidUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Collection;

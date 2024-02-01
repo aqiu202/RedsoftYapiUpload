@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.15.0'
+    id 'org.jetbrains.intellij' version '1.17.0'
 }
 
 group 'com.github.aqiu202.ideayapi'
@@ -22,10 +22,22 @@ dependencies {
 
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+//ext {
+//    ide.browser.jcef.headless.enabled true
+//}
+
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
 //    version = '2019.2'
-    version = '2022.1.1'
+//    version = '2020.1'
+//    version = '2021.1'
+    version = '2022.1'
+//    version = '2023.1'
     type = 'IU'
     plugins = ["java"]
     updateSinceUntilBuild = false

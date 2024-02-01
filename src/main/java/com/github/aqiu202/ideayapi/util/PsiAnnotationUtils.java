@@ -3,7 +3,6 @@ package com.github.aqiu202.ideayapi.util;
 import com.github.aqiu202.ideayapi.constant.AnnotationConstants;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.intellij.psi.*;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

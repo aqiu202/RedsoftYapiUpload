@@ -4,9 +4,9 @@ import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.api.MenuResolver;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
 import com.github.aqiu202.ideayapi.util.PsiDocUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.javadoc.PsiDocComment;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import static com.github.aqiu202.ideayapi.constant.DocCommentConstants.TAG_DESCRIPTION;
