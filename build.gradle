@@ -7,9 +7,16 @@ group 'com.github.aqiu202.ideayapi'
 version '2.2.2'
 
 repositories {
-    maven {
-        url 'https://repo1.maven.org/maven2/'
+    maven{
+        url 'https://maven.aliyun.com/repository/public/'
     }
+    maven{
+        url 'https://maven.aliyun.com/nexus/content/repositories/google'
+    }
+    maven{
+        url 'https://maven.aliyun.com/nexus/content/repositories/jcenter'
+    }
+    mavenLocal()
     mavenCentral()
 }
 
