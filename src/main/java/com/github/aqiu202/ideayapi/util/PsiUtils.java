@@ -13,7 +13,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -122,6 +121,9 @@ public final class PsiUtils {
      * @author aqiu
      */
     public static PsiClass findPsiClass(Project project, String typePkName) {
+        if (StringUtils.isBlank(typePkName)) {
+            return null;
+        }
         return JavaPsiFacade.getInstance(project)
                 .findClass(typePkName,
                         GlobalSearchScope.allScope(project));

@@ -41,9 +41,9 @@ java {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
 //    version = '2019.2'
-//    version = '2020.1'
+    version = '2020.1'
 //    version = '2021.1'
-    version = '2022.1'
+//    version = '2022.1'
 //    version = '2023.1'
     type = 'IU'
     plugins = ["java"]

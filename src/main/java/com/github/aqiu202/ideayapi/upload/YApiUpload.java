@@ -102,17 +102,14 @@ public class YApiUpload {
         if (Objects.nonNull(menuId)) {
             return new YApiResponse(menuId);
         }
-        String response;
         try {
-            response = HttpClientUtils.ObjectToString(HttpClientUtils.getHttpclient().execute(
+            String response = HttpClientUtils.ObjectToString(HttpClientUtils.getHttpclient().execute(
                             this.getHttpGet(yApiUrl + YApiConstants.yapiCatMenu + "?project_id="
                                     + projectId + "&token=" + yapiSaveParam.getToken())),
                     "utf-8");
             YApiResponse yapiResponse = gson.fromJson(response, YApiResponse.class);
             if (yapiResponse.getErrcode() == 0) {
-                @SuppressWarnings("unchecked")
-                List<YApiCatResponse> list = (List<YApiCatResponse>) yapiResponse.getData();
-                list = gson.fromJson(gson.toJson(list), new TypeToken<List<YApiCatResponse>>() {
+                List<YApiCatResponse> list = gson.fromJson(gson.toJson(yapiResponse.getData()), new TypeToken<List<YApiCatResponse>>() {
                 }.getType());
                 for (YApiCatResponse yapiCatResponse : list) {
                     if (yapiCatResponse.getName().equals(yapiSaveParam.getMenu())) {
@@ -132,10 +129,8 @@ public class YApiUpload {
                             this.getHttpPost(yApiUrl + YApiConstants.yapiAddCat,
                                     gson.toJson(yapiCatMenuParam))), "utf-8");
             YApiResponse yApiResponse = gson.fromJson(responseCat, YApiResponse.class);
-            Object data = yApiResponse.getData();
-            YApiCatResponse yapiCatResponse = gson
-                    .fromJson(Objects.requireNonNull(data).toString(),
-                            YApiCatResponse.class);
+            YApiCatResponse yapiCatResponse = gson.fromJson(gson.toJson(yApiResponse.getData()),
+                    YApiCatResponse.class);
             this.addMenu(yapiCatResponse);
             return new YApiResponse(yapiCatResponse.get_id());
         } catch (Exception e) {

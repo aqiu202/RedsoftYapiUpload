@@ -202,7 +202,7 @@ public class TypeUtils {
      * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isMap(PsiType psiType) {
-        if (psiType == null) {
+        if (isNull(psiType)) {
             return false;
         }
         return getMapType().isAssignableFrom(psiType);
@@ -216,7 +216,14 @@ public class TypeUtils {
      * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isCollection(PsiType psiType) {
+        if (isNull(psiType)) {
+            return false;
+        }
         return getCollectionType().isAssignableFrom(psiType);
+    }
+
+    private static boolean isNull(PsiType psiType) {
+        return psiType == null;
     }
 
     /**
@@ -227,6 +234,9 @@ public class TypeUtils {
      * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isSet(PsiType psiType) {
+        if (isNull(psiType)) {
+            return false;
+        }
         return getSetType().isAssignableFrom(psiType);
     }
 
@@ -238,6 +248,9 @@ public class TypeUtils {
      * @author aqiu 2019-07-03 09:43
      **/
     public static boolean isEnum(PsiType psiType) {
+        if (isNull(psiType)) {
+            return false;
+        }
         return getEnumType().isAssignableFrom(psiType);
     }
 
@@ -258,7 +271,7 @@ public class TypeUtils {
     }
 
     public static String getTypePkName(PsiType psiType) {
-        if (psiType == null) {
+        if (isNull(psiType)) {
             return null;
         }
         return psiType.getCanonicalText();

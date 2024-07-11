@@ -53,6 +53,7 @@ public class PsiClassParserImpl implements PsiClassParser {
 
     @Override
     public PsiMethodFilter getPsiMethodFilter() {
+        // 过滤构造器、私有方法、没有RequestMapping注解的方法和过时方法
         return (m, c) -> !(m.getName().equals(c.getName()) ||
                 m.getModifierList().hasModifierProperty(PsiModifier.PRIVATE) ||
                 //过滤没有RequestMapping注解的方法
