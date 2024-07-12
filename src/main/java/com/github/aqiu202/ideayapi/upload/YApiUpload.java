@@ -54,7 +54,7 @@ public class YApiUpload {
         } else {
             yapiSaveParam.getReq_headers().add(yapiHeader);
         }
-        YApiResponse<Integer> yapiResponse = this.getCatIdOrCreate(property, yapiSaveParam);
+        YApiResponse<Integer> yapiResponse = this.getMenuIdOrCreate(property, yapiSaveParam);
         if (yapiResponse.getErrcode() == 0 && yapiResponse.getData() != null) {
             yapiSaveParam.setCatid(String.valueOf(yapiResponse.getData()));
             String response = HttpClientUtils
@@ -90,8 +90,8 @@ public class YApiUpload {
      *
      * @author aqiu 2019/5/15
      */
-    public YApiResponse<Integer> getCatIdOrCreate(YApiProjectProperty property,
-                                                  YApiSaveParam yapiSaveParam) {
+    public YApiResponse<Integer> getMenuIdOrCreate(YApiProjectProperty property,
+                                                   YApiSaveParam yapiSaveParam) {
         String projectId = Integer.toString(property.getProjectId());
         String yApiUrl = property.getUrl();
         String menu = yapiSaveParam.getMenu();
