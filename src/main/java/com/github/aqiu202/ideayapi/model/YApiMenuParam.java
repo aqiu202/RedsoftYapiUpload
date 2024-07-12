@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author aqiu 2019/2/1 10:44 AM
  */
 @SuppressWarnings("unused")
-public class YApiCatMenuParam implements Serializable {
+public class YApiMenuParam implements Serializable {
 
     /**
      * 描述
@@ -63,23 +63,23 @@ public class YApiCatMenuParam implements Serializable {
         this.token = token;
     }
 
-    public YApiCatMenuParam() {
+    public YApiMenuParam() {
     }
 
 
-    public YApiCatMenuParam(String desc, String name, Integer project_id, String token) {
+    public YApiMenuParam(String desc, String name, Integer project_id, String token) {
         this.desc = desc;
         this.name = name;
         this.project_id = project_id;
         this.token = token;
     }
 
-    public YApiCatMenuParam(Integer project_id, String token) {
+    public YApiMenuParam(Integer project_id, String token) {
         this.project_id = project_id;
         this.token = token;
     }
 
-    public YApiCatMenuParam(String name, Integer project_id, String token) {
+    public YApiMenuParam(String name, Integer project_id, String token) {
         this.name = name;
         this.project_id = project_id;
         this.token = token;

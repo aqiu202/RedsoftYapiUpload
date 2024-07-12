@@ -24,10 +24,10 @@ public class YApiInitComponent implements ProjectComponent {
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
-            String changeLogTitle = "<h4>2.2.2版本，添加对Lombok的支持，修复已知致命BUG</h4>";
+            String changeLogTitle = "<h4>2.2.2+1版本，修复批量上传异常的问题</h4>";
             String changeLogContent = "<ol>\n" +
-                    "        <li>添加对Lombok的支持</li>\n" +
-                    "        <li>修复已知问题#27,#29</li>\n" +
+                    "        <li>修复批量上传异常的问题</li>\n" +
+                    "        <li>修复部分场景下的空指针问题</li>\n" +
                     "     </ol>";
             NotificationUtils.createNotification("更新内容",
                             changeLogTitle + "\n" + changeLogContent

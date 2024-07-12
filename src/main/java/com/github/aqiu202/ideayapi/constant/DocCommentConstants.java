@@ -2,13 +2,13 @@ package com.github.aqiu202.ideayapi.constant;
 
 public interface DocCommentConstants {
 
-    String[] TAG_DESCRIPTION = {"description", "Description"};
+    String[] TAG_DESCRIPTION = {"description"};
 
-    String[] TAG_MENU = {"menu", "Menu"};
+    String[] TAG_MENU = {"menu"};
 
-    String[] TAG_PREFIX = {"prefix", "Prefix"};
+    String[] TAG_PREFIX = {"prefix"};
 
-    String[] TAG_STATUS = {"status", "Status"};
+    String[] TAG_STATUS = {"status"};
 
-    String[] TAG_DEPRECATED = {"deprecated", "Deprecated"};
+    String[] TAG_DEPRECATED = {"deprecated"};
 }

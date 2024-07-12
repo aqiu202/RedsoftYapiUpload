@@ -116,9 +116,9 @@ public final class PsiDocUtils {
 
     @Nullable
     public static PsiDocTag getTagByName(@NotNull PsiDocComment docComment, String... names) {
-        PsiDocTag tag;
-        for (String name : names) {
-            if (Objects.nonNull(tag = docComment.findTagByName(name))) {
+        PsiDocTag[] tags = docComment.getTags();
+        for (PsiDocTag tag : tags) {
+            if (StringUtils.equalsAnyIgnoreCase(tag.getName(), names)) {
                 return tag;
             }
         }

@@ -6,6 +6,7 @@ import com.github.aqiu202.ideayapi.constant.YApiConstants;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.model.YApiResponse;
 import com.github.aqiu202.ideayapi.model.YApiSaveParam;
+import com.github.aqiu202.ideayapi.model.YApiSaveResponse;
 import com.github.aqiu202.ideayapi.parser.PsiMethodParser;
 import com.github.aqiu202.ideayapi.parser.YApiParser;
 import com.github.aqiu202.ideayapi.parser.impl.PsiMethodParserImpl;
@@ -22,10 +23,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -69,7 +67,7 @@ public class YApiUploadAction extends AnAction {
                     for (YApiSaveParam param : params) {
                         try {
                             // 上传
-                            YApiResponse yapiResponse = new YApiUpload()
+                            YApiResponse<List<YApiSaveResponse>> yapiResponse = new YApiUpload()
                                     .uploadSave(property, param, project.getBasePath());
                             if (yapiResponse.getErrcode() != 0) {
                                 NotificationUtils.createNotification("上传失败",

@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author aqiu 2019/2/1 10:30 AM
  */
 @SuppressWarnings("unused")
-public class YApiCatResponse implements Serializable {
+public class YApiMenuResponse implements Serializable {
 
     /**
      * id
