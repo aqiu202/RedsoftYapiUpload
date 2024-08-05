@@ -16,8 +16,8 @@ public final class PsiAnnotationUtils {
 
     @Nullable
     public static PsiAnnotation findAnnotation(@NotNull PsiModifierListOwner psiModifierListOwner,
-                                               @NotNull String annotationFQN) {
-        PsiAnnotation result = findAnnotationQuick(psiModifierListOwner.getModifierList(), annotationFQN);
+                                               @NotNull String... annotationFQNs) {
+        PsiAnnotation result = findAnnotationQuick(psiModifierListOwner.getModifierList(), annotationFQNs);
         if (result == null) {
             // 字段上没有注解时尝试获取getter方法上的注解
             if (psiModifierListOwner instanceof PsiField) {
@@ -25,8 +25,10 @@ public final class PsiAnnotationUtils {
                 String name = PropertyNamingUtils.upperCamel(field.getName());
                 String prefix = "boolean".equals(TypeUtils.getTypePkName(field.getType())) ? "is" : "get";
                 PsiMethod[] methods = ((PsiClass) field.getParent()).findMethodsByName(prefix + name, true);
-                if (methods.length > 0) {
-                    result = findAnnotation(methods[0], annotationFQN);
+                for (PsiMethod method : methods) {
+                    if (method.getParameterList().getParametersCount() == 0) {
+                        result = findAnnotation(method, annotationFQNs);
+                    }
                 }
             }
         }
@@ -40,12 +42,6 @@ public final class PsiAnnotationUtils {
             return null;
         }
         return annotationOwner.findAnnotation(qualifiedName);
-    }
-
-    @Nullable
-    public static PsiAnnotation findAnnotation(@NotNull PsiModifierListOwner psiModifierListOwner,
-                                               @NotNull String... annotationFQNs) {
-        return findAnnotationQuick(psiModifierListOwner.getModifierList(), annotationFQNs);
     }
 
     @Nullable

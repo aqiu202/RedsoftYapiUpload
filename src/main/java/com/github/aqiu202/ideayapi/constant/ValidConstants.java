@@ -2,36 +2,50 @@ package com.github.aqiu202.ideayapi.constant;
 
 public interface ValidConstants {
 
-    String NotNull = "javax.validation.constraints.NotNull";
+    String[] NotNull = new String[]{"javax.validation.constraints.NotNull",
+            "jakarta.validation.constraints.NotNull"};
 
-    String NotBlank = "javax.validation.constraints.NotBlank";
+    String[] NotBlank = new String[]{"javax.validation.constraints.NotBlank",
+            "jakarta.validation.constraints.NotBlank"};
 
-    String NotEmpty = "javax.validation.constraints.NotEmpty";
+    String[] NotEmpty = new String[]{"javax.validation.constraints.NotEmpty",
+            "jakarta.validation.constraints.NotEmpty"};
 
-    String Min = "javax.validation.constraints.Min";
+    String[] Min = new String[]{"javax.validation.constraints.Min",
+            "jakarta.validation.constraints.Min"};
 
-    String Max = "javax.validation.constraints.Max";
+    String[] Max = new String[]{"javax.validation.constraints.Max",
+            "jakarta.validation.constraints.Max"};
 
-    String Size = "javax.validation.constraints.Size";
+    String[] Size = new String[]{"javax.validation.constraints.Size",
+            "jakarta.validation.constraints.Size"};
 
-    String Digits = "javax.validation.constraints.Digits";
+    String[] Digits = new String[]{"javax.validation.constraints.Digits",
+            "jakarta.validation.constraints.Digits"};
 
-    String Pattern = "javax.validation.constraints.Pattern";
+    String[] Pattern = new String[]{"javax.validation.constraints.Pattern",
+            "jakarta.validation.constraints.Pattern"};
 
-    String DecimalMin = "javax.validation.constraints.DecimalMin";
+    String[] DecimalMin = new String[]{"javax.validation.constraints.DecimalMin",
+            "jakarta.validation.constraints.DecimalMin"};
 
-    String DecimalMax = "javax.validation.constraints.DecimalMax";
+    String[] DecimalMax = new String[]{"javax.validation.constraints.DecimalMax",
+            "jakarta.validation.constraints.DecimalMax"};
 
-    String Positive = "javax.validation.constraints.Positive";
+    String[] Positive = new String[]{"javax.validation.constraints.Positive",
+            "jakarta.validation.constraints.Positive"};
 
-    String PositiveOrZero = "javax.validation.constraints.PositiveOrZero";
+    String[] PositiveOrZero = new String[]{"javax.validation.constraints.PositiveOrZero",
+            "jakarta.validation.constraints.PositiveOrZero"};
 
-    String Negative = "javax.validation.constraints.Negative";
+    String[] Negative = new String[]{"javax.validation.constraints.Negative",
+            "jakarta.validation.constraints.Negative"};
 
-    String NegativeOrZero = "javax.validation.constraints.NegativeOrZero";
+    String[] NegativeOrZero = new String[]{"javax.validation.constraints.NegativeOrZero",
+            "jakarta.validation.constraints.NegativeOrZero"};
 
-    String Range = "org.hibernate.validator.constraints.Range";
+    String[] Range = new String[]{"org.hibernate.validator.constraints.Range"};
 
-    String Length = "org.hibernate.validator.constraints.Length";
+    String[] Length = new String[]{"org.hibernate.validator.constraints.Length"};
 
 }
