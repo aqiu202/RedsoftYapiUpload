@@ -74,6 +74,13 @@ public class SimplePsiDescriptor implements PsiDescriptor {
     }
 
     @Override
+    public void addElement(int index, PsiModifierListOwner element) {
+        this.elements.add(0, element);
+        this.description = null;
+        this.annotationsMap.clear();
+    }
+
+    @Override
     public String getName() {
         return name;
     }

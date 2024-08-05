@@ -241,7 +241,7 @@ public class TypeUtils {
     }
 
     /**
-     * 是否是Set类型或者是Set的封装类型
+     * 是否是枚举类型
      *
      * @param psiType: 类型
      * @return {@link boolean}

@@ -33,7 +33,7 @@ public class LombokDescriptorResolver extends SimpleDescriptorResolver {
                 String fieldName = field.getName();
                 PsiDescriptor descriptor = descriptorMap.get(fieldName);
                 if (descriptor != null) {
-                    descriptor.addElement(field);
+                    descriptor.addElement(0, field);
                 } else {
                     descriptors.add(new SimplePsiDescriptor(field));
                 }

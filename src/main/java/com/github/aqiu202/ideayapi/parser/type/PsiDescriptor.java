@@ -17,6 +17,8 @@ public interface PsiDescriptor {
 
     void addElement(PsiModifierListOwner element);
 
+    void addElement(int index, PsiModifierListOwner element);
+
     default PsiModifierListOwner getFirstElement() {
         List<PsiModifierListOwner> elements = this.getElements();
         if (CollectionUtils.isEmpty(elements)) {
