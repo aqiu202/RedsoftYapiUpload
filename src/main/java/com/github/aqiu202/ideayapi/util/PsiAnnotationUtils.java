@@ -2,9 +2,14 @@ package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.constant.AnnotationConstants;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
+import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * Psi注解读取工具类
@@ -17,22 +22,18 @@ public final class PsiAnnotationUtils {
     @Nullable
     public static PsiAnnotation findAnnotation(@NotNull PsiModifierListOwner psiModifierListOwner,
                                                @NotNull String... annotationFQNs) {
-        PsiAnnotation result = findAnnotationQuick(psiModifierListOwner.getModifierList(), annotationFQNs);
-        if (result == null) {
-            // 字段上没有注解时尝试获取getter方法上的注解
-            if (psiModifierListOwner instanceof PsiField) {
-                PsiField field = (PsiField) psiModifierListOwner;
-                String name = PropertyNamingUtils.upperCamel(field.getName());
-                String prefix = "boolean".equals(TypeUtils.getTypePkName(field.getType())) ? "is" : "get";
-                PsiMethod[] methods = ((PsiClass) field.getParent()).findMethodsByName(prefix + name, true);
-                for (PsiMethod method : methods) {
-                    if (method.getParameterList().getParametersCount() == 0) {
-                        result = findAnnotation(method, annotationFQNs);
-                    }
-                }
+        return findAnnotationQuick(psiModifierListOwner.getModifierList(), annotationFQNs);
+    }
+
+    public static PsiAnnotation findAnnotation(@NotNull Collection<PsiModifierListOwner> psiModifierListOwners,
+                                               @NotNull String... annotationFQNs) {
+        for (PsiModifierListOwner psiModifierListOwner : psiModifierListOwners) {
+            PsiAnnotation annotation = findAnnotationQuick(psiModifierListOwner.getModifierList(), annotationFQNs);
+            if (annotation != null) {
+                return annotation;
             }
         }
-        return result;
+        return null;
     }
 
     @Nullable
@@ -40,6 +41,7 @@ public final class PsiAnnotationUtils {
                                                      @NotNull String qualifiedName) {
         if (annotationOwner == null) {
             return null;
+
         }
         return annotationOwner.findAnnotation(qualifiedName);
     }

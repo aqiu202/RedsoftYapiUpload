@@ -19,7 +19,9 @@ import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.github.aqiu202.ideayapi.util.ValidUtils;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiArrayType;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiType;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -86,7 +88,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
                 }
                 objectSchema.addProperty(fieldName, value.setDescription(desc));
             }
-            if (ValidUtils.notNullOrBlank(wrapper.getSource().getFirstElement())) {
+            if (ValidUtils.notNullOrBlank(wrapper.getSource())) {
                 objectSchema.addRequired(fieldName);
             }
         }
@@ -119,26 +121,25 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         PsiType psiType = descriptor.getType();
         ItemJsonSchema result;
         SchemaType schemaType = TypeUtils.getBasicSchema(psiType);
-        PsiModifierListOwner owner = descriptor.getFirstElement();
         switch (schemaType) {
             case number:
                 NumberSchema numberSchema = new NumberSchema();
-                DecimalRange decimalRange = ValidUtils.rangeDecimal(owner);
+                DecimalRange decimalRange = ValidUtils.rangeDecimal(descriptor);
                 if (Objects.nonNull(decimalRange)) {
                     numberSchema.setRange(decimalRange);
                 }
-                if (ValidUtils.isPositive(owner)) {
+                if (ValidUtils.isPositive(descriptor)) {
                     numberSchema.setMinimum(new BigDecimal("0"));
                     numberSchema.setExclusiveMinimum(true);
                 }
-                if (ValidUtils.isPositiveOrZero(owner)) {
+                if (ValidUtils.isPositiveOrZero(descriptor)) {
                     numberSchema.setMinimum(new BigDecimal("0"));
                 }
-                if (ValidUtils.isNegative(owner)) {
+                if (ValidUtils.isNegative(descriptor)) {
                     numberSchema.setMaximum(new BigDecimal("0"));
                     numberSchema.setExclusiveMaximum(true);
                 }
-                if (ValidUtils.isNegativeOrZero(owner)) {
+                if (ValidUtils.isNegativeOrZero(descriptor)) {
                     numberSchema.setMaximum(new BigDecimal("0"));
                 }
                 result = numberSchema;
@@ -150,22 +151,22 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
                         integerSchema.setRange(TypeUtils.getBaseRange(psiType));
                     }
                 }
-                LongRange longRange = ValidUtils.range(owner, this.enableBasicScope);
+                LongRange longRange = ValidUtils.range(descriptor, this.enableBasicScope);
                 if (Objects.nonNull(longRange)) {
                     integerSchema.setRange(longRange);
                 }
-                if (ValidUtils.isPositive(owner)) {
+                if (ValidUtils.isPositive(descriptor)) {
                     integerSchema.setMinimum(0L);
                     integerSchema.setExclusiveMinimum(true);
                 }
-                if (ValidUtils.isPositiveOrZero(owner)) {
+                if (ValidUtils.isPositiveOrZero(descriptor)) {
                     integerSchema.setMinimum(0L);
                 }
-                if (ValidUtils.isNegative(owner)) {
+                if (ValidUtils.isNegative(descriptor)) {
                     integerSchema.setMinimum(0L);
                     integerSchema.setExclusiveMaximum(true);
                 }
-                if (ValidUtils.isNegativeOrZero(owner)) {
+                if (ValidUtils.isNegativeOrZero(descriptor)) {
                     integerSchema.setMinimum(0L);
                 }
                 result = integerSchema;
@@ -173,10 +174,10 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
             case string:
                 StringSchema stringSchema = new StringSchema();
                 IntegerRange integerRange = ValidUtils
-                        .rangeLength(owner, this.enableBasicScope);
+                        .rangeLength(descriptor, this.enableBasicScope);
                 stringSchema.setMinLength(integerRange.getMin());
                 stringSchema.setMaxLength(integerRange.getMax());
-                String pattern = ValidUtils.getPattern(owner);
+                String pattern = ValidUtils.getPattern(descriptor);
                 if (!StringUtils.isEmpty(pattern)) {
                     stringSchema.setPattern(pattern);
                 }
@@ -196,7 +197,6 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     private ItemJsonSchema parseCompoundField(PsiClass rootClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
         PsiDescriptor descriptor = fieldWrapper.getDescriptor();
         PsiType psiType = fieldWrapper.resolveFieldType();
-        PsiModifierListOwner origin = descriptor.getFirstElement();
         boolean wrapArray = descriptor instanceof PsiArrayType;
         ItemJsonSchema result = this.parseJsonSchema(rootClass, psiType, counter);
         if (result instanceof ArraySchema) {
@@ -204,11 +204,11 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
             if (TypeUtils.isSet(psiType) && !wrapArray) {
                 a.setUniqueItems(true);
             }
-            if (ValidUtils.notEmpty(origin)) {
+            if (ValidUtils.notEmpty(descriptor)) {
                 a.setMinItems(1);
             }
             IntegerRange integerRange = ValidUtils
-                    .rangeSize(origin, this.enableBasicScope);
+                    .rangeSize(descriptor, this.enableBasicScope);
             a.setMinItems(integerRange.getMin(), this.enableBasicScope);
             a.setMaxItems(integerRange.getMax(), this.enableBasicScope);
         }

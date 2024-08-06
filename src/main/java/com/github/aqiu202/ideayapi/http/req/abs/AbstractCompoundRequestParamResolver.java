@@ -66,7 +66,7 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
     protected ValueWrapper resolveProperty(@NotNull PsiDescriptor descriptor) {
         PsiType fType = descriptor.getType();
         ValueWrapper valueWrapper = new ValueWrapper();
-        valueWrapper.setRequired(ValidUtils.getRequired(descriptor.getFirstElement()));
+        valueWrapper.setRequired(ValidUtils.getRequired(descriptor));
         valueWrapper.setName(descriptor.getName());
         valueWrapper.setDesc(descriptor.getDescription());
         if (property.isEnableTypeDesc()) {

@@ -4,6 +4,7 @@ import com.github.aqiu202.ideayapi.constant.ValidConstants;
 import com.github.aqiu202.ideayapi.model.range.DecimalRange;
 import com.github.aqiu202.ideayapi.model.range.IntegerRange;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifierListOwner;
 
@@ -15,55 +16,82 @@ import java.util.Objects;
  */
 public final class ValidUtils {
 
-    public static boolean hasAnnotation(PsiModifierListOwner psiModifierListOwner,
+    public static boolean hasAnnotation(PsiModifierListOwner descriptor,
                                         String... annotationNames) {
-        PsiAnnotation psiAnnotation = PsiAnnotationUtils.findAnnotation(psiModifierListOwner,
+        PsiAnnotation psiAnnotation = PsiAnnotationUtils.findAnnotation(descriptor,
                 annotationNames);
         return Objects.nonNull(psiAnnotation);
     }
 
-    public static boolean notNull(PsiModifierListOwner psiModifierListOwner) {
-        return hasAnnotation(psiModifierListOwner, ValidConstants.NotNull);
+    public static boolean hasAnnotation(PsiDescriptor descriptor,
+                                        String... annotationNames) {
+        PsiAnnotation psiAnnotation = PsiAnnotationUtils.findAnnotation(descriptor.getElements(),
+                annotationNames);
+        return Objects.nonNull(psiAnnotation);
     }
 
-    public static boolean notBlank(PsiModifierListOwner psiModifierListOwner) {
-        return hasAnnotation(psiModifierListOwner, ValidConstants.NotBlank);
+    public static boolean notNull(PsiDescriptor descriptor) {
+        return hasAnnotation(descriptor, ValidConstants.NotNull);
     }
 
-    public static boolean notNullOrBlank(PsiModifierListOwner psiModifierListOwner) {
-        return notNull(psiModifierListOwner) || notBlank(psiModifierListOwner) ||
-                notEmpty(psiModifierListOwner);
+    public static boolean notBlank(PsiDescriptor descriptor) {
+        return hasAnnotation(descriptor, ValidConstants.NotBlank);
     }
 
-    public static String getRequired(PsiModifierListOwner psiModifierListOwner) {
-        return (notNull(psiModifierListOwner) || notBlank(psiModifierListOwner) ||
-                notEmpty(psiModifierListOwner)) ? "1" : "0";
+    public static boolean notEmpty(PsiDescriptor descriptor) {
+        return hasAnnotation(descriptor, ValidConstants.NotEmpty);
     }
 
-    public static boolean notEmpty(PsiModifierListOwner psiModifierListOwner) {
-        return hasAnnotation(psiModifierListOwner, ValidConstants.NotEmpty);
+    public static boolean notNullOrBlank(PsiDescriptor descriptor) {
+        return notNull(descriptor) || notBlank(descriptor) ||
+                notEmpty(descriptor);
     }
 
-    public static boolean isPositive(PsiModifierListOwner psiModifierListOwner) {
-        return hasAnnotation(psiModifierListOwner, ValidConstants.Positive);
+    public static boolean notNull(PsiModifierListOwner owner) {
+        return hasAnnotation(owner, ValidConstants.NotNull);
     }
 
-    public static boolean isPositiveOrZero(PsiModifierListOwner psiModifierListOwner) {
-        return hasAnnotation(psiModifierListOwner, ValidConstants.PositiveOrZero);
+    public static boolean notBlank(PsiModifierListOwner owner) {
+        return hasAnnotation(owner, ValidConstants.NotBlank);
     }
 
-    public static boolean isNegative(PsiModifierListOwner psiModifierListOwner) {
-        return hasAnnotation(psiModifierListOwner, ValidConstants.Negative);
+    public static boolean notEmpty(PsiModifierListOwner owner) {
+        return hasAnnotation(owner, ValidConstants.NotEmpty);
     }
 
-    public static boolean isNegativeOrZero(PsiModifierListOwner psiModifierListOwner) {
-        return hasAnnotation(psiModifierListOwner, ValidConstants.NegativeOrZero);
+    public static boolean notNullOrBlank(PsiModifierListOwner owner) {
+        return notNull(owner) || notBlank(owner) ||
+                notEmpty(owner);
     }
 
-    public static IntegerRange rangeSize(PsiModifierListOwner psiModifierListOwner,
+    public static String getRequired(PsiDescriptor descriptor) {
+        return notNullOrBlank(descriptor) ? "1" : "0";
+    }
+
+    public static String getRequired(PsiModifierListOwner owner) {
+        return notNullOrBlank(owner) ? "1" : "0";
+    }
+
+    public static boolean isPositive(PsiDescriptor descriptor) {
+        return hasAnnotation(descriptor, ValidConstants.Positive);
+    }
+
+    public static boolean isPositiveOrZero(PsiDescriptor descriptor) {
+        return hasAnnotation(descriptor, ValidConstants.PositiveOrZero);
+    }
+
+    public static boolean isNegative(PsiDescriptor descriptor) {
+        return hasAnnotation(descriptor, ValidConstants.Negative);
+    }
+
+    public static boolean isNegativeOrZero(PsiDescriptor descriptor) {
+        return hasAnnotation(descriptor, ValidConstants.NegativeOrZero);
+    }
+
+    public static IntegerRange rangeSize(PsiDescriptor descriptor,
                                          boolean enableBasicScope) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                .findAnnotation(psiModifierListOwner, ValidConstants.Size);
+                .findAnnotation(descriptor.getElements(), ValidConstants.Size);
         Integer min = null;
         Integer max = null;
         if (Objects.nonNull(psiAnnotation)) {
@@ -79,10 +107,10 @@ public final class ValidUtils {
         return new IntegerRange(min, max, enableBasicScope);
     }
 
-    public static IntegerRange rangeLength(PsiModifierListOwner psiModifierListOwner,
+    public static IntegerRange rangeLength(PsiDescriptor descriptor,
                                            boolean enableBasicScope) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                .findAnnotation(psiModifierListOwner, ValidConstants.Length);
+                .findAnnotation(descriptor.getElements(), ValidConstants.Length);
         Integer min = null;
         Integer max = null;
         if (Objects.nonNull(psiAnnotation)) {
@@ -98,9 +126,9 @@ public final class ValidUtils {
         return new IntegerRange(min, max, enableBasicScope);
     }
 
-    public static Long getMin(PsiModifierListOwner psiModifierListOwner) {
+    public static Long getMin(PsiDescriptor descriptor) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                .findAnnotation(psiModifierListOwner, ValidConstants.Min);
+                .findAnnotation(descriptor.getElements(), ValidConstants.Min);
         if (Objects.nonNull(psiAnnotation)) {
             String attributeValue = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation);
             if (StringUtils.isNotBlank(attributeValue)) {
@@ -110,9 +138,9 @@ public final class ValidUtils {
         return null;
     }
 
-    public static Long getMax(PsiModifierListOwner psiModifierListOwner) {
+    public static Long getMax(PsiDescriptor descriptor) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                .findAnnotation(psiModifierListOwner, ValidConstants.Max);
+                .findAnnotation(descriptor.getElements(), ValidConstants.Max);
         if (Objects.nonNull(psiAnnotation)) {
             String value = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation);
             if (StringUtils.isNotBlank(value)) {
@@ -122,16 +150,16 @@ public final class ValidUtils {
         return null;
     }
 
-    public static LongRange range(PsiModifierListOwner psiModifierListOwner,
+    public static LongRange range(PsiDescriptor descriptor,
                                   boolean enableBasicScope) {
         LongRange result = null;
         Long min;
         Long max;
-        if (Objects.nonNull(min = getMin(psiModifierListOwner))) {
+        if (Objects.nonNull(min = getMin(descriptor))) {
             result = new LongRange();
             result.setMin(min);
         }
-        if (Objects.nonNull(max = getMax(psiModifierListOwner))) {
+        if (Objects.nonNull(max = getMax(descriptor))) {
             if (Objects.isNull(result)) {
                 result = new LongRange();
             }
@@ -139,7 +167,7 @@ public final class ValidUtils {
         }
         if (Objects.isNull(result)) {
             PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                    .findAnnotation(psiModifierListOwner, ValidConstants.Range);
+                    .findAnnotation(descriptor.getElements(), ValidConstants.Range);
             if (Objects.nonNull(psiAnnotation)) {
                 String minVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "min");
                 if (StringUtils.isNotBlank(minVal)) {
@@ -155,15 +183,15 @@ public final class ValidUtils {
         return result;
     }
 
-    public static DecimalRange rangeDecimal(PsiModifierListOwner psiModifierListOwner) {
+    public static DecimalRange rangeDecimal(PsiDescriptor descriptor) {
         DecimalRange result = null;
         BigDecimal min;
         BigDecimal max;
-        if (Objects.nonNull(min = getDecimalMin(psiModifierListOwner))) {
+        if (Objects.nonNull(min = getDecimalMin(descriptor))) {
             result = new DecimalRange();
             result.setMin(min);
         }
-        if (Objects.nonNull(max = getDecimalMax(psiModifierListOwner))) {
+        if (Objects.nonNull(max = getDecimalMax(descriptor))) {
             if (Objects.isNull(result)) {
                 result = new DecimalRange();
             }
@@ -171,7 +199,7 @@ public final class ValidUtils {
         }
         if (Objects.isNull(result)) {
             PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                    .findAnnotation(psiModifierListOwner, ValidConstants.Digits);
+                    .findAnnotation(descriptor.getElements(), ValidConstants.Digits);
             if (Objects.nonNull(psiAnnotation)) {
                 String integerVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "integer");
                 String fractionVal = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "fraction");
@@ -187,9 +215,9 @@ public final class ValidUtils {
         return null;
     }
 
-    public static BigDecimal getDecimalMin(PsiModifierListOwner psiModifierListOwner) {
+    public static BigDecimal getDecimalMin(PsiDescriptor descriptor) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                .findAnnotation(psiModifierListOwner, ValidConstants.DecimalMin);
+                .findAnnotation(descriptor.getElements(), ValidConstants.DecimalMin);
         if (Objects.nonNull(psiAnnotation)) {
             String attributeValue = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation);
             if (StringUtils.isNotBlank(attributeValue)) {
@@ -199,9 +227,9 @@ public final class ValidUtils {
         return null;
     }
 
-    public static BigDecimal getDecimalMax(PsiModifierListOwner psiModifierListOwner) {
+    public static BigDecimal getDecimalMax(PsiDescriptor descriptor) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                .findAnnotation(psiModifierListOwner, ValidConstants.DecimalMax);
+                .findAnnotation(descriptor.getElements(), ValidConstants.DecimalMax);
         if (Objects.nonNull(psiAnnotation)) {
             String attributeValue = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation);
             if (StringUtils.isNotBlank(attributeValue)) {
@@ -211,9 +239,9 @@ public final class ValidUtils {
         return null;
     }
 
-    public static String getPattern(PsiModifierListOwner psiModifierListOwner) {
+    public static String getPattern(PsiDescriptor descriptor) {
         PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                .findAnnotation(psiModifierListOwner, ValidConstants.Pattern);
+                .findAnnotation(descriptor.getElements(), ValidConstants.Pattern);
         if (Objects.nonNull(psiAnnotation)) {
             String pattern = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiAnnotation, "regexp");
             if (StringUtils.isNotBlank(pattern)) {
