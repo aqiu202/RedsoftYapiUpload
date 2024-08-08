@@ -31,7 +31,7 @@ import java.util.Objects;
 public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFieldNameHandler,
         DocTagValueHandler {
 
-    private static final PsiGenericTypeResolver GENERIC_TYPE_RESOLVER = new SimplePsiGenericTypeResolver();
+    private static final PsiGenericTypeResolver GENERIC_TYPE_RESOLVER = SimplePsiGenericTypeResolver.INSTANCE;
 
     protected final YApiProjectProperty property;
     protected final Project project;

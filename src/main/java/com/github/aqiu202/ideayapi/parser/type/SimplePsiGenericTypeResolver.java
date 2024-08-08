@@ -4,6 +4,8 @@ import com.intellij.psi.*;
 
 public class SimplePsiGenericTypeResolver implements PsiGenericTypeResolver {
 
+    public static final PsiGenericTypeResolver INSTANCE = new SimplePsiGenericTypeResolver();
+
     @Override
     public PsiTypeParameter[] findTypeParameters(PsiType psiType) {
         if (psiType instanceof PsiClassType) {

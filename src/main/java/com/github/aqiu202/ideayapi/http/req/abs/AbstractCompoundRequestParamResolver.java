@@ -105,7 +105,7 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
                     valueWrapper.setTypeDesc(TypeUtils.getTypeName(paramType));
                 }
             }
-            valueWrapper.setSource(new SimplePsiDescriptor(param));
+            valueWrapper.setSource(new SimplePsiDescriptor(param, valueWrapper.getName()));
             YApiSupportHolder.supports.handleParam(valueWrapper);
             valueWrappers.add(valueWrapper);
         } else {

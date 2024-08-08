@@ -15,10 +15,17 @@ public class SimplePsiDescriptor implements PsiDescriptor {
     private String description;
     private final Map<String, List<PsiAnnotation>> annotationsMap = new HashMap<>();
 
-    public SimplePsiDescriptor(PsiModifierListOwner elements) {
-        this.elements = new ArrayList<>(Collections.singletonList(elements));
+    public SimplePsiDescriptor(PsiModifierListOwner element) {
+        this.elements = new ArrayList<>(Collections.singletonList(element));
         this.name = null;
         this.type = null;
+        this.valid = false;
+    }
+
+    public SimplePsiDescriptor(PsiParameter psiParameter, String name) {
+        this.elements = new ArrayList<>(Collections.singletonList(psiParameter));
+        this.name = name;
+        this.type = psiParameter.getType();
         this.valid = false;
     }
 
