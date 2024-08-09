@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.aqiu202.ideayapi'
-version '2.2.2+1'
+version '2.2.2+2'
 
 repositories {
     maven{

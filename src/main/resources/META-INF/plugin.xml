@@ -138,6 +138,12 @@
         <li>修复批量上传异常的问题</li>
         <li>修复部分场景下的空指针问题</li>
      </ol>
+     <h4>2.2.2+2版本，添加对Jakarta Validation API系列数据校验注解的支持，修复已知问题</h4>
+     <ol>
+        <li>添加对Jakarta Validation API系列数据校验注解的支持</li>
+        <li>修复使用lombok时字段偶尔解析异常的问题</li>
+        <li>修复文件类型参数无法正常解析的问题</li>
+     </ol>
     ]]>
     </change-notes>
 
