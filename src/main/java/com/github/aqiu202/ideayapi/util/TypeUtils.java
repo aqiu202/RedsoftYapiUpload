@@ -6,6 +6,7 @@ import com.github.aqiu202.ideayapi.model.Mock;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.range.LongRange;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
+import com.github.aqiu202.ideayapi.parser.type.SimplePsiGenericTypeResolver;
 import com.intellij.psi.PsiArrayType;
 import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiType;
@@ -37,7 +38,6 @@ public class TypeUtils {
     private static final Map<String, Object> dateTypesPackages = new HashMap<>();
 
     private static final Map<String, LongRange> baseRangeMappings = new HashMap<>();
-    private static final Map<String, String> fileTypes = new HashMap<>();
     private static final String mapTypeName = "java.util.Map";
     private static final String collectionTypeName = "java.util.Collection";
     private static final String setTypeName = "java.util.Set";
@@ -127,12 +127,6 @@ public class TypeUtils {
                 new LongRange((long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE));
         baseRangeMappings.put("java.lang.Long", new LongRange(Long.MIN_VALUE, Long.MAX_VALUE));
 
-        fileTypes.put(SpringMVCConstants.MultipartFile, "file");
-        fileTypes.put(SpringMVCConstants.MultipartFile + "[]", "file[]");
-        fileTypes.put("List<" + SpringMVCConstants.MultipartFile + ">", "file[]");
-        fileTypes.put("Set<" + SpringMVCConstants.MultipartFile + ">", "file[]");
-        fileTypes.put("Collection<" + SpringMVCConstants.MultipartFile + ">", "file[]");
-
     }
 
     public static boolean isBasicType(PsiType type) {
@@ -147,7 +141,23 @@ public class TypeUtils {
     }
 
     public static boolean isFile(PsiType psiType) {
-        return fileTypes.containsKey(getTypePkName(psiType));
+        PsiType contentType;
+        if (isCollection(psiType)) {
+            contentType = resolveFirstGenericType(psiType);
+        } else if (isArray(psiType)) {
+            contentType = ((PsiArrayType) psiType).getComponentType();
+        } else {
+            contentType = psiType;
+        }
+        return SpringMVCConstants.MultipartFile.equals(getTypePkName(contentType));
+    }
+
+    public static PsiType resolveGenericType(PsiType psiType, int index) {
+        return SimplePsiGenericTypeResolver.INSTANCE.resolveType(psiType, index);
+    }
+
+    public static PsiType resolveFirstGenericType(PsiType psiType) {
+        return resolveGenericType(psiType, 0);
     }
 
     public static String getDefaultValueByPackageName(PsiType psiType) {
@@ -155,7 +165,7 @@ public class TypeUtils {
     }
 
     private static String getListableValue(PsiType psiType, Map<String, Object> source) {
-        boolean isArray = psiType instanceof PsiArrayType;
+        boolean isArray = isArray(psiType);
         if (isArray) {
             psiType = ((PsiArrayType) psiType).getComponentType();
         }
@@ -192,6 +202,10 @@ public class TypeUtils {
             enumType = PsiUtils.findPsiClassType(YApiSupportHolder.project, enumTypeName);
         }
         return enumType;
+    }
+
+    public static boolean isArray(PsiType psiType) {
+        return psiType instanceof PsiArrayType;
     }
 
     /**

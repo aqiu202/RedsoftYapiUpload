@@ -31,8 +31,6 @@ import java.util.Objects;
 public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFieldNameHandler,
         DocTagValueHandler {
 
-    private static final PsiGenericTypeResolver GENERIC_TYPE_RESOLVER = SimplePsiGenericTypeResolver.INSTANCE;
-
     protected final YApiProjectProperty property;
     protected final Project project;
     protected final boolean notConvertFieldName;
@@ -63,7 +61,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
     @Override
     public Jsonable parse(PsiClass rootClass, PsiType type, LevelCounter counter) {
         //是否是数组
-        if (type instanceof PsiArrayType) {
+        if (TypeUtils.isArray(type)) {
             return this.parseCollection(rootClass, ((PsiArrayType) type).getComponentType(), counter);
         }
         Jsonable result;
@@ -76,11 +74,11 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         } else if (TypeUtils.isCollection(type)) {
             //截取子类型
             //如果是集合类型（List Set）
-            result = this.parseCollection(rootClass, GENERIC_TYPE_RESOLVER.resolveFirst(type), counter);
+            result = this.parseCollection(rootClass, TypeUtils.resolveFirstGenericType(type), counter);
         } else {
             PsiType targetType;
             if (StringUtils.equals(SpringWebFluxConstants.Mono, TypeUtils.getTypePkName(type))) {
-                targetType = GENERIC_TYPE_RESOLVER.resolveFirst(type);
+                targetType = TypeUtils.resolveFirstGenericType(type);
             } else {
                 targetType = type;
             }

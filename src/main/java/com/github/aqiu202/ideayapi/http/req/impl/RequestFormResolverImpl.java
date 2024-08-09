@@ -66,8 +66,8 @@ public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolve
     }
 
     @Override
-    protected boolean isBasicType(PsiType psiType) {
-        return super.isBasicType(psiType) || this.isFile(psiType);
+    protected boolean isItemType(PsiType psiType) {
+        return super.isItemType(psiType) || this.isFile(psiType);
     }
 
     private boolean isFile(PsiType psiType) {

@@ -197,11 +197,11 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     private ItemJsonSchema parseCompoundField(PsiClass rootClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
         PsiDescriptor descriptor = fieldWrapper.getDescriptor();
         PsiType psiType = fieldWrapper.resolveFieldType();
-        boolean wrapArray = descriptor instanceof PsiArrayType;
+        boolean isArray = TypeUtils.isArray(descriptor.getType());
         ItemJsonSchema result = this.parseJsonSchema(rootClass, psiType, counter);
         if (result instanceof ArraySchema) {
             ArraySchema a = (ArraySchema) result;
-            if (TypeUtils.isSet(psiType) && !wrapArray) {
+            if (TypeUtils.isSet(psiType) && !isArray) {
                 a.setUniqueItems(true);
             }
             if (ValidUtils.notEmpty(descriptor)) {

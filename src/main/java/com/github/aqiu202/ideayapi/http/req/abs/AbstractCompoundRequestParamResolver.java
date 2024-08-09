@@ -45,7 +45,7 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         }
     }
 
-    protected boolean isBasicType(PsiType psiType) {
+    protected boolean isItemType(PsiType psiType) {
         return TypeUtils.isBasicType(psiType);
     }
 
@@ -84,12 +84,12 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
             return Collections.emptyList();
         }
         // 数据类型进行拆解，非json参数暂不支持多层级和数组格式
-        if (paramType instanceof PsiArrayType) {
+        if (TypeUtils.isArray(paramType)) {
             paramType = ((PsiArrayType) paramType).getComponentType();
         }
         List<ValueWrapper> valueWrappers = new ArrayList<>();
-        //如果是基本类型
-        if (this.isBasicType(paramType)) {
+        //如果是单参数类型
+        if (this.isItemType(paramType)) {
             ValueWrapper valueWrapper;
             PsiAnnotation psiAnnotation = PsiAnnotationUtils
                     .findAnnotation(param, SpringMVCConstants.RequestParam);
