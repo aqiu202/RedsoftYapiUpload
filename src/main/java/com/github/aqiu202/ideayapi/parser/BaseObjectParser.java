@@ -2,7 +2,7 @@ package com.github.aqiu202.ideayapi.parser;
 
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
-import com.github.aqiu202.ideayapi.parser.type.PsiDescriptorWrapper;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
@@ -37,9 +37,9 @@ public interface BaseObjectParser {
 
     Jsonable parsePojo(PsiClass rootClass, PsiType psiType, LevelCounter counter);
 
-    default ValueWrapper parseProperty(PsiClass targetClass, PsiDescriptorWrapper field) {
-        return parseProperty(targetClass, field, new LevelCounter());
+    default ValueWrapper parseProperty(PsiClass rootClass, PsiDescriptor field) {
+        return parseProperty(rootClass, field, new LevelCounter());
     }
 
-    ValueWrapper parseProperty(PsiClass targetClass, PsiDescriptorWrapper field, LevelCounter counter);
+    ValueWrapper parseProperty(PsiClass rootClass, PsiDescriptor field, LevelCounter counter);
 }

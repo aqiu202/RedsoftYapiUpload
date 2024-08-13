@@ -4,23 +4,31 @@ import com.github.aqiu202.ideayapi.constant.LombokConstants;
 import com.github.aqiu202.ideayapi.parser.abs.Source;
 import com.github.aqiu202.ideayapi.util.CollectionUtils;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.intellij.psi.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LombokDescriptorResolver extends SimpleDescriptorResolver {
 
     @Override
-    public Collection<PsiDescriptor> resolveDescriptors(PsiClass c, Source source) {
+    public List<PsiDescriptor> resolveDescriptors(PsiType type, Source source) {
+        PsiClass c = PsiUtils.convertToClass(type);
+        if (c == null) {
+            return Collections.emptyList();
+        }
         if (source == Source.REQUEST && PsiAnnotationUtils.isNotAnnotatedWith(c, LombokConstants.Data)
                 && PsiAnnotationUtils.isNotAnnotatedWith(c, LombokConstants.Setter)) {
-            return super.resolveDescriptors(c, source);
+            return super.resolveDescriptors(type, source);
         } else if (source == Source.RESPONSE && PsiAnnotationUtils.isNotAnnotatedWith(c, LombokConstants.Data)
                 && PsiAnnotationUtils.isNotAnnotatedWith(c, LombokConstants.Getter)) {
-            return super.resolveDescriptors(c, source);
+            return super.resolveDescriptors(type, source);
         }
-        List<PsiDescriptor> descriptors = this.getMethodsDescriptors(c, source);
+        List<PsiDescriptor> descriptors = this.getMethodsDescriptors(c, type, source);
         Map<String, PsiDescriptor> descriptorMap = descriptors.stream().collect(Collectors.toMap(PsiDescriptor::getName, a -> a));
         List<PsiField> fields = null;
         if (source == Source.REQUEST) {
@@ -29,32 +37,19 @@ public class LombokDescriptorResolver extends SimpleDescriptorResolver {
             fields = this.getGettableFields(c);
         }
         if (CollectionUtils.isNotEmpty(fields)) {
+            PsiDescriptorParser psiDescriptorParser = this.getPsiDescriptorParser();
             for (PsiField field : fields) {
                 String fieldName = field.getName();
                 PsiDescriptor descriptor = descriptorMap.get(fieldName);
                 if (descriptor != null) {
                     descriptor.addElement(0, field);
                 } else {
-                    descriptors.add(new SimplePsiDescriptor(field));
+                    descriptors.add(psiDescriptorParser.parse(field, type));
                 }
             }
         }
         return this.filterResults(descriptors, c);
     }
-
-    protected List<PsiDescriptor> getMethodsDescriptors(PsiClass c, Source source) {
-        List<PsiMethod> methods = null;
-        if (source == Source.REQUEST) {
-            methods = this.getSetters(c);
-        } else if (source == Source.RESPONSE) {
-            methods = this.getGetters(c);
-        }
-        if (methods == null) {
-            methods = new ArrayList<>();
-        }
-        return methods.stream().map(SimplePsiDescriptor::of).collect(Collectors.toList());
-    }
-
 
     public List<PsiField> getGettableFields(PsiClass psiClass) {
         return Arrays.stream(psiClass.getAllFields())

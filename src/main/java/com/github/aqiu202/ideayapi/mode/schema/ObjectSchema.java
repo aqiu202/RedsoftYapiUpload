@@ -3,7 +3,10 @@ package com.github.aqiu202.ideayapi.mode.schema;
 import com.github.aqiu202.ideayapi.mode.schema.base.ItemJsonSchema;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class ObjectSchema extends ItemJsonSchema {

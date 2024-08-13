@@ -80,13 +80,13 @@ public final class PsiAnnotationUtils {
 //    }
 
     public static boolean isAnnotatedWith(@NotNull PsiModifierListOwner psiModifierListOwner,
-                                          @NotNull String annotationFQN) {
-        return null != findAnnotation(psiModifierListOwner, annotationFQN);
+                                          @NotNull String... annotationFQNs) {
+        return null != findAnnotation(psiModifierListOwner, annotationFQNs);
     }
 
     public static boolean isNotAnnotatedWith(@NotNull PsiModifierListOwner psiModifierListOwner,
-                                             @NotNull String annotationFQN) {
-        return null == findAnnotation(psiModifierListOwner, annotationFQN);
+                                             @NotNull String... annotationFQNs) {
+        return null == findAnnotation(psiModifierListOwner, annotationFQNs);
     }
 
     /**

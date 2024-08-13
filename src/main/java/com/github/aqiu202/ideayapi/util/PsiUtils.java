@@ -3,6 +3,7 @@ package com.github.aqiu202.ideayapi.util;
 import com.github.aqiu202.ideayapi.model.EnumField;
 import com.github.aqiu202.ideayapi.model.EnumFields;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
+import com.github.aqiu202.ideayapi.parser.type.SimplePsiGenericTypeResolver;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -20,10 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +46,7 @@ public final class PsiUtils {
         return (pe != null && clz.isAssignableFrom(pe.getClass())) ? (T) pe : null;
     }
 
-    public static Collection<PsiClass> collectPsiClasses(PsiJavaFile javaFile) {
+    public static List<PsiClass> collectPsiClasses(PsiJavaFile javaFile) {
         return Arrays.asList(javaFile.getClasses());
     }
 
@@ -157,7 +155,7 @@ public final class PsiUtils {
         if (type instanceof PsiClassType) {
             return ((PsiClassType) type).resolve();
         }
-        return null;
+        return findPsiClass(TypeUtils.getTypePkName(type));
     }
 
 
@@ -167,30 +165,12 @@ public final class PsiUtils {
         ).collect(Collectors.toList()));
     }
 
-    public static PsiType resolveGenericType(PsiClass targetClass, PsiType psiType) {
-        PsiClassType[] superTypes = targetClass.getSuperTypes();
-        for (PsiClassType superType : superTypes) {
-            PsiType type = resolveGenericType(superType, psiType);
-            if (!StringUtils.equals(type.getCanonicalText(), psiType.getCanonicalText())) {
-                return type;
-            }
-        }
-        return psiType;
+    public static PsiType resolveMethodGenericType(PsiClass rootClass, PsiType psiType) {
+        return SimplePsiGenericTypeResolver.INSTANCE.resolveType(rootClass, psiType);
     }
 
-    public static PsiType resolveGenericType(PsiClassType classType, PsiType psiType) {
-        PsiSubstitutor substitutor = classType.resolveGenerics().getSubstitutor();
-        return substitutor.substitute(psiType);
-    }
-
-    public static PsiType resolveValidType(PsiModifierListOwner owner) {
-        PsiType type = null;
-        if (owner instanceof PsiVariable) {
-            type = ((PsiVariable) owner).getType();
-        } else if (owner instanceof PsiMethod) {
-            type = ((PsiMethod) owner).getReturnType();
-        }
-        return type;
+    public static PsiType resolveFieldGenericType(PsiClassType classType, PsiType filedType) {
+        return SimplePsiGenericTypeResolver.INSTANCE.resolveType(classType, filedType);
     }
 
 }

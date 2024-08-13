@@ -41,8 +41,8 @@ public class RequestFormResolverImpl extends AbstractCompoundRequestParamResolve
                 .hasRequestBody(m.getParameterList().getParameters())) {
             return p -> false;
         }
-        //过滤掉@PathVariable注解标注的参数
-        return p -> PsiAnnotationUtils.isNotAnnotatedWith(p, SpringMVCConstants.PathVariable);
+        //过滤掉@PathVariable、@RequestHeader等注解标注的参数
+        return p -> PsiAnnotationUtils.isNotAnnotatedWith(p, SpringMVCConstants.PathVariable, SpringMVCConstants.RequestHeader);
     }
 
     @Override

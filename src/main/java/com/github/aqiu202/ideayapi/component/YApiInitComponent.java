@@ -25,18 +25,18 @@ public class YApiInitComponent implements ProjectComponent {
         YApiApplicationProperty property = ApplicationConfigReader.read();
         if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
             /**
-             * <h4>2.2.2+2版本，添加对Jakarta Validation API系列数据校验注解的支持，修复已知问题</h4>
+             * <h4>2.2.2+3版本，添加对Jakarta Servlet的支持，修复已知问题</h4>
              *      <ol>
-             *         <li>添加对Jakarta Validation API系列数据校验注解的支持</li>
-             *         <li>修复使用lombok时字段偶尔解析异常的问题</li>
-             *         <li>修复文件类型参数无法正常解析的问题</li>
+             *         <li>添加对Jakarta Servlet的支持</li>
+             *         <li>修复WebFlux接口的解析异常问题</li>
+             *         <li>修复部分参数泛型解析异常的问题</li>
              *      </ol>
              */
-            String changeLogTitle = "<h4>2.2.2+2版本，添加对Jakarta Validation API系列数据校验注解的支持，修复已知问题</h4>";
+            String changeLogTitle = "<h4>2.2.2+3版本，添加对Jakarta Servlet的支持，修复已知问题</h4>";
             String changeLogContent = "<ol>\n" +
-                    "        <li>添加对Jakarta Validation API系列数据校验注解的支持</li>\n" +
-                    "        <li>修复使用lombok时字段偶尔解析异常的问题</li>\n" +
-                    "        <li>修复文件类型参数无法正常解析的问题</li>\n" +
+                    "        <li>添加对Jakarta Servlet的支持</li>\n" +
+                    "        <li>修复WebFlux接口的解析异常问题</li>\n" +
+                    "        <li>修复部分参数泛型解析异常的问题</li>\n" +
                     "     </ol>";
             NotificationUtils.createNotification("更新内容",
                             changeLogTitle + "\n" + changeLogContent

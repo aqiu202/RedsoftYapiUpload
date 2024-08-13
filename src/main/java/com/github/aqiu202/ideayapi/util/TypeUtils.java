@@ -1,6 +1,7 @@
 package com.github.aqiu202.ideayapi.util;
 
 import com.github.aqiu202.ideayapi.constant.SpringMVCConstants;
+import com.github.aqiu202.ideayapi.constant.SpringWebFluxConstants;
 import com.github.aqiu202.ideayapi.mode.schema.base.SchemaType;
 import com.github.aqiu202.ideayapi.model.Mock;
 import com.github.aqiu202.ideayapi.model.ValueWrapper;
@@ -47,6 +48,8 @@ public class TypeUtils {
     private static PsiClassType mapType;
     private static PsiClassType setType;
     private static PsiClassType enumType;
+    private static PsiClassType monoType;
+    private static PsiClassType fluxType;
 
     static {
 
@@ -234,6 +237,28 @@ public class TypeUtils {
             return false;
         }
         return getCollectionType().isAssignableFrom(psiType);
+    }
+
+    public static PsiClassType getMonoType() {
+        if (monoType == null) {
+            monoType = PsiUtils.findPsiClassType(YApiSupportHolder.project, SpringWebFluxConstants.Mono);
+        }
+        return monoType;
+    }
+
+    public static boolean isMono(PsiType psiType) {
+        return getMonoType().isAssignableFrom(psiType);
+    }
+
+    public static PsiClassType getFluxType() {
+        if (fluxType == null) {
+            fluxType = PsiUtils.findPsiClassType(YApiSupportHolder.project, SpringWebFluxConstants.Flux);
+        }
+        return fluxType;
+    }
+
+    public static boolean isFlux(PsiType psiType) {
+        return getFluxType().isAssignableFrom(psiType);
     }
 
     private static boolean isNull(PsiType psiType) {

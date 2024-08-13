@@ -13,4 +13,13 @@ public interface ServletConstants {
 
     String HttpSession = "javax.servlet.http.HttpSession";
 
+    String JakartaHttpServletRequest = "jakarta.servlet.http.HttpServletRequest";
+
+    String JakartaHttpServletResponse = "jakarta.servlet.http.HttpServletResponse";
+
+    String JakartaHttpSession = "jakarta.servlet.http.HttpSession";
+
+    String[] HttpServletTypes = new String[]{HttpServletRequest, HttpServletResponse, HttpSession,
+            JakartaHttpServletRequest, JakartaHttpServletResponse, JakartaHttpSession};
+
 }

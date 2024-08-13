@@ -12,9 +12,11 @@ import com.github.aqiu202.ideayapi.parser.Jsonable;
 import com.github.aqiu202.ideayapi.parser.ObjectJsonParser;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
-import com.github.aqiu202.ideayapi.parser.type.*;
+import com.github.aqiu202.ideayapi.parser.type.DescriptorResolver;
+import com.github.aqiu202.ideayapi.parser.type.LombokDescriptorResolver;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
+import com.github.aqiu202.ideayapi.parser.type.SimpleDescriptorResolver;
 import com.github.aqiu202.ideayapi.util.PropertyNamingUtils;
-import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.openapi.project.Project;
@@ -26,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFieldNameHandler,
         DocTagValueHandler {
@@ -71,13 +72,13 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         } else if (TypeUtils.isMap(type)) {
             //对Map及其子类进行处理
             result = this.parseMap(type);
-        } else if (TypeUtils.isCollection(type)) {
+        } else if (TypeUtils.isCollection(type) || TypeUtils.isFlux(type)) {
             //截取子类型
             //如果是集合类型（List Set）
             result = this.parseCollection(rootClass, TypeUtils.resolveFirstGenericType(type), counter);
         } else {
             PsiType targetType;
-            if (StringUtils.equals(SpringWebFluxConstants.Mono, TypeUtils.getTypePkName(type))) {
+            if (TypeUtils.isMono(type)) {
                 targetType = TypeUtils.resolveFirstGenericType(type);
             } else {
                 targetType = type;
@@ -118,21 +119,17 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
             return this.parseMap(psiType, TypeUtils.getTypeDesc(String.format("超出最大解析层数:%d，不再展示详细字段信息", YApiConstants.maxLevel)));
         }
         counter.incrementLevel();
-        PsiClass psiClass = PsiUtils.convertToClass(psiType);
-        if (psiClass == null) {
-            psiClass = PsiUtils.findPsiClass(TypeUtils.getTypePkName(psiType));
-        }
         List<ValueWrapper> wrapperList = new ArrayList<>();
-        if (Objects.nonNull(psiClass)) {
-            for (PsiDescriptor descriptor : this.getDescriptorResolver().resolveDescriptors(psiClass, this.getSource())) {
-                if (this.isIgnoredField(descriptor)) {
-                    continue;
-                }
-                ValueWrapper valueWrapper = this.parseProperty(rootClass, new SimpleDescriptorWrapper(psiType, psiClass, descriptor), counter);
-                YApiSupportHolder.supports.handleProperty(valueWrapper);
-                TypeUtils.handleTypeDesc(valueWrapper);
-                wrapperList.add(valueWrapper);
+        DescriptorResolver descriptorResolver = this.getDescriptorResolver();
+        List<PsiDescriptor> descriptors = descriptorResolver.resolveDescriptors(psiType, this.getSource());
+        for (PsiDescriptor descriptor : descriptors) {
+            if (this.isIgnoredField(descriptor)) {
+                continue;
             }
+            ValueWrapper valueWrapper = this.parseProperty(rootClass, descriptor, counter);
+            YApiSupportHolder.supports.handleProperty(valueWrapper);
+            TypeUtils.handleTypeDesc(valueWrapper);
+            wrapperList.add(valueWrapper);
         }
         return this.buildPojo(wrapperList);
     }
@@ -157,11 +154,10 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
     }
 
     @Override
-    public ValueWrapper parseProperty(PsiClass targetClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
+    public ValueWrapper parseProperty(PsiClass rootClass, PsiDescriptor descriptor, LevelCounter counter) {
         ValueWrapper result = new ValueWrapper();
-        PsiDescriptor descriptor = fieldWrapper.getDescriptor();
         result.setSource(descriptor);
-        result.setJson(this.parsePropertyValue(targetClass, fieldWrapper, counter));
+        result.setJson(this.parsePropertyValue(rootClass, descriptor, counter));
         if (this.needDescription()) {
             String desc = descriptor.getDescription();
             desc = this.handleDocTagValue(desc);
@@ -182,8 +178,8 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
      *
      * @author aqiu 2020/7/23 3:14 下午
      **/
-    protected Jsonable parsePropertyValue(PsiClass rootClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
-        return this.parse(rootClass, fieldWrapper.resolveFieldType(), counter);
+    protected Jsonable parsePropertyValue(PsiClass rootClass, PsiDescriptor descriptor, LevelCounter counter) {
+        return this.parse(rootClass, descriptor.getType(), counter);
     }
 
     /**

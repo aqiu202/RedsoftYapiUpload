@@ -1,9 +1,11 @@
 package com.github.aqiu202.ideayapi.http.req;
 
 import com.github.aqiu202.ideayapi.model.YApiParam;
+import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -15,13 +17,26 @@ import java.util.List;
  **/
 public interface EachRequestParamResolver extends RequestParamResolver {
 
-    default void doResolve(@NotNull PsiClass targetClass,
+    default void doResolve(@NotNull PsiClass rootClass,
                            @NotNull PsiMethod m,
                            @NotNull List<PsiParameter> parameterList,
                            @NotNull YApiParam target) {
-        parameterList.forEach(p -> this.doResolverItem(targetClass, m, p, target));
+        parameterList.forEach(p ->
+                this.doResolverItem(rootClass, m, p, this.resolveParamType(rootClass, p), target)
+        );
     }
 
-    void doResolverItem(@NotNull PsiClass targetClass, @NotNull PsiMethod m,
-                        @NotNull PsiParameter param, @NotNull YApiParam target);
+    /**
+     * 解析参数类型中的泛型
+     *
+     * @param rootClass controller类型
+     * @param param     参数类型
+     * @return 泛型替换后的类型
+     */
+    default PsiType resolveParamType(PsiClass rootClass, PsiParameter param) {
+        return PsiUtils.resolveMethodGenericType(rootClass, param.getType());
+    }
+
+    void doResolverItem(@NotNull PsiClass rootClass, @NotNull PsiMethod m,
+                        @NotNull PsiParameter param, PsiType paramType, @NotNull YApiParam target);
 }

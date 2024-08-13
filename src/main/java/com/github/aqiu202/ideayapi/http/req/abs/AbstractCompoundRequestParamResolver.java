@@ -37,9 +37,9 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
     }
 
     @Override
-    public void doResolverItem(@NotNull PsiClass targetClass, @NotNull PsiMethod m, @NotNull PsiParameter param,
-                               @NotNull YApiParam target) {
-        Collection<ValueWrapper> valueWrappers = this.resolvePojo(targetClass, m, param);
+    public void doResolverItem(@NotNull PsiClass rootClass, @NotNull PsiMethod m, @NotNull PsiParameter param,
+                               PsiType paramType, @NotNull YApiParam target) {
+        List<ValueWrapper> valueWrappers = this.resolvePojo(rootClass, m, param, paramType);
         if (CollectionUtils.isNotEmpty(valueWrappers)) {
             this.doSet(target, valueWrappers);
         }
@@ -76,10 +76,10 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         return valueWrapper;
     }
 
-    protected Collection<ValueWrapper> resolvePojo(@NotNull PsiClass targetClass,
-                                                   @NotNull PsiMethod m,
-                                                   @NotNull PsiParameter param) {
-        PsiType paramType = param.getType();
+    protected List<ValueWrapper> resolvePojo(@NotNull PsiClass rootClass,
+                                             @NotNull PsiMethod m,
+                                             @NotNull PsiParameter param,
+                                             PsiType paramType) {
         if (TypeUtils.isMap(paramType)) {
             return Collections.emptyList();
         }
@@ -105,7 +105,7 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
                     valueWrapper.setTypeDesc(TypeUtils.getTypeName(paramType));
                 }
             }
-            valueWrapper.setSource(new SimplePsiDescriptor(param, valueWrapper.getName()));
+            valueWrapper.setSource(new SimplePsiDescriptor(param, paramType, valueWrapper.getName()));
             YApiSupportHolder.supports.handleParam(valueWrapper);
             valueWrappers.add(valueWrapper);
         } else {
@@ -120,7 +120,7 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
                 valueWrappers.add(valueWrapper);
             } else {
                 DescriptorResolver descriptorResolver = this.getDescriptorResolver();
-                Collection<PsiDescriptor> descriptors = descriptorResolver.resolveDescriptors(psiClass, Source.REQUEST);
+                List<PsiDescriptor> descriptors = descriptorResolver.resolveDescriptors(paramType, Source.REQUEST);
                 for (PsiDescriptor descriptor : descriptors) {
                     if (this.property.getIgnoredReqFieldList().contains(descriptor.getName())) {
                         continue;

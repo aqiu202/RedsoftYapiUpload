@@ -34,7 +34,7 @@ public class YApiUpload {
      * @author aqiu 2019/5/15
      */
     public YApiResponse<List<YApiSaveResponse>> uploadSave(YApiProjectProperty property, YApiSaveParam yapiSaveParam,
-                                      @SuppressWarnings("unused") String path)
+                                                           @SuppressWarnings("unused") String path)
             throws IOException {
         if (StringUtils.isEmpty(yapiSaveParam.getTitle())) {
             yapiSaveParam.setTitle(yapiSaveParam.getPath());
@@ -61,7 +61,8 @@ public class YApiUpload {
                     .ObjectToString(HttpClientUtils.getHttpclient().execute(
                             this.getHttpPost(property.getUrl() + YApiConstants.yapiSave,
                                     gson.toJson(yapiSaveParam))), "utf-8");
-            return gson.fromJson(response, new TypeToken<YApiResponse<List<YApiSaveResponse>>>(){}.getType());
+            return gson.fromJson(response, new TypeToken<YApiResponse<List<YApiSaveResponse>>>() {
+            }.getType());
         } else {
             throw new IOException(yapiResponse.getErrmsg());
         }

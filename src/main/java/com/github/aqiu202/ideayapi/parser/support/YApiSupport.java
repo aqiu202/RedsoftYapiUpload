@@ -49,6 +49,7 @@ public interface YApiSupport {
     default boolean isIgnored(PsiField field, PsiClass psiClass) {
         return false;
     }
+
     default boolean isIgnored(PsiMethod method, PsiClass psiClass) {
         return false;
     }

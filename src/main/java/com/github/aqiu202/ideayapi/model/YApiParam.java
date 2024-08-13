@@ -16,7 +16,8 @@ import java.util.Set;
  */
 public class YApiParam implements Serializable, ResultConvert<Collection<YApiSaveParam>> {
 
-    public YApiParam(){}
+    public YApiParam() {
+    }
 
     public YApiParam(String method, YApiParam source) {
         this.method = method;
@@ -39,6 +40,7 @@ public class YApiParam implements Serializable, ResultConvert<Collection<YApiSav
         this.hasFile = source.hasFile;
         this.consumes = source.consumes;
     }
+
     private String method;
     /**
      * 路径

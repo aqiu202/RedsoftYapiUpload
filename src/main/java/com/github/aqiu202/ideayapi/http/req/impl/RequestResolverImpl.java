@@ -27,8 +27,8 @@ public class RequestResolverImpl implements RequestResolver {
     }
 
     @Override
-    public void resolve(@NotNull PsiClass targetClass, @NotNull PsiMethod m, @NotNull YApiParam target) {
-        this.paramResolvers.forEach(r -> r.resolve(targetClass, m, target));
+    public void resolve(@NotNull PsiClass rootClass, @NotNull PsiMethod m, @NotNull YApiParam target) {
+        this.paramResolvers.forEach(r -> r.resolve(rootClass, m, target));
     }
 
 }

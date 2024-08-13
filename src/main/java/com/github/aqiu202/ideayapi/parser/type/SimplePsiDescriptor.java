@@ -1,7 +1,10 @@
 package com.github.aqiu202.ideayapi.parser.type;
 
 import com.github.aqiu202.ideayapi.parser.base.DeprecatedAssert;
-import com.github.aqiu202.ideayapi.util.*;
+import com.github.aqiu202.ideayapi.util.CollectionUtils;
+import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.PsiDocUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.intellij.psi.*;
 
 import java.util.*;
@@ -15,57 +18,19 @@ public class SimplePsiDescriptor implements PsiDescriptor {
     private String description;
     private final Map<String, List<PsiAnnotation>> annotationsMap = new HashMap<>();
 
-    public SimplePsiDescriptor(PsiModifierListOwner element) {
+    public SimplePsiDescriptor(PsiModifierListOwner element, String name, PsiType type, boolean valid) {
         this.elements = new ArrayList<>(Collections.singletonList(element));
-        this.name = null;
-        this.type = null;
-        this.valid = false;
+        this.name = name;
+        this.type = type;
+        this.valid = valid;
     }
 
-    public SimplePsiDescriptor(PsiParameter psiParameter, String name) {
+    public SimplePsiDescriptor(PsiParameter psiParameter, PsiType paramType, String name) {
         this.elements = new ArrayList<>(Collections.singletonList(psiParameter));
         this.name = name;
-        this.type = psiParameter.getType();
+        // 传递泛型解析后的参数
+        this.type = paramType;
         this.valid = false;
-    }
-
-    public static SimplePsiDescriptor of(PsiModifierListOwner origin) {
-        if (origin instanceof PsiField) {
-            return new SimplePsiDescriptor(((PsiField) origin));
-        }
-        if (origin instanceof PsiMethod) {
-            return new SimplePsiDescriptor(((PsiMethod) origin));
-        }
-        return new SimplePsiDescriptor(origin);
-    }
-
-    public SimplePsiDescriptor(PsiField element) {
-        this.elements = new ArrayList<>(Collections.singletonList(element));
-        this.name = element.getName();
-        this.type = element.getType();
-        this.valid = true;
-    }
-
-    public SimplePsiDescriptor(PsiMethod element) {
-        this.elements = new ArrayList<>(Collections.singletonList(element));
-        String methodName = element.getName();
-        String prefix;
-        if (methodName.startsWith("set")) {
-            prefix = "set";
-            PsiParameter firstParameter = element.getParameterList().getParameters()[0];
-            this.type = firstParameter == null ? null : firstParameter.getType();
-            this.valid = type != null && element.getParameterList().getParametersCount() == 1;
-        } else {
-            this.type = element.getReturnType();
-            prefix = StringUtils.equals("boolean", TypeUtils.getTypePkName(type)) ? "is" : "get";
-            this.valid = methodName.startsWith(prefix) && element.getParameterList().isEmpty();
-        }
-        if (this.valid) {
-            methodName = methodName.substring(prefix.length());
-            this.name = methodName.substring(0, 1).toLowerCase() + methodName.substring(1);
-        } else {
-            this.name = methodName;
-        }
     }
 
     @Override

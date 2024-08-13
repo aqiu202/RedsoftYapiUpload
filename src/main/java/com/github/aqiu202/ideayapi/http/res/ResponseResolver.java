@@ -13,5 +13,5 @@ import org.jetbrains.annotations.Nullable;
  **/
 public interface ResponseResolver {
 
-    void resolve(PsiClass targetClass, @Nullable PsiType returnType, @NotNull YApiParam target);
+    void resolve(PsiClass rootClass, @Nullable PsiType returnType, @NotNull YApiParam target);
 }

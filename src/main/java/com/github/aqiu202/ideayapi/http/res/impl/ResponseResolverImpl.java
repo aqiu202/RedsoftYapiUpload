@@ -12,7 +12,6 @@ import com.github.aqiu202.ideayapi.parser.impl.JsonSchemaParserImpl;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,20 +35,19 @@ public class ResponseResolverImpl implements ResponseResolver {
     }
 
     @Override
-    public void resolve(PsiClass targetClass, @Nullable PsiType returnType, @NotNull YApiParam target) {
+    public void resolve(PsiClass rootClass, @Nullable PsiType returnType, @NotNull YApiParam target) {
         if (Objects.isNull(returnType)) {
             return;
         }
-        if (returnType instanceof PsiClassType && ((PsiClassType) returnType).hasParameters()) {
-            returnType = PsiUtils.resolveGenericType(targetClass, returnType);
-        }
+        // 如果返回值有泛型，解析泛型
+        returnType = PsiUtils.resolveMethodGenericType(rootClass, returnType);
         int dataMode = this.property.getDataMode();
         boolean isJsonSchema = dataMode == 0;
         target.setRes_body_is_json_schema(isJsonSchema);
         if (ContentTypeResolver.RAW_VALUE.equals(target.getRes_body_type())) {
-            target.setResponse(this.objectRawParser.getRawResponse(targetClass, returnType));
+            target.setResponse(this.objectRawParser.getRawResponse(rootClass, returnType));
         } else {
-            target.setResponse(this.objectJsonParser.getJson(targetClass, returnType));
+            target.setResponse(this.objectJsonParser.getJson(rootClass, returnType));
         }
     }
 }

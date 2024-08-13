@@ -8,8 +8,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
 public class RequestContentTypeResolverImpl implements ContentTypeResolver {
 
     @Override

@@ -2,7 +2,6 @@ package com.github.aqiu202.ideayapi.parser.type;
 
 import com.github.aqiu202.ideayapi.parser.base.DeprecatedAssert;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,8 +15,20 @@ public abstract class AbstractDescriptorResolver implements DescriptorResolver {
 
     private final List<String> ignoredProperties = new ArrayList<>();
 
+    private PsiDescriptorParser psiDescriptorParser = SimplePsiDescriptorParser.INSTANCE;
+
     @Override
-    public Collection<String> getIgnoredProperties() {
+    public PsiDescriptorParser getPsiDescriptorParser() {
+        return psiDescriptorParser;
+    }
+
+    @Override
+    public void setPsiDescriptorParser(PsiDescriptorParser psiDescriptorParser) {
+        this.psiDescriptorParser = psiDescriptorParser;
+    }
+
+    @Override
+    public List<String> getIgnoredProperties() {
         return this.ignoredProperties;
     }
 

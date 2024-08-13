@@ -34,8 +34,7 @@ public interface PsiParamListFilter {
 
     default boolean isInnerParameterType(PsiParameter p) {
         String typePkName = TypeUtils.getTypePkName(p.getType());
-        return StringUtils.equalsAny(typePkName, ServletConstants.HttpServletRequest,
-                ServletConstants.HttpServletResponse, ServletConstants.HttpSession);
+        return StringUtils.equalsAny(typePkName, ServletConstants.HttpServletTypes);
     }
 
     @NotNull

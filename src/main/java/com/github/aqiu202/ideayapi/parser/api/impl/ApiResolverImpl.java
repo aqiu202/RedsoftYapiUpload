@@ -51,6 +51,7 @@ public class ApiResolverImpl implements ApiParser, DocTagValueHandler {
     public List<YApiParam> parse(@NotNull PsiClass c, @NotNull PsiMethod m) {
         YApiParam target = new YApiParam();
         this.responseContentTypeResolver.resolve(c, m, target);
+        // 根据配置忽略非Restful接口
         if (this.property.isIgnoreViewUrl()
                 && StringUtils.equals(ContentTypeResolver.RAW_VALUE, target.getRes_body_type())) {
             return null;

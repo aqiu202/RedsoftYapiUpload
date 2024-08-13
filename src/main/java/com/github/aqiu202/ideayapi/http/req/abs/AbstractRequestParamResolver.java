@@ -20,7 +20,7 @@ public abstract class AbstractRequestParamResolver implements PsiParamListFilter
         EachRequestParamResolver {
 
     @Override
-    public void resolve(@NotNull PsiClass targetClass, @NotNull PsiMethod m, @NotNull YApiParam target) {
-        this.doResolve(targetClass, m, this.filter(m, target), target);
+    public void resolve(@NotNull PsiClass rootClass, @NotNull PsiMethod m, @NotNull YApiParam target) {
+        this.doResolve(rootClass, m, this.filter(m, target), target);
     }
 }

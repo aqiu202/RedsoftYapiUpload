@@ -12,5 +12,5 @@ import org.jetbrains.annotations.NotNull;
  **/
 public interface RequestResolver {
 
-    void resolve(@NotNull PsiClass targetClass, @NotNull PsiMethod m, @NotNull YApiParam target);
+    void resolve(@NotNull PsiClass rootClass, @NotNull PsiMethod m, @NotNull YApiParam target);
 }

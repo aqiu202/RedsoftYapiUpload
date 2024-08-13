@@ -13,13 +13,11 @@ import com.github.aqiu202.ideayapi.parser.JsonSchemaJsonParser;
 import com.github.aqiu202.ideayapi.parser.abs.AbstractJsonParser;
 import com.github.aqiu202.ideayapi.parser.base.LevelCounter;
 import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
-import com.github.aqiu202.ideayapi.parser.type.PsiDescriptorWrapper;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.github.aqiu202.ideayapi.util.ValidUtils;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiArrayType;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
 
@@ -96,9 +94,8 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ItemJsonSchema parsePropertyValue(PsiClass rootClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
-        PsiDescriptor descriptor = fieldWrapper.getDescriptor();
-        PsiType type = fieldWrapper.resolveFieldType();
+    public ItemJsonSchema parsePropertyValue(PsiClass rootClass, PsiDescriptor descriptor, LevelCounter counter) {
+        PsiType type = descriptor.getType();
         ItemJsonSchema itemJsonSchema;
         if (TypeUtils.isEnum(type)) {
             itemJsonSchema = new StringSchema();
@@ -112,7 +109,7 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         } else if (TypeUtils.isBasicType(type)) {
             itemJsonSchema = this.parseBasicField(descriptor);
         } else {
-            itemJsonSchema = this.parseCompoundField(rootClass, fieldWrapper, counter);
+            itemJsonSchema = this.parseCompoundField(rootClass, descriptor, counter);
         }
         return itemJsonSchema;
     }
@@ -194,9 +191,8 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
         return result;
     }
 
-    private ItemJsonSchema parseCompoundField(PsiClass rootClass, PsiDescriptorWrapper fieldWrapper, LevelCounter counter) {
-        PsiDescriptor descriptor = fieldWrapper.getDescriptor();
-        PsiType psiType = fieldWrapper.resolveFieldType();
+    private ItemJsonSchema parseCompoundField(PsiClass rootClass, PsiDescriptor descriptor, LevelCounter counter) {
+        PsiType psiType = descriptor.getType();
         boolean isArray = TypeUtils.isArray(descriptor.getType());
         ItemJsonSchema result = this.parseJsonSchema(rootClass, psiType, counter);
         if (result instanceof ArraySchema) {
