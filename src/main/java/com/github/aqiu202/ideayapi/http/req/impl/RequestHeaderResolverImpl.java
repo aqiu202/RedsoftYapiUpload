@@ -6,6 +6,7 @@ import com.github.aqiu202.ideayapi.http.req.abs.AbstractRequestParamResolver;
 import com.github.aqiu202.ideayapi.model.YApiHeader;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.PsiDocUtils;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +34,7 @@ public class RequestHeaderResolverImpl extends AbstractRequestParamResolver {
         if (Objects.nonNull(annotation)) {
             YApiHeader header = new YApiHeader();
             header.full(this.handleParamAnnotation(param, annotation));
+            header.setDesc(PsiDocUtils.getParamComment(m, param.getName()));
             Set<YApiHeader> headers = target.getHeaders();
             if (Objects.isNull(headers)) {
                 headers = new LinkedHashSet<>();
