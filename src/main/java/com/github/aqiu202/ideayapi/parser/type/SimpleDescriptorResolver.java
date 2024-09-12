@@ -45,6 +45,7 @@ public class SimpleDescriptorResolver extends AbstractDescriptorResolver {
         PsiDescriptorParser psiDescriptorParser = this.getPsiDescriptorParser();
         return methods.stream()
                 .map(method -> psiDescriptorParser.parse(method, type))
+                .distinct()
                 .collect(Collectors.toList());
     }
 

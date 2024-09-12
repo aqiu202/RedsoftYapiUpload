@@ -7,10 +7,7 @@ import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.intellij.psi.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -31,13 +28,15 @@ public class LombokDescriptorResolver extends SimpleDescriptorResolver {
         }
         List<PsiDescriptor> descriptors = this.getMethodsDescriptors(c, type, source);
         Map<String, PsiDescriptor> descriptorMap = descriptors.stream()
-                .distinct().collect(Collectors.toMap(PsiDescriptor::getName, Function.identity()));
+                .collect(Collectors.toMap(PsiDescriptor::getName, Function.identity()));
         List<PsiField> fields = null;
         if (source == Source.REQUEST) {
             fields = this.getSettableFields(c);
         } else if (source == Source.RESPONSE) {
             fields = this.getGettableFields(c);
         }
+        // 去除重复的字段（优先使用子类的字段--属性覆盖）
+        final Set<String> fileNames = new HashSet<>();
         if (CollectionUtils.isNotEmpty(fields)) {
             PsiDescriptorParser psiDescriptorParser = this.getPsiDescriptorParser();
             for (PsiField field : fields) {
@@ -46,7 +45,11 @@ public class LombokDescriptorResolver extends SimpleDescriptorResolver {
                 if (descriptor != null) {
                     descriptor.addElement(0, field);
                 } else {
+                    if (fileNames.contains(fieldName)) {
+                        continue;
+                    }
                     descriptors.add(psiDescriptorParser.parse(field, type));
+                    fileNames.add(fieldName);
                 }
             }
         }
