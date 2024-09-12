@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class LombokDescriptorResolver extends SimpleDescriptorResolver {
@@ -29,7 +30,8 @@ public class LombokDescriptorResolver extends SimpleDescriptorResolver {
             return super.resolveDescriptors(type, source);
         }
         List<PsiDescriptor> descriptors = this.getMethodsDescriptors(c, type, source);
-        Map<String, PsiDescriptor> descriptorMap = descriptors.stream().collect(Collectors.toMap(PsiDescriptor::getName, a -> a));
+        Map<String, PsiDescriptor> descriptorMap = descriptors.stream()
+                .distinct().collect(Collectors.toMap(PsiDescriptor::getName, Function.identity()));
         List<PsiField> fields = null;
         if (source == Source.REQUEST) {
             fields = this.getSettableFields(c);
