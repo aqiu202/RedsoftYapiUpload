@@ -9,9 +9,10 @@ public interface SwaggerConstants {
 
     String API = "io.swagger.annotations.Api";
     String API_OPERATION = "io.swagger.annotations.ApiOperation";
+    String API_OPERATION_V3 = "io.swagger.v3.oas.annotations.Operation";
 
     String API_MODEL = "io.swagger.annotations.ApiModel";
     String API_MODEL_PROPERTY = "io.swagger.annotations.ApiModelProperty";
 
-    String API_PARAM = "io.swagger.annotations.ApiParam";
+    String[] API_PARAM = new String[] {"io.swagger.annotations.ApiParam","io.swagger.v3.oas.annotations.Parameter"};
 }

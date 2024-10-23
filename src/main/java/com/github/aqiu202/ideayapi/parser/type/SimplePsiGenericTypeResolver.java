@@ -1,5 +1,6 @@
 package com.github.aqiu202.ideayapi.parser.type;
 
+import com.github.aqiu202.ideayapi.util.TypeUtils;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiSubstitutor;
@@ -67,7 +68,7 @@ public class SimplePsiGenericTypeResolver implements PsiGenericTypeResolver {
     public PsiType resolveType(PsiType psiType, int index) {
         PsiType[] psiTypes = this.resolveTypes(psiType);
         if (psiTypes == null || psiTypes.length <= index) {
-            return null;
+            return TypeUtils.getObjectType();
         }
         return psiTypes[index];
     }

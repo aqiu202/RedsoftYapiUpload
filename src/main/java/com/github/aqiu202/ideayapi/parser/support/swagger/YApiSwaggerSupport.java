@@ -44,9 +44,14 @@ public class YApiSwaggerSupport implements YApiSupport {
     public void handleMethod(PsiMethod psiMethod, @NonNls YApiParam apiDTO) {
         String title = PsiAnnotationUtils
                 .getPsiAnnotationAttributeValue(psiMethod, SwaggerConstants.API_OPERATION);
+        // 对Swagger 3.0.0以上版本的兼容
+        if (StringUtils.isBlank(title)) {
+            title = PsiAnnotationUtils.getPsiAnnotationAttributeValue(psiMethod, SwaggerConstants.API_OPERATION_V3, "method");
+        }
         if (StringUtils.isNotBlank(title)) {
             apiDTO.setTitle(title);
         }
+
     }
 
     @Override
@@ -54,10 +59,10 @@ public class YApiSwaggerSupport implements YApiSupport {
         PsiAnnotation annotation = wrapper.getSource().findFirstAnnotation(SwaggerConstants.API_PARAM);
         if (annotation != null) {
             String desc = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation);
+            String example = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation, "example");
             if (StringUtils.isNotBlank(desc)) {
                 wrapper.setDesc(desc);
             }
-            String example = PsiAnnotationUtils.getPsiAnnotationAttributeValue(annotation, "example");
             if (StringUtils.isNotBlank(example)) {
                 wrapper.setExample(example);
             }

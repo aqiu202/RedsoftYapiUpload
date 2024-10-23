@@ -97,17 +97,22 @@ public class SimplePsiDescriptor implements PsiDescriptor {
     }
 
     @Override
-    public boolean hasAnnotation(String annotationName) {
-        return this.findFirstAnnotation(annotationName) != null;
+    public boolean hasAnnotation(String... annotationNames) {
+        return this.findFirstAnnotation(annotationNames) != null;
     }
 
     @Override
-    public PsiAnnotation findFirstAnnotation(String annotationName) {
-        List<PsiAnnotation> annotations = this.findAnnotations(annotationName);
-        if (CollectionUtils.isEmpty(annotations)) {
+    public PsiAnnotation findFirstAnnotation(String... annotationNames) {
+        if (annotationNames == null) {
             return null;
         }
-        return annotations.get(0);
+        for (String annotationName : annotationNames) {
+            List<PsiAnnotation> annotations = this.findAnnotations(annotationName);
+            if (CollectionUtils.isNotEmpty(annotations)) {
+                return annotations.get(0);
+            }
+        }
+        return null;
     }
 
     @Override

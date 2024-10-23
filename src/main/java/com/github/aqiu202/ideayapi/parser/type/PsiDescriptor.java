@@ -24,9 +24,9 @@ public interface PsiDescriptor {
 
     boolean isDeprecated();
 
-    boolean hasAnnotation(String annotationName);
+    boolean hasAnnotation(String... annotationNames);
 
     List<PsiAnnotation> findAnnotations(String annotationName);
 
-    PsiAnnotation findFirstAnnotation(String annotationName);
+    PsiAnnotation findFirstAnnotation(String... annotationNames);
 }

@@ -40,11 +40,13 @@ public class TypeUtils {
 
     private static final Map<String, LongRange> baseRangeMappings = new HashMap<>();
     private static final String mapTypeName = "java.util.Map";
+    private static final String objectTypeName = "java.lang.Object";
     private static final String collectionTypeName = "java.util.Collection";
     private static final String setTypeName = "java.util.Set";
     private static final String enumTypeName = "java.lang.Enum";
 
     private static PsiClassType collectionType;
+    private static PsiClassType objectType;
     private static PsiClassType mapType;
     private static PsiClassType setType;
     private static PsiClassType enumType;
@@ -184,6 +186,13 @@ public class TypeUtils {
             mapType = PsiUtils.findPsiClassType(YApiSupportHolder.project, mapTypeName);
         }
         return mapType;
+    }
+
+    public static PsiClassType getObjectType() {
+        if (objectType == null) {
+            objectType = PsiUtils.findPsiClassType(YApiSupportHolder.project, objectTypeName);
+        }
+        return objectType;
     }
 
     private static PsiClassType getCollectionType() {
