@@ -13,16 +13,15 @@
     </template>
     <template name="_ym" value="**&#x000D;
  * &lt;b&gt;$description$&lt;/b&gt;&#x000D;
- * @author $user$ $date$ $time$$param$&#x000D;
- * @return {@link $return$}&#x000D;
+ * @author $user$ $date$ $time$$param$$return$&#x000D;
 **/" description="YApi method template" toReformat="true" toShortenFQNames="true">
         <variable name="description" expression="" defaultValue="&quot;方法说明&quot;" alwaysStopAt="true"/>
         <variable name="user" expression="user()" defaultValue="" alwaysStopAt="false"/>
         <variable name="date" expression="date()" defaultValue="" alwaysStopAt="false"/>
         <variable name="time" expression="time()" defaultValue="" alwaysStopAt="false"/>
         <variable name="param" expression="" defaultValue="groovyScript(&quot;if(\&quot;${_1}\&quot;.length() == 2) {return &apos;&apos;;}else {def result=&apos;&apos;;def params=\&quot;${_1}\&quot;.replaceAll(&apos;[\\\\[|\\\\]|\\\\s]&apos;, &apos;&apos;).split(&apos;,&apos;).toList();for(i=0;i&lt;params.size();i++){result+=&apos;\\n&apos;+ &apos; * @param &apos;+params[i]+&apos; &apos;};return result;}&quot;,methodParameters());"
-                alwaysStopAt="true"/>
-        <variable name="return" expression="methodReturnType()" defaultValue=""
+                alwaysStopAt="false"/>
+        <variable name="return" expression="" defaultValue="groovyScript(&quot;if(&apos;void&apos; == (\&quot;${_1}\&quot;)){return &apos;&apos;;} else {return &apos;\\n&apos;+ &apos; * @return {@link &apos;+\&quot;${_1}\&quot;+&apos;}&apos;;}&quot;,methodReturnType());"
                 alwaysStopAt="false"/>
         <context>
             <option name="JAVA" value="true"/>
