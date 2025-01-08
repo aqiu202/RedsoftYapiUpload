@@ -18,11 +18,11 @@ public interface BaseObjectParser {
 
     Jsonable parseBasic(PsiType psiType);
 
-    default Jsonable parseMap(PsiType type) {
-        return this.parseMap(type, TypeUtils.getTypeDesc("map"));
+    default Jsonable parseMap(PsiClass rootClass, PsiType type) {
+        return this.parseMap(rootClass, type, TypeUtils.getTypeDesc("map"));
     }
 
-    Jsonable parseMap(PsiType type, String description);
+    Jsonable parseMap(PsiClass rootClass, PsiType type, String description);
 
     default Jsonable parseCollection(PsiClass rootClass, PsiType type) {
         return this.parseCollection(rootClass, type, new LevelCounter());

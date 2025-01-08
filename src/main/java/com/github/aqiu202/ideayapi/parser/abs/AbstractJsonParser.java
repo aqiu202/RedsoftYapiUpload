@@ -74,7 +74,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
             result = this.parseBasic(type);
         } else if (TypeUtils.isMap(type)) {
             //对Map及其子类进行处理
-            result = this.parseMap(type);
+            result = this.parseMap(rootClass, type);
         } else if (TypeUtils.isCollection(type) || TypeUtils.isFlux(type)) {
             //截取子类型
             //如果是集合类型（List Set）
@@ -119,7 +119,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
     @Override
     public Jsonable parsePojo(PsiClass rootClass, PsiType psiType, LevelCounter counter) {
         if (counter.getLevel() >= YApiConstants.maxLevel) {
-            return this.parseMap(psiType, TypeUtils.getTypeDesc(String.format("超出最大解析层数:%d，不再展示详细字段信息", YApiConstants.maxLevel)));
+            return this.parseMap(rootClass, psiType, TypeUtils.getTypeDesc(String.format("超出最大解析层数:%d，不再展示详细字段信息", YApiConstants.maxLevel)));
         }
         counter.incrementLevel();
         List<ValueWrapper> wrapperList = new ArrayList<>();

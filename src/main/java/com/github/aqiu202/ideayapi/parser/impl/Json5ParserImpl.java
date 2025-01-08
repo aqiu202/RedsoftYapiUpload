@@ -54,8 +54,10 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
     }
 
     @Override
-    public JsonObject parseMap(PsiType psiType, String description) {
-        return new JsonObject(new JsonItem<>("key", new Json<>("value"), description));
+    public JsonObject parseMap(PsiClass rootClass,PsiType psiType, String description) {
+        PsiType valueType = TypeUtils.resolveGenericType(psiType, 1);
+        JsonItem<?> valueJson = new JsonItem<>("key", this.parseJson5(rootClass, valueType), description);
+        return new JsonObject(valueJson);
     }
 
     @Override

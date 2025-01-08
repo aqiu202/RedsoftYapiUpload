@@ -55,8 +55,10 @@ public class JsonSchemaParserImpl extends AbstractJsonParser implements JsonSche
     }
 
     @Override
-    public ObjectSchema parseMap(PsiType psiType, String description) {
+    public ObjectSchema parseMap(PsiClass rootClass, PsiType psiType, String description) {
         ObjectSchema objectSchema = new ObjectSchema();
+        PsiType valueType = TypeUtils.resolveGenericType(psiType, 1);
+        objectSchema.addProperty("key", this.parseJsonSchema(rootClass, valueType));
         objectSchema.setDescription(description);
         return objectSchema;
     }
