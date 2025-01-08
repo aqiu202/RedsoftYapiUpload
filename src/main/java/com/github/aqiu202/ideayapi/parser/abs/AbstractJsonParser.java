@@ -61,6 +61,9 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     @Override
     public Jsonable parse(PsiClass rootClass, PsiType type, LevelCounter counter) {
+        if (TypeUtils.isVoid(type)) {
+            return null;
+        }
         //是否是数组
         if (TypeUtils.isArray(type)) {
             return this.parseCollection(rootClass, ((PsiArrayType) type).getComponentType(), counter);
@@ -105,7 +108,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         if (jsonable instanceof ItemJsonSchema) {
             ((ItemJsonSchema) jsonable).set$schema(YApiConstants.$schema);
         }
-        return jsonable.toJson();
+        return jsonable == null ? null :jsonable.toJson();
     }
 
     @Override

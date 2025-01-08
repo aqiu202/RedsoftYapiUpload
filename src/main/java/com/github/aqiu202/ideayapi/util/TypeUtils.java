@@ -106,6 +106,7 @@ public class TypeUtils {
         basicTypeMappings.put("java.math.BigInteger", SchemaType.integer);
         basicTypeMappings.put("java.lang.Float", SchemaType.number);
         basicTypeMappings.put("java.lang.Double", SchemaType.number);
+        basicTypeMappings.put("java.lang.Character", SchemaType.string);
         basicTypeMappings.put("java.sql.Timestamp", SchemaType.string);
         basicTypeMappings.put("java.util.Date", SchemaType.string);
         basicTypeMappings.put("java.sql.Date", SchemaType.string);
@@ -268,6 +269,10 @@ public class TypeUtils {
 
     public static boolean isFlux(PsiType psiType) {
         return getFluxType().isAssignableFrom(psiType);
+    }
+
+    public static boolean isVoid(PsiType psiType) {
+        return PsiType.VOID.equals(psiType);
     }
 
     private static boolean isNull(PsiType psiType) {

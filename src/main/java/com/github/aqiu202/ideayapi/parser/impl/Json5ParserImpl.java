@@ -65,7 +65,8 @@ public class Json5ParserImpl extends AbstractJsonParser implements Json5JsonPars
 
     @Override
     public String getRawResponse(PsiClass rootClass, PsiType psiType) {
-        return this.parse(rootClass, psiType, new LevelCounter()).toJson();
+        Jsonable json = this.parse(rootClass, psiType, new LevelCounter());
+        return json == null ? null :json.toJson();
     }
 
     @Override
