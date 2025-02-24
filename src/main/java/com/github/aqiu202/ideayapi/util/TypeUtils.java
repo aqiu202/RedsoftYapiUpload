@@ -330,6 +330,14 @@ public class TypeUtils {
         return psiType.getCanonicalText();
     }
 
+    public static String getRawTypePkName(PsiType psiType) {
+        String typePkName = getTypePkName(psiType);
+        if (StringUtils.isBlank(typePkName)) {
+            return typePkName;
+        }
+        return typePkName.split("<")[0].trim();
+    }
+
     public static String getTypeName(PsiType psiType) {
         return psiType.getPresentableText();
     }

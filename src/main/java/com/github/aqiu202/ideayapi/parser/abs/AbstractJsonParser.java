@@ -118,10 +118,11 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
 
     @Override
     public Jsonable parsePojo(PsiClass rootClass, PsiType psiType, LevelCounter counter) {
-        if (counter.getLevel() >= YApiConstants.maxLevel) {
+        String rawTypePkName = TypeUtils.getRawTypePkName(psiType);
+        if (counter.getLevel(rawTypePkName) >= YApiConstants.maxLevel) {
             return this.parseMap(rootClass, psiType, TypeUtils.getTypeDesc(String.format("超出最大解析层数:%d，不再展示详细字段信息", YApiConstants.maxLevel)));
         }
-        counter.incrementLevel();
+        counter.incrementLevel(rawTypePkName);
         List<ValueWrapper> wrapperList = new ArrayList<>();
         DescriptorResolver descriptorResolver = this.getDescriptorResolver();
         List<PsiDescriptor> descriptors = descriptorResolver.resolveDescriptors(psiType, this.getSource());
