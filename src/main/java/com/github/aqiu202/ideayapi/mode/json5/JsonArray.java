@@ -1,7 +1,5 @@
 package com.github.aqiu202.ideayapi.mode.json5;
 
-import com.github.aqiu202.ideayapi.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,41 +18,22 @@ public class JsonArray<T> extends Json<Collection<Json<T>>> {
 
     @Override
     public String toString() {
-        this.preStr();
-        String intent = this.intent(this.level);
-        StringJoiner joiner = new StringJoiner(",\n", intent + "[\n", "\n" + intent + "]");
+        return this.toString(0);
+    }
+
+    @Override
+    public String toString(String description, int level, CommentMode commentMode) {
+        String intent = this.intent(level);
+        String desc = this.buildCommentString(description, commentMode);
+        StringJoiner joiner = new StringJoiner(",\n",
+                intent + "[ " + desc + "\n",
+                "\n" + intent + "]");
+        int subLevel = level + 1;
+        String subIntent = this.intent(subLevel);
         for (Json<T> json : this.value) {
-            joiner.add(json.toString());
+            joiner.add(subIntent + json.toString(subLevel, commentMode));
         }
         return joiner.toString();
     }
 
-    @Override
-    public String toString(String description) {
-        StringJoiner joiner;
-        String intent = this.intent(this.level);
-        String desc;
-        if (commentMode == COMMENT_MODE_SINGLE) {
-            desc = StringUtils.isBlank(description) ? "" : "// " + description;
-            joiner = new StringJoiner(",\n", "[ " + desc + "\n",
-                    "\n" + intent + "]");
-        } else {
-            desc = StringUtils.isBlank(description) ? "" : "/* " + description + " */";
-            joiner = new StringJoiner(",\n",
-                    intent + "[ " + desc + "\n",
-                    "\n" + intent + "]");
-        }
-        for (Json<T> json : this.value) {
-            joiner.add(json.toString());
-        }
-        return joiner.toString();
-    }
-
-    @Override
-    protected void preStr() {
-        this.value.forEach(i -> {
-            i.setLevel(this.level + 1);
-            i.preStr();
-        });
-    }
 }

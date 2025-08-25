@@ -45,12 +45,11 @@ public class JsonItem<T> {
         this.description = description;
     }
 
-    @Override
-    public String toString() {
-        String intent = this.intent(this.value.level);
+    public String toString(int level, CommentMode commentMode) {
+        String intent = this.intent(level);
         StringBuilder builder = new StringBuilder(intent);
         builder.append("\"").append(this.key)
-                .append("\":").append(this.value.toString(this.description));
+                .append("\":").append(this.value.toString(this.description, level, commentMode));
         return builder.toString();
     }
 

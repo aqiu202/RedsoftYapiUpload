@@ -6,13 +6,8 @@ import com.github.aqiu202.ideayapi.util.StringUtils;
 public class Json<T> implements Jsonable {
 
     public final static String INTENT = "  ";
-    protected final static int COMMENT_MODE_SINGLE = 1;
-    protected final static int COMMENT_MODE_MULTIPLE = 2;
-    protected int commentMode = COMMENT_MODE_SINGLE;
 
     protected T value;
-
-    protected int level = 0;
 
     public Json() {
         this(null);
@@ -30,36 +25,51 @@ public class Json<T> implements Jsonable {
         this.value = value;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    @Override
-    public String toString() {
-        return value instanceof String ? ("\"" + value + "\"") : this.value.toString();
-    }
-
-    protected void preStr() {
-    }
-
     public String toString(String description) {
-        String vs = value instanceof String ? ("\"" + value + "\"") : this.value.toString();
-        if (StringUtils.isBlank(description)) {
-            return vs;
-        }
-        if (commentMode == COMMENT_MODE_SINGLE) {
-            vs += ", // " + description;
-        } else if (commentMode == COMMENT_MODE_MULTIPLE) {
-            vs += ", /* " + description + " */";
-        }
+        return this.toString(description, 0);
+    }
+
+    public String toString(int level) {
+        return this.toString(null, level);
+    }
+
+    public String toString(CommentMode commentMode) {
+        return this.toString(null, 0, commentMode);
+    }
+
+    public String toString(int level, CommentMode commentMode) {
+        return this.toString(null, level, commentMode);
+    }
+
+    public String toString(String description, CommentMode commentMode) {
+        return this.toString(description, 0, commentMode);
+    }
+
+    public String toString(String description, int level) {
+        return this.toString(description, level, CommentMode.SINGLE);
+    }
+
+    public String toString(String description, int level, CommentMode commentMode) {
+        String vs = value instanceof Json<?> ? ((Json<?>) this.value).toString(level, commentMode) : this.wrapValue(value);
+        vs += (", " + this.buildCommentString(description, commentMode));
         return vs;
     }
 
+    protected String buildCommentString(String description, CommentMode commentMode) {
+        if (StringUtils.isBlank(description) || commentMode == null) {
+            return "";
+        }
+        return String.format(commentMode.getTemplate(), description);
+    }
+
+    protected String wrapValue(Object value) {
+        return "\"" + value + "\"";
+    }
+
     protected String intent(int level) {
+        if (level <= 0) {
+            return "";
+        }
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < level; i++) {
             builder.append(INTENT);
