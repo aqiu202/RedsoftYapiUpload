@@ -4,8 +4,11 @@ import com.github.aqiu202.ideayapi.parser.abs.Source;
 import com.github.aqiu202.ideayapi.util.PsiUtils;
 import com.github.aqiu202.ideayapi.util.StringUtils;
 import com.github.aqiu202.ideayapi.util.TypeUtils;
-import com.intellij.psi.*;
-
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,7 +16,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SimpleDescriptorResolver extends AbstractDescriptorResolver {
-
 
     @Override
     public List<PsiDescriptor> resolveDescriptors(PsiType type, Source source) {
@@ -43,22 +45,21 @@ public class SimpleDescriptorResolver extends AbstractDescriptorResolver {
             methods = new ArrayList<>();
         }
         PsiDescriptorParser psiDescriptorParser = this.getPsiDescriptorParser();
-        return methods.stream()
-                .map(method -> psiDescriptorParser.parse(method, type))
-                .distinct()
-                .collect(Collectors.toList());
+        return methods.stream().map(method -> psiDescriptorParser.parse(method, type)).distinct().collect(Collectors.toList());
     }
 
     protected List<PsiMethod> getGetters(PsiClass psiClass) {
         return Arrays.stream(psiClass.getAllMethods())
-                .filter(this::filterObjectMethods)
-                .filter(this::isGetter).collect(Collectors.toList());
+            .filter(this::filterObjectMethods)
+            .filter(this::isGetter)
+            .collect(Collectors.toList());
     }
 
     protected List<PsiMethod> getSetters(PsiClass psiClass) {
         return Arrays.stream(psiClass.getAllMethods())
-                .filter(this::filterObjectMethods)
-                .filter(this::isSetter).collect(Collectors.toList());
+            .filter(this::filterObjectMethods)
+            .filter(this::isSetter)
+            .collect(Collectors.toList());
     }
 
     protected boolean filterObjectMethods(PsiMethod method) {
@@ -67,15 +68,21 @@ public class SimpleDescriptorResolver extends AbstractDescriptorResolver {
 
     protected boolean isGetter(PsiMethod method) {
         PsiType type = method.getReturnType();
+        String methodName = method.getName();
         String prefix = StringUtils.equals("boolean", TypeUtils.getTypePkName(type)) ? "is" : "get";
-        return !method.getModifierList().hasModifierProperty(PsiModifier.STATIC)
-                && method.getName().startsWith(prefix)
-                && method.getParameterList().isEmpty();
+        return !method.getModifierList().hasModifierProperty(PsiModifier.STATIC) &&
+            methodName.startsWith(prefix) &&
+            !methodName.equals(prefix) &&
+            method.getParameterList().isEmpty();
     }
 
     protected boolean isSetter(PsiMethod method) {
-        return !method.getModifierList().hasModifierProperty(PsiModifier.STATIC)
-                && method.getName().startsWith("set") && method.getParameterList().getParametersCount() == 1;
+        String prefix = "set";
+        String methodName = method.getName();
+        return !method.getModifierList().hasModifierProperty(PsiModifier.STATIC) &&
+            methodName.startsWith(prefix) &&
+            !methodName.equals(prefix) &&
+            method.getParameterList().getParametersCount() == 1;
     }
 
 }

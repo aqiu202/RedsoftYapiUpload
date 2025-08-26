@@ -143,7 +143,7 @@ public class TypeUtils {
     }
 
     public static SchemaType getBasicSchema(PsiType type) {
-        return basicTypeMappings.get(getTypePkName(type));
+        return basicTypeMappings.getOrDefault(getTypePkName(type), SchemaType.string);
     }
 
     public static boolean isFile(PsiType psiType) {
