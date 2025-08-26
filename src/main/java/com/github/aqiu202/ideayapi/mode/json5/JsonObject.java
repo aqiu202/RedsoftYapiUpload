@@ -15,11 +15,6 @@ public class JsonObject extends Json<Collection<JsonItem<?>>> {
         this.value = value;
     }
 
-    @Override
-    public String toString() {
-        return this.toString(0);
-    }
-
     public void addItem(JsonItem<?> item) {
         this.value.add(item);
     }

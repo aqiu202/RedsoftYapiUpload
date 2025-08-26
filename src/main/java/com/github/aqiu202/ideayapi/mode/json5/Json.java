@@ -25,6 +25,11 @@ public class Json<T> implements Jsonable {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        return this.toString(0);
+    }
+
     public String toString(String description) {
         return this.toString(description, 0);
     }

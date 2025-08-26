@@ -17,11 +17,6 @@ public class JsonArray<T> extends Json<Collection<Json<T>>> {
     }
 
     @Override
-    public String toString() {
-        return this.toString(0);
-    }
-
-    @Override
     public String toString(String description, int level, CommentMode commentMode) {
         String intent = this.intent(level);
         String desc = this.buildCommentString(description, commentMode);
