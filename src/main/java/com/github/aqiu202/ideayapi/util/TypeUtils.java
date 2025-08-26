@@ -54,19 +54,20 @@ public class TypeUtils {
     private static PsiClassType fluxType;
 
     static {
-
-        dateTypesPackages.put("java.sql.Timestamp", LocalDateTime.now().format(dateTimeFormat));
-        dateTypesPackages.put("java.util.Date",
-                LocalDateTime.now().format(dateTimeFormat));
-        dateTypesPackages.put("java.sql.Date", LocalDate.now().format(dateFormat));
-        dateTypesPackages.put("java.sql.Time", LocalTime.now().format(timeFormat));
-        dateTypesPackages.put("java.time.LocalDateTime", LocalDateTime.now().format(dateTimeFormat));
-        dateTypesPackages.put("java.time.LocalDate", LocalDate.now().format(dateFormat));
-        dateTypesPackages.put("java.time.LocalTime", LocalTime.now().format(timeFormat));
-        dateTypesPackages.put("org.joda.time.LocalDateTime", LocalDateTime.now().format(dateTimeFormat));
-        dateTypesPackages.put("org.joda.time.LocalDate", LocalDate.now().format(dateFormat));
-        dateTypesPackages.put("org.joda.time.LocalTime", LocalTime.now().format(timeFormat));
-        dateTypesPackages.put("org.joda.time.DateTime", LocalDateTime.now().format(dateTimeFormat));
+        LocalDateTime dateTime = LocalDateTime.now();
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
+        dateTypesPackages.put("java.sql.Timestamp", dateTimeFormat.format(dateTime));
+        dateTypesPackages.put("java.util.Date", dateTimeFormat.format(dateTime));
+        dateTypesPackages.put("java.sql.Date", dateFormat.format(date));
+        dateTypesPackages.put("java.sql.Time", timeFormat.format(time));
+        dateTypesPackages.put("java.time.LocalDateTime", dateTimeFormat.format(dateTime));
+        dateTypesPackages.put("java.time.LocalDate", dateFormat.format(date));
+        dateTypesPackages.put("java.time.LocalTime", timeFormat.format(time));
+        dateTypesPackages.put("org.joda.time.LocalDateTime", dateTimeFormat.format(dateTime));
+        dateTypesPackages.put("org.joda.time.LocalDate", dateFormat.format(date));
+        dateTypesPackages.put("org.joda.time.LocalTime", timeFormat.format(time));
+        dateTypesPackages.put("org.joda.time.DateTime", dateTimeFormat.format(dateTime));
 
         normalTypesPackages.put("int", 1);
         normalTypesPackages.put("boolean", true);
