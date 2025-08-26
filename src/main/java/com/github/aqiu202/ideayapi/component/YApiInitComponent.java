@@ -31,6 +31,7 @@ public class YApiInitComponent implements ProjectComponent {
              *         <li>修复Lombok插件的兼容性问题</li>
              *         <li>完善对范型参数的解析问题，特别对Map的解析进行了优化</li>
              *         <li>优化了内置代码模版的逻辑，生成注释时不再在参数注释处停留</li>
+             *         <li><li>修复了已知问题#34,#35,#37</li></li>
              *      </ol>
              */
             String changeLogTitle = "<h4>2.2.2+4版本，完善对Json5的解析和格式化逻辑，修复已知问题</h4>";
@@ -39,6 +40,7 @@ public class YApiInitComponent implements ProjectComponent {
                     "        <li>修复Lombok插件的兼容性问题</li>\n" +
                     "        <li>完善对范型参数的解析问题，特别对Map的解析进行了优化</li>\n" +
                     "        <li>优化了内置代码模版的逻辑，生成注释时不再在参数注释处停留</li>\n" +
+                    "        <li><li>修复了已知问题#34,#35,#37</li>\n" +
                     "     </ol>";
             NotificationUtils.createNotification("更新内容",
                             changeLogTitle + "\n" + changeLogContent
