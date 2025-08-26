@@ -23,20 +23,22 @@ public class YApiInitComponent implements ProjectComponent {
     @Override
     public void projectOpened() {
         YApiApplicationProperty property = ApplicationConfigReader.read();
-        if (property == null || !PluginConstants.currentVersion.equals(property.getVersion())) {
+        if (property == null || !PluginConstants.CURRENT_VERSION.equals(property.getVersion())) {
             /**
-             * <h4>2.2.2+3版本，添加对Jakarta Servlet的支持，修复已知问题</h4>
+             * <h4>2.2.2+4版本，完善对Json5的解析和格式化逻辑，修复已知问题</h4>
              *      <ol>
-             *         <li>添加对Jakarta Servlet的支持</li>
-             *         <li>修复WebFlux接口的解析异常问题</li>
-             *         <li>修复部分参数泛型解析异常的问题</li>
+             *         <li>完善对Json5的解析和格式化逻辑，修复之前的格式化缩进问题</li>
+             *         <li>修复Lombok插件的兼容性问题</li>
+             *         <li>完善对范型参数的解析问题，特别对Map的解析进行了优化</li>
+             *         <li>优化了内置代码模版的逻辑，生成注释时不再在参数注释处停留</li>
              *      </ol>
              */
-            String changeLogTitle = "<h4>2.2.2+3版本，添加对Jakarta Servlet的支持，修复已知问题</h4>";
+            String changeLogTitle = "<h4>2.2.2+4版本，完善对Json5的解析和格式化逻辑，修复已知问题</h4>";
             String changeLogContent = "<ol>\n" +
-                    "        <li>添加对Jakarta Servlet的支持</li>\n" +
-                    "        <li>修复WebFlux接口的解析异常问题</li>\n" +
-                    "        <li>修复部分参数泛型解析异常的问题</li>\n" +
+                    "        <li>完善对Json5的解析和格式化逻辑，修复之前的格式化缩进问题</li>\n" +
+                    "        <li>修复Lombok插件的兼容性问题</li>\n" +
+                    "        <li>完善对范型参数的解析问题，特别对Map的解析进行了优化</li>\n" +
+                    "        <li>优化了内置代码模版的逻辑，生成注释时不再在参数注释处停留</li>\n" +
                     "     </ol>";
             NotificationUtils.createNotification("更新内容",
                             changeLogTitle + "\n" + changeLogContent
@@ -46,7 +48,7 @@ public class YApiInitComponent implements ProjectComponent {
                     .setImportant(true)
                     .notify(this.project);
             property = new YApiApplicationProperty();
-            property.setVersion(PluginConstants.currentVersion);
+            property.setVersion(PluginConstants.CURRENT_VERSION);
             YApiApplicationPersistentState.getInstance().loadState(
                     YApiPropertyConvertHolder.getApplicationConvert().serialize(property));
         }
