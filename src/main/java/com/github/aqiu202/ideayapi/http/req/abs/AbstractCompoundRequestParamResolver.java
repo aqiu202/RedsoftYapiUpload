@@ -7,16 +7,30 @@ import com.github.aqiu202.ideayapi.model.ValueWrapper;
 import com.github.aqiu202.ideayapi.model.YApiParam;
 import com.github.aqiu202.ideayapi.parser.abs.Source;
 import com.github.aqiu202.ideayapi.parser.support.YApiSupportHolder;
-import com.github.aqiu202.ideayapi.parser.type.*;
-import com.github.aqiu202.ideayapi.util.*;
+import com.github.aqiu202.ideayapi.parser.type.DescriptorResolver;
+import com.github.aqiu202.ideayapi.parser.type.LombokDescriptorResolver;
+import com.github.aqiu202.ideayapi.parser.type.PsiDescriptor;
+import com.github.aqiu202.ideayapi.parser.type.SimpleDescriptorResolver;
+import com.github.aqiu202.ideayapi.parser.type.SimplePsiDescriptor;
+import com.github.aqiu202.ideayapi.util.CollectionUtils;
+import com.github.aqiu202.ideayapi.util.PsiAnnotationUtils;
+import com.github.aqiu202.ideayapi.util.PsiDocUtils;
+import com.github.aqiu202.ideayapi.util.PsiUtils;
+import com.github.aqiu202.ideayapi.util.StringUtils;
+import com.github.aqiu202.ideayapi.util.TypeUtils;
+import com.github.aqiu202.ideayapi.util.ValidUtils;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
-import org.jetbrains.annotations.NotNull;
-
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiArrayType;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * <b>解析复杂类型的参数的解析抽象类(Form和Query类型，不支持多层级解析)</b>
@@ -37,8 +51,8 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
     }
 
     @Override
-    public void doResolverItem(@NotNull PsiClass rootClass, @NotNull PsiMethod m, @NotNull PsiParameter param,
-                               PsiType paramType, @NotNull YApiParam target) {
+    public void doResolverItem(@NotNull PsiClass rootClass, @NotNull PsiMethod m, @NotNull PsiParameter param, PsiType paramType,
+        @NotNull YApiParam target) {
         List<ValueWrapper> valueWrappers = this.resolvePojo(rootClass, m, param, paramType);
         if (CollectionUtils.isNotEmpty(valueWrappers)) {
             this.doSet(target, valueWrappers);
@@ -51,8 +65,7 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
 
     protected ValueWrapper resolveBasic(@NotNull PsiParameter param) {
         ValueWrapper valueWrapper = this.resolveParameter(param);
-        valueWrapper.setExample(
-                TypeUtils.getDefaultValueByPackageName(param.getType()));
+        valueWrapper.setExample(TypeUtils.getDefaultValueByPackageName(param.getType()));
         return valueWrapper;
     }
 
@@ -76,11 +89,9 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         return valueWrapper;
     }
 
-    protected List<ValueWrapper> resolvePojo(@NotNull PsiClass rootClass,
-                                             @NotNull PsiMethod m,
-                                             @NotNull PsiParameter param,
-                                             PsiType paramType) {
-        if (TypeUtils.isMap(paramType)) {
+    protected List<ValueWrapper> resolvePojo(@NotNull PsiClass rootClass, @NotNull PsiMethod m,
+        @NotNull PsiParameter param, PsiType paramType) {
+        if (YApiSupportHolder.supports.isIgnored(param, rootClass) || TypeUtils.isMap(paramType)) {
             return Collections.emptyList();
         }
         // 数据类型进行拆解，非json参数暂不支持多层级和数组格式
@@ -91,8 +102,7 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
         //如果是单参数类型
         if (this.isItemType(paramType)) {
             ValueWrapper valueWrapper;
-            PsiAnnotation psiAnnotation = PsiAnnotationUtils
-                    .findAnnotation(param, SpringMVCConstants.RequestParam);
+            PsiAnnotation psiAnnotation = PsiAnnotationUtils.findAnnotation(param, SpringMVCConstants.RequestParam);
             if (psiAnnotation != null) {
                 valueWrapper = this.handleParamAnnotation(param, psiAnnotation);
             } else {
@@ -140,7 +150,7 @@ public abstract class AbstractCompoundRequestParamResolver extends AbstractReque
     }
 
     /**
-     * @param target   参数
+     * @param target 参数
      * @param wrappers 参数值
      */
     protected abstract void doSet(@NotNull YApiParam target, Collection<ValueWrapper> wrappers);

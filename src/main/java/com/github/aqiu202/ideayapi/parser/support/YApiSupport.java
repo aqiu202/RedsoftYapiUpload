@@ -8,6 +8,7 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifierListOwner;
 
+import com.intellij.psi.PsiParameter;
 import java.util.List;
 
 /**
@@ -42,6 +43,9 @@ public interface YApiSupport {
             if (element instanceof PsiMethod) {
                 ignored = ignored || this.isIgnored(((PsiMethod) element), psiClass);
             }
+            if (element instanceof PsiParameter) {
+                ignored = ignored || this.isIgnored(((PsiParameter) element), psiClass);
+            }
         }
         return ignored;
     }
@@ -51,6 +55,9 @@ public interface YApiSupport {
     }
 
     default boolean isIgnored(PsiMethod method, PsiClass psiClass) {
+        return false;
+    }
+    default boolean isIgnored(PsiParameter param, PsiClass psiClass) {
         return false;
     }
 

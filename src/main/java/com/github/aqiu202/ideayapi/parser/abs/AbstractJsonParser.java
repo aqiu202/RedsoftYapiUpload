@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiArrayType;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiType;
+import java.util.Collections;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -127,7 +128,7 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         DescriptorResolver descriptorResolver = this.getDescriptorResolver();
         List<PsiDescriptor> descriptors = descriptorResolver.resolveDescriptors(psiType, this.getSource());
         for (PsiDescriptor descriptor : descriptors) {
-            if (this.isIgnoredField(descriptor)) {
+            if (this.isIgnoredField(descriptor, rootClass)) {
                 continue;
             }
             ValueWrapper valueWrapper = this.parseProperty(rootClass, descriptor, counter);
@@ -138,16 +139,18 @@ public abstract class AbstractJsonParser implements ObjectJsonParser, ResponseFi
         return this.buildPojo(wrapperList);
     }
 
-    protected boolean isIgnoredField(PsiDescriptor descriptor) {
+    protected boolean isIgnoredField(PsiDescriptor descriptor, PsiClass rootClass) {
         Source source = this.getSource();
         String fieldName = descriptor.getName();
+        List<String> ignoredFieldList = Collections.emptyList();
         if (Source.REQUEST == source) {
-            return this.property.getIgnoredReqFieldList().contains(fieldName);
+            ignoredFieldList = this.property.getIgnoredReqFieldList();
         }
         if (Source.RESPONSE == source) {
-            return this.property.getIgnoredResFieldList().contains(fieldName);
+            ignoredFieldList = this.property.getIgnoredResFieldList();
         }
-        return false;
+        return ignoredFieldList.contains(fieldName)
+            || YApiSupportHolder.supports.isIgnored(descriptor, rootClass);
     }
 
     /**
